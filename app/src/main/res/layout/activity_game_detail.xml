@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="#fff"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <ScrollView
+    <com.app.view.MyScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -357,7 +357,7 @@
                 android:textSize="12dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:text="更多"
+                android:text="展开"
                 android:layout_marginRight="14dp"
                 />
             </RelativeLayout>
@@ -389,6 +389,7 @@
                     android:id="@+id/gamesreen_"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="14dp"
+                    android:layout_marginTop="14dp"
                     android:layout_height="240dp">
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -473,7 +474,7 @@
                         android:textSize="12dp"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentRight="true"
-                        android:text="更多"
+                        android:text="展开"
                         android:layout_marginRight="14dp"
                         />
                 </RelativeLayout>
@@ -488,8 +489,26 @@
                     />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15.33dp"
+                android:layout_marginTop="18.33dp"
+                android:text="cp其他游戏"
+                android:textColor="#343434"
+                android:layout_marginLeft="14dp"
+                />
+            <com.app.view.HorizontalListView
+                android:id="@+id/other_game_cp"
+                android:layout_width="match_parent"
+                android:layout_height="98dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="10.66dp"
+                />
+
         </LinearLayout>
-    </ScrollView>
+    </com.app.view.MyScrollView>
 
 </LinearLayout>
 

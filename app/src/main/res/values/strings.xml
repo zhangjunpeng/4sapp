@@ -9,4 +9,6 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_my_acount_setting">MyAcountSettingActivity</string>
     <string name="title_activity_game_detail">GameDetailActivity</string>
+    <string name="title_activity_fx_detail">FxDetailActivity</string>
+    <string name="title_activity_tz_detial">TzDetialActivity</string>
 </resources>
