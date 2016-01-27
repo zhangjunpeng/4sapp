@@ -6,9 +6,13 @@ package com.test4s.gdb;
  */
 public class IP {
 
-    private Long id;
-    private String ipId;
-    private String name;
+    private String company_name;
+    private String id;
+    private String ip_name;
+    private String ip_logo;
+    private String ip_style;
+    private String ip_cat;
+    private String uthority;
     private String type;
     private String style;
     private String range;
@@ -23,14 +27,14 @@ public class IP {
     public IP() {
     }
 
-    public IP(Long id) {
+    public IP(String company_name, String id, String ip_name, String ip_logo, String ip_style, String ip_cat, String uthority, String type, String style, String range, String introuduction, String location, String scale, String webSite, String telePhone, String address, String otherIp) {
+        this.company_name = company_name;
         this.id = id;
-    }
-
-    public IP(Long id, String ipId, String name, String type, String style, String range, String introuduction, String location, String scale, String webSite, String telePhone, String address, String otherIp) {
-        this.id = id;
-        this.ipId = ipId;
-        this.name = name;
+        this.ip_name = ip_name;
+        this.ip_logo = ip_logo;
+        this.ip_style = ip_style;
+        this.ip_cat = ip_cat;
+        this.uthority = uthority;
         this.type = type;
         this.style = style;
         this.range = range;
@@ -43,28 +47,60 @@ public class IP {
         this.otherIp = otherIp;
     }
 
-    public Long getId() {
+    public String getCompany_name() {
+        return company_name;
+    }
+
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getIpId() {
-        return ipId;
+    public String getIp_name() {
+        return ip_name;
     }
 
-    public void setIpId(String ipId) {
-        this.ipId = ipId;
+    public void setIp_name(String ip_name) {
+        this.ip_name = ip_name;
     }
 
-    public String getName() {
-        return name;
+    public String getIp_logo() {
+        return ip_logo;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIp_logo(String ip_logo) {
+        this.ip_logo = ip_logo;
+    }
+
+    public String getIp_style() {
+        return ip_style;
+    }
+
+    public void setIp_style(String ip_style) {
+        this.ip_style = ip_style;
+    }
+
+    public String getIp_cat() {
+        return ip_cat;
+    }
+
+    public void setIp_cat(String ip_cat) {
+        this.ip_cat = ip_cat;
+    }
+
+    public String getUthority() {
+        return uthority;
+    }
+
+    public void setUthority(String uthority) {
+        this.uthority = uthority;
     }
 
     public String getType() {

@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -29,6 +30,13 @@ public class FxDetailActivity extends AppCompatActivity {
         //设置支持缩放
         webSettings.setBuiltInZoomControls(true);
         //加载需要显示的网页
+
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
 
         webView.loadUrl("http://www.sina.com.cn");
 

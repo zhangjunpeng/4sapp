@@ -18,7 +18,7 @@
             android:layout_marginTop="14.67dp"
             >
             <ImageView
-                android:id="@+id/imageView_gamelist_listac"
+                android:id="@+id/imageView_gamelist"
                 android:layout_width="84dp"
                 android:layout_height="84dp"
                 android:layout_centerInParent="true"
@@ -34,13 +34,13 @@
                 android:layout_height="96.67dp"
 
                 android:src="@drawable/bg_item_listview"
-                />
+                 />
 
 
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/name_item_game_listac"
+            android:id="@+id/name_item_gamelist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -53,7 +53,7 @@
             android:text="莽荒纪"
             />
         <TextView
-            android:id="@+id/introuduction_item_game_listac"
+            android:id="@+id/introuduction_item_gamelist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -62,14 +62,14 @@
             android:maxLines="2"
             android:textColor="#848484"
             android:layout_toRightOf="@+id/re_image_item_gamelist"
-            android:layout_below="@+id/name_item_game_listac"
+            android:layout_below="@+id/name_item_gamelist"
             android:layout_marginLeft="9.33dp"
             android:text="2600万下载/50m\n找投资、找发行、找外包、找IP"
             android:ellipsize="end"
             />
 
         <ImageView
-            android:id="@+id/download_gamelist"
+            android:id="@+id/download_item_gamelist"
             android:layout_width="60dp"
             android:layout_height="32dp"
             android:src="@drawable/download"

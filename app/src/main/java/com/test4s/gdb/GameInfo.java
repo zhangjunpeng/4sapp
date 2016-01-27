@@ -7,17 +7,16 @@ package com.test4s.gdb;
 public class GameInfo {
 
     private Long id;
-    private String name;
-    private Long gameid;
-    private String tips;
-    private String playerSource;
-    private Long upTime;
-    private String others;
-    private String introuduction;
-    private String imageUrl;
-    private String upDescription;
-    private String companyGameId;
-    private String comment;
+    private String sort;
+    private String game_id;
+    private String require;
+    private String game_img;
+    private String game_download_nums;
+    private String game_platform;
+    private String game_stage;
+    private String game_name;
+    private String game_download_url;
+    private String game_size;
 
     public GameInfo() {
     }
@@ -26,19 +25,18 @@ public class GameInfo {
         this.id = id;
     }
 
-    public GameInfo(Long id, String name, Long gameid, String tips, String playerSource, Long upTime, String others, String introuduction, String imageUrl, String upDescription, String companyGameId, String comment) {
+    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size) {
         this.id = id;
-        this.name = name;
-        this.gameid = gameid;
-        this.tips = tips;
-        this.playerSource = playerSource;
-        this.upTime = upTime;
-        this.others = others;
-        this.introuduction = introuduction;
-        this.imageUrl = imageUrl;
-        this.upDescription = upDescription;
-        this.companyGameId = companyGameId;
-        this.comment = comment;
+        this.sort = sort;
+        this.game_id = game_id;
+        this.require = require;
+        this.game_img = game_img;
+        this.game_download_nums = game_download_nums;
+        this.game_platform = game_platform;
+        this.game_stage = game_stage;
+        this.game_name = game_name;
+        this.game_download_url = game_download_url;
+        this.game_size = game_size;
     }
 
     public Long getId() {
@@ -49,92 +47,84 @@ public class GameInfo {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getSort() {
+        return sort;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 
-    public Long getGameid() {
-        return gameid;
+    public String getGame_id() {
+        return game_id;
     }
 
-    public void setGameid(Long gameid) {
-        this.gameid = gameid;
+    public void setGame_id(String game_id) {
+        this.game_id = game_id;
     }
 
-    public String getTips() {
-        return tips;
+    public String getRequire() {
+        return require;
     }
 
-    public void setTips(String tips) {
-        this.tips = tips;
+    public void setRequire(String require) {
+        this.require = require;
     }
 
-    public String getPlayerSource() {
-        return playerSource;
+    public String getGame_img() {
+        return game_img;
     }
 
-    public void setPlayerSource(String playerSource) {
-        this.playerSource = playerSource;
+    public void setGame_img(String game_img) {
+        this.game_img = game_img;
     }
 
-    public Long getUpTime() {
-        return upTime;
+    public String getGame_download_nums() {
+        return game_download_nums;
     }
 
-    public void setUpTime(Long upTime) {
-        this.upTime = upTime;
+    public void setGame_download_nums(String game_download_nums) {
+        this.game_download_nums = game_download_nums;
     }
 
-    public String getOthers() {
-        return others;
+    public String getGame_platform() {
+        return game_platform;
     }
 
-    public void setOthers(String others) {
-        this.others = others;
+    public void setGame_platform(String game_platform) {
+        this.game_platform = game_platform;
     }
 
-    public String getIntrouduction() {
-        return introuduction;
+    public String getGame_stage() {
+        return game_stage;
     }
 
-    public void setIntrouduction(String introuduction) {
-        this.introuduction = introuduction;
+    public void setGame_stage(String game_stage) {
+        this.game_stage = game_stage;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getGame_name() {
+        return game_name;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setGame_name(String game_name) {
+        this.game_name = game_name;
     }
 
-    public String getUpDescription() {
-        return upDescription;
+    public String getGame_download_url() {
+        return game_download_url;
     }
 
-    public void setUpDescription(String upDescription) {
-        this.upDescription = upDescription;
+    public void setGame_download_url(String game_download_url) {
+        this.game_download_url = game_download_url;
     }
 
-    public String getCompanyGameId() {
-        return companyGameId;
+    public String getGame_size() {
+        return game_size;
     }
 
-    public void setCompanyGameId(String companyGameId) {
-        this.companyGameId = companyGameId;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setGame_size(String game_size) {
+        this.game_size = game_size;
     }
 
 }

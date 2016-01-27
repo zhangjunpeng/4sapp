@@ -24,17 +24,18 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Type = new Property(2, String.class, "type", false, "TYPE");
-        public final static Property Introuduction = new Property(3, String.class, "introuduction", false, "INTROUDUCTION");
-        public final static Property Location = new Property(4, String.class, "location", false, "LOCATION");
-        public final static Property Scale = new Property(5, String.class, "scale", false, "SCALE");
-        public final static Property WebSite = new Property(6, String.class, "webSite", false, "WEB_SITE");
-        public final static Property TelePhone = new Property(7, String.class, "telePhone", false, "TELE_PHONE");
-        public final static Property Address = new Property(8, String.class, "address", false, "ADDRESS");
+        public final static Property Company_name = new Property(1, String.class, "company_name", false, "COMPANY_NAME");
+        public final static Property Identity_cat = new Property(2, String.class, "identity_cat", false, "IDENTITY_CAT");
+        public final static Property Logo = new Property(3, String.class, "logo", false, "LOGO");
+        public final static Property User_id = new Property(4, String.class, "user_id", false, "USER_ID");
+        public final static Property Type = new Property(5, String.class, "type", false, "TYPE");
+        public final static Property Introuduction = new Property(6, String.class, "introuduction", false, "INTROUDUCTION");
+        public final static Property Location = new Property(7, String.class, "location", false, "LOCATION");
+        public final static Property Scale = new Property(8, String.class, "scale", false, "SCALE");
+        public final static Property WebSite = new Property(9, String.class, "webSite", false, "WEB_SITE");
+        public final static Property TelePhone = new Property(10, String.class, "telePhone", false, "TELE_PHONE");
+        public final static Property Address = new Property(11, String.class, "address", false, "ADDRESS");
     };
-
-    private DaoSession daoSession;
 
 
     public OutSourceDao(DaoConfig config) {
@@ -43,7 +44,6 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
     
     public OutSourceDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -51,14 +51,17 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'OUT_SOURCE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'NAME' TEXT," + // 1: name
-                "'TYPE' TEXT," + // 2: type
-                "'INTROUDUCTION' TEXT," + // search: introuduction
-                "'LOCATION' TEXT," + // 4: location
-                "'SCALE' TEXT," + // 5: scale
-                "'WEB_SITE' TEXT," + // 6: webSite
-                "'TELE_PHONE' TEXT," + // 7: telePhone
-                "'ADDRESS' TEXT);"); // 8: address
+                "'COMPANY_NAME' TEXT," + // 1: company_name
+                "'IDENTITY_CAT' TEXT," + // 2: identity_cat
+                "'LOGO' TEXT," + // 3: logo
+                "'USER_ID' TEXT," + // 4: user_id
+                "'TYPE' TEXT," + // 5: type
+                "'INTROUDUCTION' TEXT," + // 6: introuduction
+                "'LOCATION' TEXT," + // 7: location
+                "'SCALE' TEXT," + // 8: scale
+                "'WEB_SITE' TEXT," + // 9: webSite
+                "'TELE_PHONE' TEXT," + // 10: telePhone
+                "'ADDRESS' TEXT);"); // 11: address
     }
 
     /** Drops the underlying database table. */
@@ -77,51 +80,60 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
             stmt.bindLong(1, id);
         }
  
-        String name = entity.getName();
-        if (name != null) {
-            stmt.bindString(2, name);
+        String company_name = entity.getCompany_name();
+        if (company_name != null) {
+            stmt.bindString(2, company_name);
+        }
+ 
+        String identity_cat = entity.getIdentity_cat();
+        if (identity_cat != null) {
+            stmt.bindString(3, identity_cat);
+        }
+ 
+        String logo = entity.getLogo();
+        if (logo != null) {
+            stmt.bindString(4, logo);
+        }
+ 
+        String user_id = entity.getUser_id();
+        if (user_id != null) {
+            stmt.bindString(5, user_id);
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(3, type);
+            stmt.bindString(6, type);
         }
  
         String introuduction = entity.getIntrouduction();
         if (introuduction != null) {
-            stmt.bindString(4, introuduction);
+            stmt.bindString(7, introuduction);
         }
  
         String location = entity.getLocation();
         if (location != null) {
-            stmt.bindString(5, location);
+            stmt.bindString(8, location);
         }
  
         String scale = entity.getScale();
         if (scale != null) {
-            stmt.bindString(6, scale);
+            stmt.bindString(9, scale);
         }
  
         String webSite = entity.getWebSite();
         if (webSite != null) {
-            stmt.bindString(7, webSite);
+            stmt.bindString(10, webSite);
         }
  
         String telePhone = entity.getTelePhone();
         if (telePhone != null) {
-            stmt.bindString(8, telePhone);
+            stmt.bindString(11, telePhone);
         }
  
         String address = entity.getAddress();
         if (address != null) {
-            stmt.bindString(9, address);
+            stmt.bindString(12, address);
         }
-    }
-
-    @Override
-    protected void attachEntity(OutSource entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -135,14 +147,17 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
     public OutSource readEntity(Cursor cursor, int offset) {
         OutSource entity = new OutSource( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // type
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // introuduction
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // location
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // scale
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // webSite
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // telePhone
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // address
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // company_name
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // identity_cat
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // logo
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // user_id
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // type
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // introuduction
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // location
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // scale
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // webSite
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // telePhone
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // address
         );
         return entity;
     }
@@ -151,14 +166,17 @@ public class OutSourceDao extends AbstractDao<OutSource, Long> {
     @Override
     public void readEntity(Cursor cursor, OutSource entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setType(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setIntrouduction(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLocation(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setScale(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setWebSite(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setTelePhone(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setAddress(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setCompany_name(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setIdentity_cat(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setLogo(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setUser_id(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setType(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setIntrouduction(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLocation(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setScale(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setWebSite(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setTelePhone(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setAddress(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
      }
     
     /** @inheritdoc */

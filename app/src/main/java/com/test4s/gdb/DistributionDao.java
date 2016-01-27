@@ -49,7 +49,7 @@ public class DistributionDao extends AbstractDao<Distribution, Long> {
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'NAME' TEXT," + // 1: name
                 "'INTROUDUCTION' TEXT," + // 2: introuduction
-                "'LOCATION' TEXT," + // search: location
+                "'LOCATION' TEXT," + // 3: location
                 "'SCALE' TEXT," + // 4: scale
                 "'WEB_SITE' TEXT," + // 5: webSite
                 "'TELE_PHONE' TEXT," + // 6: telePhone

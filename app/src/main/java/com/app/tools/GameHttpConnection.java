@@ -22,7 +22,7 @@ public class GameHttpConnection {
 
 	static URL url;
 	static HttpURLConnection uRLConnection;
-	static String key="";
+	static String key="52game.com!2015168";
 
 	// 向服务器发送post请求
 	public static String doPost(String urlAdd, TreeMap<String, String> headers,
@@ -142,10 +142,7 @@ public class GameHttpConnection {
 			params.append("&");
 
 		}
-		if (params.length() > 0) {
-			params.deleteCharAt(params.length() - 1);
-		}
-		params.append("|");
+
 		params.append(key);
 		MyLog.i("unsign===" + params);
 

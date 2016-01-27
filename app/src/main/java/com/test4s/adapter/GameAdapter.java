@@ -8,9 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.tools.MyLog;
 import com.test4s.gdb.CP;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
+import com.test4s.net.GameListParser;
+import com.test4s.net.Url;
 
 import org.xutils.x;
 
@@ -30,6 +33,7 @@ public class GameAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        MyLog.i("listcount::"+gameList.size());
         return gameList.size();
     }
 
@@ -45,22 +49,28 @@ public class GameAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        MyLog.i("Gamelist::getView"+position);
         ViewHolder viewHolder;
         if (convertView==null){
-            convertView= LayoutInflater.from(mcontext).inflate(R.layout.item_cplist_listactivity,null);
             viewHolder=new ViewHolder();
-            viewHolder.imageView= (ImageView) convertView.findViewById(R.id.imageView_cplist_listac);
-            viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_cp_listac);
-            viewHolder.introduction= (TextView) convertView.findViewById(R.id.introuduction_item_cp_listac);
+            convertView=LayoutInflater.from(mcontext).inflate(R.layout.item_gamelist_listactivity,null);
+            viewHolder.imageView= (ImageView) convertView.findViewById(R.id.imageView_gamelist);
+            viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gamelist);
+
+            viewHolder.introduction= (TextView) convertView.findViewById(R.id.introuduction_item_gamelist);
             convertView.setTag(viewHolder);
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
-            x.image().bind(viewHolder.imageView,"http://store.akamai.steamstatic.com/public/shared/images/header/globalheader_logo.png");
-            viewHolder.name.setText("莽荒纪");
-
         }
+        GameInfo gameInfo=gameList.get(position);
+        x.image().bind(viewHolder.imageView, Url.prePic+gameInfo.getGame_img());
+        viewHolder.name.setText(gameInfo.getGame_name());
+        MyLog.i("name::"+gameInfo.getGame_name());
+        viewHolder.introduction.setText(gameInfo.getGame_download_nums()+"下载/"+gameInfo.getGame_size()+"M\n"+gameInfo.getRequire());
         return convertView;
     }
+
     class ViewHolder{
         ImageView imageView;
         TextView name;

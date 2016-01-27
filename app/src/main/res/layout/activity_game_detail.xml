@@ -56,14 +56,14 @@
                 android:src="@drawable/gameiconbg"
                 />
             <com.app.view.RoundImageView
-                android:id="@+id/name_game_detail"
+                android:id="@+id/image_game_detail"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 app:borderRadius="5dp"
                 app:type="round"
                 android:layout_marginTop="8.67dp"
                 android:layout_marginLeft="9.33dp"
-                android:src="@drawable/a2"
+
                 />
 
         </RelativeLayout>
@@ -167,11 +167,13 @@
             android:gravity="center"
             >
             <ImageView
+                android:id="@+id/care_game_detail"
                 android:layout_width="84dp"
                 android:layout_height="29dp"
                 android:src="@drawable/button_guanzhu_game"
                 />
             <ImageView
+                android:id="@+id/download_game_detail"
                 android:layout_width="84dp"
                 android:layout_height="29dp"
                 android:src="@drawable/button_download_game"
@@ -221,20 +223,20 @@
                 android:id="@+id/star1_gamedetail"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/greenstar"
+                android:src="@drawable/hollowstar"
                 />
             <ImageView
                 android:id="@+id/star2_gamedetail"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/greenstar"
+                android:src="@drawable/hollowstar"
                 android:layout_marginLeft="3dp"
                 />
             <ImageView
                 android:id="@+id/star3_gamedetail"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/halfstar"
+                android:src="@drawable/hollowstar"
                 android:layout_marginLeft="3dp"
                 />
             <ImageView
@@ -258,7 +260,7 @@
                 android:text="(100人参与)"
                 android:textSize="12dp"
                 android:layout_marginLeft="5dp"
-                />
+                android:id="@+id/canyu_game_detail" />
 
         </LinearLayout>
         <TextView
@@ -270,7 +272,7 @@
             android:layout_marginLeft="14dp"
             android:lineSpacingExtra="1dp"
             android:layout_marginTop="1dp"
-            >
+            android:id="@+id/baseInfo_game_detail">
 
         </TextView>
 
@@ -307,7 +309,7 @@
             android:layout_marginTop="11dp"
             android:lineSpacingExtra="2dp"
             android:text="所在地：深圳市 \n公司规模：50-100人 \n电话：0755-26568888 \n网址：www.4stest.com"
-            />
+            android:id="@+id/cpInfo_game_detail" />
 
 
     </LinearLayout>
@@ -338,6 +340,7 @@
 
             >
             <TextView
+                android:id="@+id/gameintro_game_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
@@ -386,42 +389,41 @@
                     android:layout_marginTop="15dp"
                     />
                 <HorizontalScrollView
-                    android:id="@+id/gamesreen_"
+                    android:id="@+id/scroll_game_shot_detail"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="14dp"
                     android:layout_marginTop="14dp"
                     android:layout_height="240dp">
                     <LinearLayout
+                        android:id="@+id/gameshot_game_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         >
-                    <ImageView
-                        android:layout_width="160dp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/a3"
-                        android:scaleType="fitCenter"
-                        />
-                    <ImageView
-                        android:layout_width="160dp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/a3"
-                        android:scaleType="fitCenter"
-                        android:layout_marginLeft="3dp"
-                        />
-                    <ImageView
-                        android:layout_width="160dp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/a3"
-                        android:scaleType="fitCenter"
-                        android:layout_marginLeft="3dp"
-                        />
                         <ImageView
+                            android:id="@+id/shot1_gameDetail"
                             android:layout_width="160dp"
                             android:layout_height="match_parent"
-                            android:src="@drawable/a3"
-                            android:scaleType="fitCenter"
+
+                            />
+                        <ImageView
+                            android:id="@+id/shot2_gameDetail"
+                            android:layout_width="160dp"
+                            android:layout_height="match_parent"
                             android:layout_marginLeft="3dp"
+                            />
+                        <ImageView
+                            android:id="@+id/shot3_gameDetail"
+                            android:layout_width="160dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="3dp"
+                            />
+                        <ImageView
+                            android:id="@+id/shot4_gameDetail"
+                            android:layout_width="160dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="3dp"
+                            android:layout_marginRight="14dp"
                             />
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -499,12 +501,13 @@
                 android:layout_marginLeft="14dp"
                 />
             <com.app.view.HorizontalListView
-                android:id="@+id/other_game_cp"
+                android:id="@+id/other_game_gamedetail"
                 android:layout_width="match_parent"
                 android:layout_height="98dp"
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="10.66dp"
+                android:layout_marginBottom="13.33dp"
                 />
 
         </LinearLayout>

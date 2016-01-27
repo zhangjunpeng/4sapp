@@ -47,7 +47,7 @@ public class InformationDao extends AbstractDao<Information, Long> {
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'TITLE' TEXT NOT NULL ," + // 1: title
                 "'TIME' TEXT NOT NULL ," + // 2: time
-                "'LOOKNUM' INTEGER," + // search: looknum
+                "'LOOKNUM' INTEGER," + // 3: looknum
                 "'COMMENT_NUM' INTEGER," + // 4: comment_num
                 "'CONTEXT' TEXT);"); // 5: context
     }

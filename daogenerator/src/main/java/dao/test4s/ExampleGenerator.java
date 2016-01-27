@@ -25,23 +25,26 @@ public class ExampleGenerator {
 
         //游戏详情
         gameInfo.addIdProperty().primaryKey();
-        gameInfo.addStringProperty("name");
-        Property gameid=gameInfo.addLongProperty("gameid").getProperty();
-        gameInfo.addStringProperty("tips");
-        gameInfo.addStringProperty("playerSource");
-        gameInfo.addLongProperty("upTime");
-        gameInfo.addStringProperty("others");
-        gameInfo.addStringProperty("introuduction");
-        gameInfo.addStringProperty("imageUrl");
-        gameInfo.addStringProperty("upDescription");
-        gameInfo.addStringProperty("companyGameId");
-        gameInfo.addStringProperty("comment");
+        gameInfo.addStringProperty("sort");
+        gameInfo.addStringProperty("game_id");
+        gameInfo.addStringProperty("require");
+        gameInfo.addStringProperty("game_img");
+        gameInfo.addStringProperty("game_download_nums");
+        gameInfo.addStringProperty("game_platform");
+        gameInfo.addStringProperty("game_stage");
+        gameInfo.addStringProperty("game_name");
+        gameInfo.addStringProperty("game_download_url");
+        gameInfo.addStringProperty("game_size");
 
 
 
         //Investment投资公司
         investment.addIdProperty().primaryKey();
-        investment.addStringProperty("name");
+        investment.addStringProperty("company_name");
+        investment.addStringProperty("identity_cat");
+        investment.addStringProperty("logo");
+        investment.addStringProperty("user_id");
+
         investment.addStringProperty("introuduction");
         investment.addStringProperty("location");
         investment.addStringProperty("scale");
@@ -49,15 +52,19 @@ public class ExampleGenerator {
         investment.addStringProperty("telePhone");
         investment.addStringProperty("address");
 
-        ToMany gameToInvestment = investment.addToMany(gameInfo,gameid);
 
-        gameToInvestment.setName("cases");
 
 
 
         //外包公司
         outSource.addIdProperty().primaryKey();
-        outSource.addStringProperty("name");
+
+        //index参数
+        outSource.addStringProperty("company_name");
+        outSource.addStringProperty("identity_cat");
+        outSource.addStringProperty("logo");
+        outSource.addStringProperty("user_id");
+
         outSource.addStringProperty("type");
         outSource.addStringProperty("introuduction");
         outSource.addStringProperty("location");
@@ -65,14 +72,20 @@ public class ExampleGenerator {
         outSource.addStringProperty("webSite");
         outSource.addStringProperty("telePhone");
         outSource.addStringProperty("address");
-        ToMany outSourceToGame=  outSource.addToMany(gameInfo,gameid);
-        outSourceToGame.setName("cases");
+
 
 
         //ip
-        ip.addIdProperty().primaryKey();
-        ip.addStringProperty("ipId");
-        ip.addStringProperty("name");
+
+        //index
+        ip.addStringProperty("company_name");
+        ip.addStringProperty("id");
+        ip.addStringProperty("ip_name");
+        ip.addStringProperty("ip_logo");
+        ip.addStringProperty("ip_style");
+        ip.addStringProperty("ip_cat");
+        ip.addStringProperty("uthority");
+
         ip.addStringProperty("type");
         ip.addStringProperty("style");
         ip.addStringProperty("range");
@@ -86,17 +99,17 @@ public class ExampleGenerator {
 
         //cp游戏开发
         cp.addIdProperty().primaryKey();
-        cp.addStringProperty("name");
+        cp.addStringProperty("company_name");
+        cp.addStringProperty("identity_cat");
+        cp.addStringProperty("logo");
+        cp.addStringProperty("user_id");
+        //index
         cp.addStringProperty("introuduction");
         cp.addStringProperty("location");
         cp.addStringProperty("scale");
         cp.addStringProperty("webSite");
         cp.addStringProperty("telePhone");
         cp.addStringProperty("address");
-
-        ToMany cpToGame = cp.addToMany(gameInfo,gameid);
-
-        gameToInvestment.setName("cases");
 
 
         //distribution
@@ -109,9 +122,6 @@ public class ExampleGenerator {
         distribution.addStringProperty("telePhone");
         distribution.addStringProperty("address");
 
-        ToMany distributionToGame = investment.addToMany(gameInfo,gameid);
-
-        gameToInvestment.setName("cases");
 
 
     }
