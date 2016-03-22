@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.tools.MyLog;
+import com.squareup.picasso.Picasso;
 import com.test4s.gdb.CP;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
@@ -58,19 +60,12 @@ public class Game_HL_Adapter  extends BaseAdapter{
             viewHolder= (ViewHolder) convertView.getTag();
         }
         GameInfo gameInfo=list.get(position);
-        String imageUrl= prefixPic+gameInfo.getGame_img();
+        String imageUrl= Url.prePic+gameInfo.getGame_img();
         String name=gameInfo.getGame_name();
-        x.image().bind(viewHolder.imageView,imageUrl);
-//        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent(mcontext, CPDetailActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                mcontext.startActivity(intent);
-//                Activity activity= (Activity) mcontext;
-//                activity.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-//            }
-//        });
+        Picasso.with(mcontext)
+                .load(imageUrl)
+                .into(viewHolder.imageView);
+        MyLog.i("imageUrl=="+imageUrl);
         viewHolder.textView.setText(name);
         return convertView;
     }

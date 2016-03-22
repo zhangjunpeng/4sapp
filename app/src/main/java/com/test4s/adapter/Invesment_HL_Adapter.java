@@ -8,10 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.test4s.gdb.IP;
 import com.test4s.gdb.Investment;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
+import com.view.index.IndexItemSipleInfo;
 
 import org.xutils.x;
 
@@ -21,9 +23,9 @@ import java.util.List;
  * Created by Administrator on 2016/1/14.
  */
 public class Invesment_HL_Adapter extends BaseAdapter {
-    List<Investment> list;
+    List<IndexItemSipleInfo> list;
     Context mcontext;
-    public Invesment_HL_Adapter(Context context, List<Investment> ipList){
+    public Invesment_HL_Adapter(Context context, List<IndexItemSipleInfo> ipList){
         list=ipList;
         mcontext=context;
     }
@@ -56,10 +58,12 @@ public class Invesment_HL_Adapter extends BaseAdapter {
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        Investment investment=list.get(position);
+        IndexItemSipleInfo investment=list.get(position);
         String imageUrl= Url.prePic+investment.getLogo();
         String name=investment.getCompany_name();
-        x.image().bind(viewHolder.imageView,imageUrl);
+        Picasso.with(mcontext)
+                .load(imageUrl)
+                .into(viewHolder.imageView);
 //        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

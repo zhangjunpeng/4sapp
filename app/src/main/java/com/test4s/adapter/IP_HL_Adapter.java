@@ -8,10 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.test4s.gdb.CP;
 import com.test4s.gdb.IP;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
+import com.view.s4server.IPSimpleInfo;
 
 import org.xutils.x;
 
@@ -21,9 +23,9 @@ import java.util.List;
  * Created by Administrator on 2016/1/14.
  */
 public class IP_HL_Adapter extends BaseAdapter {
-    List<IP> list;
+    List<IPSimpleInfo> list;
     Context mcontext;
-    public IP_HL_Adapter(Context context,List<IP> ipList){
+    public IP_HL_Adapter(Context context,List<IPSimpleInfo> ipList){
         list=ipList;
         mcontext=context;
     }
@@ -56,20 +58,12 @@ public class IP_HL_Adapter extends BaseAdapter {
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        IP ip=list.get(position);
-        String imageUrl= Url.prePic+ip.getIp_logo();
-        String name=ip.getCompany_name();
-        x.image().bind(viewHolder.imageView,imageUrl);
-//        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent(mcontext, CPDetailActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                mcontext.startActivity(intent);
-//                Activity activity= (Activity) mcontext;
-//                activity.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-//            }
-//        });
+        IPSimpleInfo ip=list.get(position);
+        String imageUrl= Url.prePic+ip.getLogo();
+        String name=ip.getIp_name();
+        Picasso.with(mcontext)
+                .load(imageUrl)
+                .into(viewHolder.imageView);
         viewHolder.textView.setText(name);
         return convertView;
     }

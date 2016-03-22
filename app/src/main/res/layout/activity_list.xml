@@ -5,15 +5,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     >
-    <include
-        layout="@layout/titlebar"/>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
-        android:id="@+id/listView_list"
+    <include android:id="@+id/title_list"
+        layout="@layout/titlebar"
+        />
+    <FrameLayout
+        android:id="@+id/contianner_listactivity"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        ></com.handmark.pulltorefresh.library.PullToRefreshListView>
+        ></FrameLayout>
 
 
 </LinearLayout>

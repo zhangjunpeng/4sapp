@@ -1,36 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinatorlayout_tzdetail"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.test4s.activity.CPDetailActivity">
-    <com.app.view.MyScrollView
-        android:id="@+id/scrollView_tz"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+    tools:context="com.view.s4server.InvesmentDetialActivity"
+    android:background="#fff"
+    >
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_tzdetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="#252525"
+        >
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collToolbar_tzDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:contentScrim="#252525"
+            app:expandedTitleTextAppearance="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             >
 
             <RelativeLayout
-                android:id="@+id/title_tz_s"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
+                android:scaleType="centerCrop"
                 android:background="@drawable/titlebg"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="pin"
                 >
 
                 <com.app.view.RoundImageView
-                    android:id="@+id/roundImage_tz"
-                    android:layout_width="120.33dp"
-                    android:layout_height="120.33dp"
-                    android:layout_marginTop="56dp"
+                    android:id="@+id/roundImage_tzdetail"
+                    android:layout_width="111dp"
+                    android:layout_height="111dp"
+                    android:layout_marginTop="86.66dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/a1"
-                    app:borderRadius="10dp"
+                    android:src="@drawable/default_icon"
+                    app:borderRadius="5dp"
                     app:type="round"
                     android:layout_centerHorizontal="true"
                     />
@@ -41,134 +53,192 @@
                     android:layout_height="wrap_content"
                     android:textColor="#FFF"
                     android:textSize="15.33dp"
-                    android:text="深圳逆风行科技有限公司"
-                    android:layout_below="@+id/roundImage_tz"
-                    android:layout_marginTop="26.33dp"
+                    android:layout_below="@+id/roundImage_tzdetail"
+                    android:layout_marginTop="34dp"
                     android:layout_centerHorizontal="true"
                     />
-                <LinearLayout
-                    android:id="@+id/connect_tz"
-                    android:layout_width="126.67dp"
+                <ImageView
+                    android:id="@+id/attention_tzdetail"
+                    android:layout_width="84dp"
                     android:layout_height="28dp"
-                    android:background="@drawable/borderradius"
                     android:layout_below="@+id/name_tzdetail"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="19.33dp"
+                    android:layout_marginTop="19dp"
                     android:orientation="horizontal"
+                    android:src="@drawable/attention"
+                    android:layout_marginBottom="19dp"
+                    >
+                </ImageView>
+            </RelativeLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_tzDetail"
+                android:layout_width="match_parent"
+                android:layout_height="46.66dp"
+                app:layout_collapseMode="pin"
+                android:background="#00ffffff"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     >
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/connect_green"
-                        android:layout_marginLeft="18dp"
-                        android:layout_gravity="center_vertical"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/back"
+                        android:id="@+id/back_tzdetail" />
+                    <ImageView
+                        android:id="@+id/care_tzdetatil"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/care"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:visibility="invisible"
+                        android:layout_marginRight="58dp"
+                        />
+                    <ImageView
+                        android:id="@+id/share_tzdetail"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/share"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="18dp"
                         />
                     <TextView
+                        android:id="@+id/title_tzdetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="15.33dp"
-                        android:layout_gravity="center_vertical"
-                        android:text="联系客服"
-                        android:textColor="#37E590"
-                        android:layout_marginLeft="8.33dp"
-                        />
+                        android:layout_centerInParent="true"
+                        android:textSize="16dp"
+                        android:visibility="invisible"
+                        android:textColor="#fff" />
+                </RelativeLayout>
 
-                </LinearLayout>
 
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="投资人信息"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="19dp"
+                android:textSize="15.33dp"
+                android:textColor="#353535"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:layout_marginLeft="13.66dp"
+                android:textSize="12dp"
+                android:textColor="#7C7C7C"
+                android:lineSpacingExtra="5px"
+                android:id="@+id/info_tzdetail" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginRight="14dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="18dp"
+                android:background="#b4b4b4"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="投资人简介"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="19dp"
+                android:textSize="15.33dp"
+                android:textColor="#353535"
+                />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:layout_marginLeft="13.66dp"
+                android:layout_marginRight="11dp"
+                >
+                <TextView
+                    android:id="@+id/introduction_tzdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:textSize="12dp"
+                    android:textColor="#7C7C7C"
+                    android:ellipsize="end"
+                    />
+                <TextView
+                    android:id="@+id/all_tzdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:textColor="#FF9D00"
+                    android:text="全部"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="10dp"
+                    />
 
             </RelativeLayout>
 
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginRight="14dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="18dp"
+                android:background="#b4b4b4"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/title_tz_s"
+                android:background="#F1F5F8"
                 android:orientation="vertical"
-                android:background="#FFF"
                 >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15.33dp"
-                    android:layout_marginTop="18.33dp"
-                    android:text="投资人介绍"
-                    android:textColor="#343434"
-                    android:layout_marginLeft="14dp"
-
-                    />
-                <TextView
-                    android:id="@+id/introduction_tz_detail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:typeface="normal"
-                    android:maxLines="3"
-                    android:ellipsize="end"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginRight="14dp"
-                    android:layout_marginTop="10.66dp"
-                    android:lineSpacingExtra="3dp"
-                    android:text="撒大世家的卡死了看得见啊睡了多久啊是利空打击阿斯利康撒大世家的卡死了看得见啊睡了多久啊是利空打击阿斯利康撒大世家的卡死了看得见啊睡了多久啊是利空打击阿斯利康撒大世家的卡死了看得见啊睡了多久啊是利空打击阿斯利康撒大世家的卡死了看得见啊睡了多久啊是利空打击阿斯利康萨恢复了精神的符合贷款"
-                    />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="#B4B4B4"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginTop="18.33dp"
-                    android:layout_marginRight="14dp"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15.33dp"
-                    android:layout_marginTop="18.33dp"
-                    android:text="投资人信息"
-                    android:textColor="#343434"
-                    android:layout_marginLeft="14dp"
-
-                    />
-                <TextView
-                    android:id="@+id/info_tz_detail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:typeface="normal"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginRight="14dp"
-                    android:layout_marginTop="10.66dp"
-                    android:lineSpacingExtra="3dp"
-                    android:text="所在地：深圳市 \n公司规模：50-100人 \n电话：0755-26568888 \n网址：www.4stest.com"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="#B4B4B4"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginTop="18.33dp"
-                    android:layout_marginRight="14dp"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15.33dp"
-                    android:layout_marginTop="18.33dp"
-                    android:text="发行案例"
-                    android:textColor="#343434"
-                    android:layout_marginLeft="14dp"
-                    />
-                <WebView
-                    android:id="@+id/webview_tz_detail"
-                    android:layout_width="match_parent"
-                    android:layout_margin="14dp"
-                    android:layout_height="wrap_content"></WebView>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="投资案例"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="19dp"
+                android:textSize="15.33dp"
+                android:textColor="#353535"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:orientation="vertical"
+                android:id="@+id/contianer_tzdetail"
+                android:layout_marginBottom="11dp"
+                ></LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
-    </com.app.view.MyScrollView>
-    <include android:id="@+id/titel_tz"
-        layout="@layout/titlebar_detail"/>
-</RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="vertical"
+                ></LinearLayout>
+        </LinearLayout>
 
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

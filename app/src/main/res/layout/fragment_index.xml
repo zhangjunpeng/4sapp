@@ -11,18 +11,34 @@
         android:orientation="vertical">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="vertical"
-        android:background="#E7E7E7"
-        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="167dp">
+             <android.support.v4.view.ViewPager
+                 android:id="@+id/viewpager_index"
+                android:layout_width="match_parent"
+                android:layout_height="167dp">
+            </android.support.v4.view.ViewPager>
+            <LinearLayout
+                android:id="@+id/whitedot_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                >
+
+            </LinearLayout>
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="18dp"
+            android:layout_marginBottom="23.66dp"
             >
             <LinearLayout
                 android:layout_width="0dp"
@@ -113,201 +129,18 @@
                     android:text="找发行"
                     />
             </LinearLayout>
-
-        </LinearLayout>
-
-
-        
+            
+    </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="14.33dp"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            >
-
-            <ImageView
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:src="@drawable/pc_select"
-                android:id="@+id/pc_fg_index" />
-            <ImageView
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:src="@drawable/bg_select"
-                android:id="@+id/bg_fg_index" />
-
-        </LinearLayout>
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        >
-        <TextView
-            android:id="@+id/tj_cp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="14.33dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="14dp"
-            android:text="推荐CP"
-            />
-        <TextView
-            android:id="@+id/more_cp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="12dp"
-            android:layout_alignBaseline="@+id/tj_cp"
-            android:layout_marginRight="14dp"
-            android:text="更多"
-            android:layout_alignParentRight="true"
-            />
-        <com.app.view.HorizontalListView
-            android:id="@+id/list_cp"
-            android:layout_width="match_parent"
-            android:layout_height="98dp"
-            android:layout_below="@+id/tj_cp"
-            android:layout_marginTop="6.67dp"
-            >
-
-        </com.app.view.HorizontalListView>
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#B4B4B4"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="14dp"
-        />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <TextView
-            android:id="@+id/tj_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="14.33dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="14dp"
-            android:text="推荐IP"
-            />
-        <TextView
-            android:id="@+id/more_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="12dp"
-            android:layout_alignBaseline="@+id/tj_ip"
-            android:layout_marginRight="14dp"
-            android:text="更多"
-            android:layout_alignParentRight="true"
-            />
-        <com.app.view.HorizontalListView
-            android:id="@+id/list_ip"
-            android:layout_width="match_parent"
-            android:layout_height="98dp"
-            android:layout_below="@+id/tj_ip"
-            android:layout_marginTop="6.67dp"
-            >
-
-        </com.app.view.HorizontalListView>
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#B4B4B4"
-        android:layout_marginTop="21dp"
-        android:layout_marginLeft="15dp"
-        />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tj_wb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="14.33dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="14dp"
-            android:text="推荐外包"
-            />
-        <TextView
-            android:id="@+id/more_wb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="12dp"
-            android:layout_alignBaseline="@+id/tj_wb"
-            android:layout_marginRight="14dp"
-            android:text="更多"
-            android:layout_alignParentRight="true"
-            />
-        <com.app.view.HorizontalListView
-            android:id="@+id/list_wb"
-            android:layout_width="match_parent"
-            android:layout_height="98dp"
-            android:layout_below="@+id/tj_wb"
-            android:layout_marginTop="6.67dp"
-            >
-
-        </com.app.view.HorizontalListView>
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#B4B4B4"
-        android:layout_marginTop="21dp"
-        android:layout_marginLeft="15dp"
-        />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tj_tz"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="14.33dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="14dp"
-            android:text="推荐投资人"
-            />
-        <TextView
-            android:id="@+id/more_tz"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#838483"
-            android:textSize="12dp"
-            android:layout_alignBaseline="@+id/tj_tz"
-            android:layout_marginRight="14dp"
-            android:text="更多"
-            android:layout_alignParentRight="true"
-            />
-        <com.app.view.HorizontalListView
-            android:id="@+id/list_tz"
-            android:layout_width="match_parent"
-            android:layout_height="98dp"
-            android:layout_below="@+id/tj_tz"
-            android:layout_marginTop="6.67dp"
-            >
-
-        </com.app.view.HorizontalListView>
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#B4B4B4"
-        android:layout_marginTop="21dp"
-        android:layout_marginLeft="15dp"
-        />
+            android:layout_height="13.66dp"
+            android:background="#F1F5F7"
+            ></LinearLayout>
+   <LinearLayout
+       android:id="@+id/contianer_index"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       ></LinearLayout>
     </LinearLayout>
 </com.app.view.MyScrollView>

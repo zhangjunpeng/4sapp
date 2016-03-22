@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="138dp"
+    android:background="#F1F5F8"
+    >
+    <LinearLayout
+        android:id="@+id/linear_messlist"
+        android:layout_width="match_parent"
+        android:layout_height="119dp"
+        android:layout_marginTop="20dp"
+        android:background="#fff"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="13dp"
+            android:gravity="center_vertical"
+            >
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/timeicon_mes_orange"
+                android:layout_marginLeft="28dp"
+                android:id="@+id/timeicon_item_meslist" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2015-10-22 17:35"
+                android:textSize="12dp"
+                android:textColor="#B4B4B4"
+                android:layout_marginLeft="18dp"
+                android:id="@+id/time_item_meslist" />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_marginTop="11dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="29dp"
+            android:background="@drawable/dashline"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="22dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="尊敬的7703798442@qq.com，感谢您注册4st est游戏创客服务平台，我们将与您一起…"
+            android:textColor="#4C4C4C"
+            android:id="@+id/message_item_meslist" />
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="125dp"
+        android:layout_height="119dp"
+        android:layout_marginTop="20dp"
+        android:background="#F1F5F8"
+        >
+        
+        <ImageView
+            android:id="@+id/dele_item_messlist"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/deleicon_messlist"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

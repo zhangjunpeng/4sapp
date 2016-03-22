@@ -34,6 +34,9 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         public final static Property Game_name = new Property(8, String.class, "game_name", false, "GAME_NAME");
         public final static Property Game_download_url = new Property(9, String.class, "game_download_url", false, "GAME_DOWNLOAD_URL");
         public final static Property Game_size = new Property(10, String.class, "game_size", false, "GAME_SIZE");
+        public final static Property Norms = new Property(11, String.class, "norms", false, "NORMS");
+        public final static Property Game_grade = new Property(12, String.class, "game_grade", false, "GAME_GRADE");
+        public final static Property Game_type = new Property(13, String.class, "game_type", false, "GAME_TYPE");
     };
 
 
@@ -59,7 +62,10 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
                 "'GAME_STAGE' TEXT," + // 7: game_stage
                 "'GAME_NAME' TEXT," + // 8: game_name
                 "'GAME_DOWNLOAD_URL' TEXT," + // 9: game_download_url
-                "'GAME_SIZE' TEXT);"); // 10: game_size
+                "'GAME_SIZE' TEXT," + // 10: game_size
+                "'NORMS' TEXT," + // 11: norms
+                "'GAME_GRADE' TEXT," + // 12: game_grade
+                "'GAME_TYPE' TEXT);"); // 13: game_type
     }
 
     /** Drops the underlying database table. */
@@ -127,6 +133,21 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         if (game_size != null) {
             stmt.bindString(11, game_size);
         }
+ 
+        String norms = entity.getNorms();
+        if (norms != null) {
+            stmt.bindString(12, norms);
+        }
+ 
+        String game_grade = entity.getGame_grade();
+        if (game_grade != null) {
+            stmt.bindString(13, game_grade);
+        }
+ 
+        String game_type = entity.getGame_type();
+        if (game_type != null) {
+            stmt.bindString(14, game_type);
+        }
     }
 
     /** @inheritdoc */
@@ -149,7 +170,10 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // game_stage
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // game_name
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // game_download_url
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // game_size
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // game_size
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // norms
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // game_grade
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13) // game_type
         );
         return entity;
     }
@@ -168,6 +192,9 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         entity.setGame_name(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setGame_download_url(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setGame_size(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setNorms(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setGame_grade(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setGame_type(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
      }
     
     /** @inheritdoc */

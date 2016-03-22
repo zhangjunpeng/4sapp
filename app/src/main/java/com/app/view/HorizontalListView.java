@@ -385,6 +385,16 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
 	};
 
-	
-
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		switch (event.getAction()){
+			case MotionEvent.ACTION_DOWN:
+				break;
+			case MotionEvent.ACTION_MOVE:
+				break;
+			case MotionEvent.ACTION_UP:
+				break;
+		}
+		return super.onTouchEvent(event);
+	}
 }

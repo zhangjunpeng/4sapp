@@ -29,7 +29,16 @@ public class ImageDownloadHelper {
 
 	private LruCache<String, Bitmap> lruCache = null;
 
-	public ImageDownloadHelper() {
+	private static ImageDownloadHelper imageDownloadHelper;
+
+	public static ImageDownloadHelper getIntances(){
+		if (imageDownloadHelper==null){
+			imageDownloadHelper=new ImageDownloadHelper();
+		}
+		return imageDownloadHelper;
+	}
+
+	private ImageDownloadHelper() {
 
 		int memoryAmount = (int) Runtime.getRuntime().maxMemory();
 

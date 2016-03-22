@@ -21,9 +21,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    sourceSets.main {
+        jniLibs.srcDirs = ['libs']  // <-- Set your folder here!
+    }
 }
 sourceSets {
     main {
+
         java.srcDirs = ['src/main/java', 'src/main/java-gen']
     }
 }
@@ -35,6 +39,7 @@ repositories {
 
 dependencies {
     compile project(':pulltorefresh')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:design:23.1.1'
@@ -42,4 +47,8 @@ dependencies {
     compile 'de.greenrobot:greendao:2.0.0'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.0'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
 }

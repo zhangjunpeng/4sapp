@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#252525"
+    >
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:orientation="horizontal"
-    android:background="#000"
+
     >
 
     <ImageView
@@ -36,3 +41,4 @@
         android:layout_alignParentRight="true"
         />
 </RelativeLayout>
+</FrameLayout>

@@ -1,42 +1,34 @@
 package com.test4s.myapp;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.test4s.activity.BaseActivity;
-import com.test4s.fragment.GameFragment;
-import com.test4s.fragment.IndexFragment;
-import com.test4s.fragment.InformationFragment;
-import com.test4s.fragment.MySettingFragment;
+import com.app.tools.ScreenUtil;
+import com.view.index.GameFragment;
+import com.view.index.IndexFragment;
+import com.view.index.InformationFragment;
+import com.view.index.MySettingFragment;
 import com.test4s.gdb.CPDao;
-import com.test4s.gdb.DaoMaster;
 import com.test4s.gdb.DaoSession;
+import com.view.search.SearchActivity;
 
-import org.xutils.DbManager;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.jpush.android.api.JPushInterface;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
 
@@ -47,6 +39,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     TextView title_bar;
 
     String[] titles={"首页","游戏","资讯","我的"};
+    ImageView search;
 
     //底部导航栏
     List<ImageView> imageViewList;
@@ -75,7 +68,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         initBottomView();
 
+
+        setImmerseLayout(findViewById(R.id.title_main));
+
         title_bar= (TextView) findViewById(R.id.title_titlebar);
+        search= (ImageView) findViewById(R.id.search_titlebar);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+            }
+        });
 
         fm=getSupportFragmentManager();
 
@@ -98,6 +103,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setImageColor(0);
         fm.beginTransaction().replace(R.id.frameLayout_main,indexFragment).commit();
 
+    }
+
+    @Override
+    protected void onResume() {
+        JPushInterface.onResume(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        JPushInterface.onPause(this);
+        super.onPause();
+
+    }
+
+    protected void setImmerseLayout(View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window window = getWindow();
+                /*window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);*/
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+            int statusBarHeight = ScreenUtil.getStatusBarHeight(this.getBaseContext());
+            view.setPadding(0, statusBarHeight, 0, 0);
+        }
     }
 
     private void initBottomView() {
@@ -186,4 +216,5 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         inflater.inflate(R.menu.menu_main,menu);
         return true;
     }
+
 }

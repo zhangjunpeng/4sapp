@@ -35,8 +35,9 @@ public class ExampleGenerator {
         gameInfo.addStringProperty("game_name");
         gameInfo.addStringProperty("game_download_url");
         gameInfo.addStringProperty("game_size");
-
-
+        gameInfo.addStringProperty("norms");
+        gameInfo.addStringProperty("game_grade");
+        gameInfo.addStringProperty("game_type");
 
         //Investment投资公司
         investment.addIdProperty().primaryKey();
@@ -51,7 +52,6 @@ public class ExampleGenerator {
         investment.addStringProperty("webSite");
         investment.addStringProperty("telePhone");
         investment.addStringProperty("address");
-
 
 
 

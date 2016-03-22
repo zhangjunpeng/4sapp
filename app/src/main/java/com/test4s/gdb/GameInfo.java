@@ -17,6 +17,9 @@ public class GameInfo {
     private String game_name;
     private String game_download_url;
     private String game_size;
+    private String norms;
+    private String game_grade;
+    private String game_type;
 
     public GameInfo() {
     }
@@ -25,7 +28,7 @@ public class GameInfo {
         this.id = id;
     }
 
-    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size) {
+    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type) {
         this.id = id;
         this.sort = sort;
         this.game_id = game_id;
@@ -37,6 +40,9 @@ public class GameInfo {
         this.game_name = game_name;
         this.game_download_url = game_download_url;
         this.game_size = game_size;
+        this.norms = norms;
+        this.game_grade = game_grade;
+        this.game_type = game_type;
     }
 
     public Long getId() {
@@ -125,6 +131,30 @@ public class GameInfo {
 
     public void setGame_size(String game_size) {
         this.game_size = game_size;
+    }
+
+    public String getNorms() {
+        return norms;
+    }
+
+    public void setNorms(String norms) {
+        this.norms = norms;
+    }
+
+    public String getGame_grade() {
+        return game_grade;
+    }
+
+    public void setGame_grade(String game_grade) {
+        this.game_grade = game_grade;
+    }
+
+    public String getGame_type() {
+        return game_type;
+    }
+
+    public void setGame_type(String game_type) {
+        this.game_type = game_type;
     }
 
 }

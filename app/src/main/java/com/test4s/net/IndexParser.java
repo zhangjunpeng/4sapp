@@ -4,6 +4,8 @@ import com.test4s.gdb.CP;
 import com.test4s.gdb.IP;
 import com.test4s.gdb.Investment;
 import com.test4s.gdb.OutSource;
+import com.view.s4server.CPSimpleInfo;
+import com.view.s4server.IPSimpleInfo;
 
 import java.util.List;
 
@@ -53,10 +55,10 @@ public class IndexParser {
     }
 
     public class data{
-        List<CP> cpList;
+        List<CPSimpleInfo> cpList;
         List<Investment> investorList;
         List<OutSource> outSourceList;
-        List<IP> ipList;
+        List<IPSimpleInfo> ipList;
         private String prefixPic;
         public String getPrefixPic() {
             return prefixPic;
@@ -66,11 +68,11 @@ public class IndexParser {
             this.prefixPic = prefixPic;
         }
 
-        public List<CP> getCpList() {
+        public List<CPSimpleInfo> getCpList() {
             return cpList;
         }
 
-        public void setCpList(List<CP> cpList) {
+        public void setCpList(List<CPSimpleInfo> cpList) {
             this.cpList = cpList;
         }
 
@@ -90,11 +92,11 @@ public class IndexParser {
             this.outSourceList = outSourceList;
         }
 
-        public List<IP> getIpList() {
+        public List<IPSimpleInfo> getIpList() {
             return ipList;
         }
 
-        public void setIpList(List<IP> ipList) {
+        public void setIpList(List<IPSimpleInfo> ipList) {
             this.ipList = ipList;
         }
     }

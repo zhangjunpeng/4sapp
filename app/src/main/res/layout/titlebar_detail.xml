@@ -26,11 +26,12 @@
         android:layout_alignParentRight="true"
         />
     <ImageView
+        android:id="@+id/care_title_de"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginRight="20dp"
         android:layout_toLeftOf="@+id/share_titlebar_de"
-        android:src="@drawable/connect_title"
+        android:src="@drawable/care"
         android:layout_centerVertical="true"
         android:visibility="invisible"
         />

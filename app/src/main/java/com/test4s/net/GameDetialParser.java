@@ -21,7 +21,6 @@ public class GameDetialParser {
     String staticUrl;
     String webUrl;
     float score;
-    CpInfo cpInfo;
     List<GameInfo> cpGame;
 
     public List<String> getGame_shot() {
@@ -40,13 +39,6 @@ public class GameDetialParser {
         this.cpGame = cpGame;
     }
 
-    public CpInfo getCpInfo() {
-        return cpInfo;
-    }
-
-    public void setCpInfo(CpInfo cpInfo) {
-        this.cpInfo = cpInfo;
-    }
 
     public boolean isSuccess() {
         return success;
@@ -146,51 +138,4 @@ public class GameDetialParser {
         this.score = score;
     }
 
-    public class CpInfo{
-        String city_id;
-        String company_scale;
-        String compay_phone;
-        String company_site;
-        String require;
-
-        public String getCity_id() {
-            return city_id;
-        }
-
-        public void setCity_id(String city_id) {
-            this.city_id = city_id;
-        }
-
-        public String getCompany_scale() {
-            return company_scale;
-        }
-
-        public void setCompany_scale(String company_scale) {
-            this.company_scale = company_scale;
-        }
-
-        public String getCompay_phone() {
-            return compay_phone;
-        }
-
-        public void setCompay_phone(String compay_phone) {
-            this.compay_phone = compay_phone;
-        }
-
-        public String getCompany_site() {
-            return company_site;
-        }
-
-        public void setCompany_site(String company_site) {
-            this.company_site = company_site;
-        }
-
-        public String getRequire() {
-            return require;
-        }
-
-        public void setRequire(String require) {
-            this.require = require;
-        }
-    }
 }

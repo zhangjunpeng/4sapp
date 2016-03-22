@@ -11,4 +11,20 @@
     <string name="title_activity_game_detail">GameDetailActivity</string>
     <string name="title_activity_fx_detail">FxDetailActivity</string>
     <string name="title_activity_tz_detial">TzDetialActivity</string>
+    <string name="title_activity_select_pic">SelectPicActivity</string>
+    <string name="title_activity_reprot_list">ReprotListActivity</string>
+    <string name="title_activity_game_report">GameReportActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_ipdetail">IPDetailActivity</string>
+
+    <string name="url_index">http://app.52game.com/</string>
+    <string name="url_index_test">http://app.4stest.com/</string>
+    <string name="title_activity_out_source">OutSourceActivity</string>
+    <string name="title_activity_information_list">InformationListActivity</string>
+    <string name="title_activity_infomaion_detail">InfomaionDetailActivity</string>
+    <string name="title_activity_message">MessageActivity</string>
+    <string name="title_activity_evaluation">EvaluationActivity</string>
+    <string name="phone_kefu">0755-36632342</string>
+    <string name="title_activity_attention">AttentionActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
 </resources>

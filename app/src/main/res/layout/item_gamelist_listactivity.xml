@@ -17,13 +17,21 @@
             android:layout_marginLeft="19.67dp"
             android:layout_marginTop="14.67dp"
             >
-            <ImageView
-                android:id="@+id/imageView_gamelist"
+            <RelativeLayout
                 android:layout_width="84dp"
                 android:layout_height="84dp"
-                android:layout_centerInParent="true"
+                android:layout_centerInParent="true">
+            <ImageView
+                android:id="@+id/imageView_gamelist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 />
+                <ImageView
+                    android:id="@+id/gamerating"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp" />
+            </RelativeLayout>
             <ImageView
                 android:layout_width="96.67dp"
                 android:layout_height="96.67dp"
@@ -51,6 +59,21 @@
             android:layout_toRightOf="@+id/re_image_item_gamelist"
             android:layout_marginLeft="9.33dp"
             android:text="莽荒纪"
+            />
+        <TextView
+            android:id="@+id/norms_item_gamelist"
+            android:layout_width="34dp"
+            android:layout_height="15dp"
+            android:layout_toRightOf="@+id/re_image_item_gamelist"
+            android:layout_below="@+id/name_item_gamelist"
+            android:layout_marginLeft="9.33dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/border_blue"
+            android:text="正版IP"
+            android:textSize="8dp"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:visibility="invisible"
             />
         <TextView
             android:id="@+id/introuduction_item_gamelist"

@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.test4s.gdb.CP;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 
@@ -47,7 +46,7 @@ public class NameIconAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView==null){
-            convertView= LayoutInflater.from(mcontext).inflate(R.layout.item_cplist_listactivity,null);
+            convertView= LayoutInflater.from(mcontext).inflate(R.layout.item_cplistfragment,null);
             viewHolder=new ViewHolder();
             viewHolder.imageView= (ImageView) convertView.findViewById(R.id.imageView_cplist_listac);
             viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_cp_listac);

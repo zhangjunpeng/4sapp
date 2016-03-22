@@ -8,12 +8,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.test4s.gdb.CP;
 import com.test4s.gdb.IP;
 import com.test4s.gdb.Investment;
 import com.test4s.gdb.OutSource;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
+import com.view.index.IndexItemSipleInfo;
+import com.view.s4server.CPSimpleInfo;
 
 import org.xutils.x;
 
@@ -24,9 +27,9 @@ import java.util.List;
  */
 public class CP_HL_Adapter extends BaseAdapter {
 
-    List<CP> list;
+    List<IndexItemSipleInfo> list;
     Context mcontext;
-    public CP_HL_Adapter(Context context,List<CP> cpList){
+    public CP_HL_Adapter(Context context,List<IndexItemSipleInfo> cpList){
         list=cpList;
         mcontext=context;
     }
@@ -59,20 +62,12 @@ public class CP_HL_Adapter extends BaseAdapter {
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        CP cp=list.get(position);
+        IndexItemSipleInfo cp=list.get(position);
         String imageUrl=Url.prePic+cp.getLogo();
         String name=cp.getCompany_name();
-        x.image().bind(viewHolder.imageView,imageUrl);
-//        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent(mcontext, CPDetailActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                mcontext.startActivity(intent);
-//                Activity activity= (Activity) mcontext;
-//                activity.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-//            }
-//        });
+        Picasso.with(mcontext)
+                .load(imageUrl)
+                .into(viewHolder.imageView);
         viewHolder.textView.setText(name);
         return convertView;
     }
