@@ -38,6 +38,11 @@ public class ExampleGenerator {
         gameInfo.addStringProperty("norms");
         gameInfo.addStringProperty("game_grade");
         gameInfo.addStringProperty("game_type");
+        gameInfo.addStringProperty("game_dev");
+        gameInfo.addStringProperty("create_time");
+        gameInfo.addStringProperty("is_test");
+        gameInfo.addIntProperty("online");
+        gameInfo.addIntProperty("enabled");
 
         //Investment投资公司
         investment.addIdProperty().primaryKey();
@@ -122,6 +127,10 @@ public class ExampleGenerator {
         distribution.addStringProperty("telePhone");
         distribution.addStringProperty("address");
 
+        //历史记录
+        Entity history = schema.addEntity("History");
+        history.addIdProperty().primaryKey();
+        history.addStringProperty("keyword");
 
 
     }

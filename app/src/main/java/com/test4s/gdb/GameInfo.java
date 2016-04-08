@@ -20,6 +20,11 @@ public class GameInfo {
     private String norms;
     private String game_grade;
     private String game_type;
+    private String game_dev;
+    private String create_time;
+    private String is_test;
+    private Integer online;
+    private Integer enabled;
 
     public GameInfo() {
     }
@@ -28,7 +33,7 @@ public class GameInfo {
         this.id = id;
     }
 
-    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type) {
+    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type, String game_dev, String create_time, String is_test, Integer online, Integer enabled) {
         this.id = id;
         this.sort = sort;
         this.game_id = game_id;
@@ -43,6 +48,11 @@ public class GameInfo {
         this.norms = norms;
         this.game_grade = game_grade;
         this.game_type = game_type;
+        this.game_dev = game_dev;
+        this.create_time = create_time;
+        this.is_test = is_test;
+        this.online = online;
+        this.enabled = enabled;
     }
 
     public Long getId() {
@@ -155,6 +165,46 @@ public class GameInfo {
 
     public void setGame_type(String game_type) {
         this.game_type = game_type;
+    }
+
+    public String getGame_dev() {
+        return game_dev;
+    }
+
+    public void setGame_dev(String game_dev) {
+        this.game_dev = game_dev;
+    }
+
+    public String getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(String create_time) {
+        this.create_time = create_time;
+    }
+
+    public String getIs_test() {
+        return is_test;
+    }
+
+    public void setIs_test(String is_test) {
+        this.is_test = is_test;
+    }
+
+    public Integer getOnline() {
+        return online;
+    }
+
+    public void setOnline(Integer online) {
+        this.online = online;
+    }
+
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Integer enabled) {
+        this.enabled = enabled;
     }
 
 }

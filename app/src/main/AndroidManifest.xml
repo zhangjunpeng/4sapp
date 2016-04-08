@@ -94,11 +94,11 @@
             android:label="@string/title_activity_select_pic"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.mysetting.myreport.ReprotListActivity"
+            android:name="com.view.myreport.ReprotListActivity"
             android:label="@string/title_activity_reprot_list"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.mysetting.myreport.GameReportActivity"
+            android:name="com.view.myreport.GameReportActivity"
             android:label="@string/title_activity_game_report"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -243,6 +243,36 @@
         <activity
             android:name="com.view.search.SearchActivity"
             android:label="@string/title_activity_search"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity
+            android:name="com.view.search.SearchEndActivity"
+            android:label="@string/title_activity_search_end"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity
+            android:name="com.view.Evaluation.StartPCActivity"
+            android:label="@string/title_activity_start_pc"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.view.Evaluation.SetPcInfoActivity"
+            android:label="@string/title_activity_set_pc_info"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.view.Evaluation.PCActivity"
+            android:label="@string/title_activity_pc"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.view.Evaluation.PcDetailActivity"
+            android:label="@string/title_activity_pc_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.view.myreport.PlayerReportActivity"
+            android:label="@string/title_activity_player_report"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.view.myreport.ExpertReportActivity"
+            android:label="@string/title_activity_expert_report"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

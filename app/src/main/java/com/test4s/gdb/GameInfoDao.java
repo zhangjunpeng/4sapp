@@ -37,6 +37,11 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         public final static Property Norms = new Property(11, String.class, "norms", false, "NORMS");
         public final static Property Game_grade = new Property(12, String.class, "game_grade", false, "GAME_GRADE");
         public final static Property Game_type = new Property(13, String.class, "game_type", false, "GAME_TYPE");
+        public final static Property Game_dev = new Property(14, String.class, "game_dev", false, "GAME_DEV");
+        public final static Property Create_time = new Property(15, String.class, "create_time", false, "CREATE_TIME");
+        public final static Property Is_test = new Property(16, String.class, "is_test", false, "IS_TEST");
+        public final static Property Online = new Property(17, Integer.class, "online", false, "ONLINE");
+        public final static Property Enabled = new Property(18, Integer.class, "enabled", false, "ENABLED");
     };
 
 
@@ -65,7 +70,12 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
                 "'GAME_SIZE' TEXT," + // 10: game_size
                 "'NORMS' TEXT," + // 11: norms
                 "'GAME_GRADE' TEXT," + // 12: game_grade
-                "'GAME_TYPE' TEXT);"); // 13: game_type
+                "'GAME_TYPE' TEXT," + // 13: game_type
+                "'GAME_DEV' TEXT," + // 14: game_dev
+                "'CREATE_TIME' TEXT," + // 15: create_time
+                "'IS_TEST' TEXT," + // 16: is_test
+                "'ONLINE' INTEGER," + // 17: online
+                "'ENABLED' INTEGER);"); // 18: enabled
     }
 
     /** Drops the underlying database table. */
@@ -148,6 +158,31 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         if (game_type != null) {
             stmt.bindString(14, game_type);
         }
+ 
+        String game_dev = entity.getGame_dev();
+        if (game_dev != null) {
+            stmt.bindString(15, game_dev);
+        }
+ 
+        String create_time = entity.getCreate_time();
+        if (create_time != null) {
+            stmt.bindString(16, create_time);
+        }
+ 
+        String is_test = entity.getIs_test();
+        if (is_test != null) {
+            stmt.bindString(17, is_test);
+        }
+ 
+        Integer online = entity.getOnline();
+        if (online != null) {
+            stmt.bindLong(18, online);
+        }
+ 
+        Integer enabled = entity.getEnabled();
+        if (enabled != null) {
+            stmt.bindLong(19, enabled);
+        }
     }
 
     /** @inheritdoc */
@@ -173,7 +208,12 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // game_size
             cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // norms
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // game_grade
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13) // game_type
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // game_type
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // game_dev
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // create_time
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // is_test
+            cursor.isNull(offset + 17) ? null : cursor.getInt(offset + 17), // online
+            cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18) // enabled
         );
         return entity;
     }
@@ -195,6 +235,11 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         entity.setNorms(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
         entity.setGame_grade(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setGame_type(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setGame_dev(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setCreate_time(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setIs_test(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setOnline(cursor.isNull(offset + 17) ? null : cursor.getInt(offset + 17));
+        entity.setEnabled(cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18));
      }
     
     /** @inheritdoc */

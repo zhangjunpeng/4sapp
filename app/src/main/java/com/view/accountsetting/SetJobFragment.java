@@ -123,8 +123,6 @@ public class SetJobFragment extends BaseFragment {
                 }
                 MyAdapter.ViewHolder viewHolder= (MyAdapter.ViewHolder) view.getTag();
                 viewHolder.imageView.setVisibility(View.VISIBLE);
-
-
             }
         });
     }

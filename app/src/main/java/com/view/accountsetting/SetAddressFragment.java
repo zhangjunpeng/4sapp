@@ -70,7 +70,9 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
 
         title.setText("地 址");
 
-        if (!userInfo.getProvince().equals("null")){
+        if (userInfo.getProvince_name().equals("")){
+            selectcity.setText("点击选择省份 城市");
+        }else {
             selectcity.setText(userInfo.getProvince_name()+" "+userInfo.getCity_name()+" "+userInfo.getCounty_name());
             province_id=userInfo.getProvince();
             province=userInfo.getProvince_name();
@@ -98,9 +100,9 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
     private void changeAddress() {
         BaseParams baseParams=new BaseParams("user/chgcity");
         baseParams.addParams("token",MyAccount.getInstance().getToken());
-        baseParams.addParams("province",userInfo.getProvince());
-        baseParams.addParams("city",userInfo.getCity());
-        baseParams.addParams("county",userInfo.getCounty());
+        baseParams.addParams("province",province_id);
+        baseParams.addParams("city",city_id);
+        baseParams.addParams("county",county_id);
         baseParams.addParams("addr",address);
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {

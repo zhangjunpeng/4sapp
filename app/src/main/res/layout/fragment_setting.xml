@@ -5,10 +5,17 @@
     android:background="#f1f5f7"
     >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="20dp"
+        android:background="#CACACA"
+        />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="71dp"
-        android:layout_marginTop="20dp"
+
         android:background="#fff"
         >
         <TextView
@@ -48,13 +55,23 @@
             />
 
     </RelativeLayout>
-    
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CACACA"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="20dp"
+        android:background="#CACACA"
+        />
     <RelativeLayout
         android:id="@+id/clear_cahe_setting"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="#fff"
-        android:layout_marginTop="20dp"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -78,11 +95,21 @@
             />
 
     </RelativeLayout>
-    
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CACACA"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="20dp"
+        android:background="#CACACA"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="144dp"
-        android:layout_marginTop="20dp"
         android:background="#fff"
         android:orientation="vertical"
         >
@@ -171,6 +198,11 @@
         </RelativeLayout>
 
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CACACA"
+        />
 
     <Button
         android:id="@+id/loginout_setting"

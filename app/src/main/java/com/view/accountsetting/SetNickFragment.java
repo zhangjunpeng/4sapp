@@ -79,7 +79,7 @@ public class SetNickFragment extends BaseFragment implements View.OnClickListene
                     return;
                 }
                 MyAccount myAccount=MyAccount.getInstance();
-                BaseParams baseParams=new BaseParams("user/chgickname");
+                BaseParams baseParams=new BaseParams("user/chgnickname");
                 baseParams.addParams("token",myAccount.getToken());
                 baseParams.addParams("nickname",nickname_s);
                 baseParams.addSign();

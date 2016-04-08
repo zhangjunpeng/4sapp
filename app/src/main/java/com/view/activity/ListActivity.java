@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
 public class ListActivity extends FragmentActivity implements OnClickListener{
 
     PullToRefreshListView listView;
-
+    
     ImageView back;
     TextView title;
     ImageView search;
@@ -50,7 +50,7 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
 
     String host="http://app.4stest.com/index/";
     String url="";
-    
+
 
     public final static String CP_TAG="cplist";
     public final static String IP_TAG="iplist";

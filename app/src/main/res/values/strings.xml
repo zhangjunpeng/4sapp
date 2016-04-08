@@ -27,4 +27,14 @@
     <string name="phone_kefu">0755-36632342</string>
     <string name="title_activity_attention">AttentionActivity</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_search_end">SearchEndActivity</string>
+    <string name="title_activity_start_pc">StartPCActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_set_pc_info">SetPcInfoActivity</string>
+    <string name="title_activity_pc">PCActivity</string>
+    <string name="title_activity_pc_detail">PcDetailActivity</string>
+    <string name="title_activity_player_report">PlayerReportActivity</string>
+    <string name="title_activity_expert_report">ExpertReportActivity</string>
 </resources>

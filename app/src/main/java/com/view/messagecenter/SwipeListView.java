@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 
+import com.app.tools.MyLog;
+
 /**
  * Created by Administrator on 2016/3/16.
  */
@@ -66,8 +68,10 @@ public class SwipeListView extends ListView {
                     mPreItemView=mCurrentItemView;
                     mCurrentItemView=currentItemView;
                 }
+                MyLog.i("ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
+                MyLog.i("ACTION_MOVE");
                 float dx=lastX- mFirstX;
                 float dy= lastY=mFirstY;
 

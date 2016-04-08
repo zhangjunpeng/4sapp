@@ -3,6 +3,7 @@ package com.view.messagecenter;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,10 @@ public class DeleListView extends ListView {
 
     private ViewGroup mPointChild;	// 当前处理的item
     private LinearLayout.LayoutParams mLayoutParams;	// 当前处理的item的LayoutParams
+    private int maginleft;
+    boolean first=true;
 
+    private GestureDetector gestureDetector;
 
     public interface ClickListener{
         public void click(String id);
@@ -41,7 +45,11 @@ public class DeleListView extends ListView {
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
+
+//        initGesture(context);
     }
+
+
 
     public DeleListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,6 +57,7 @@ public class DeleListView extends ListView {
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
+//        initGesture(context);
     }
 
     public DeleListView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -59,34 +68,104 @@ public class DeleListView extends ListView {
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
+//        initGesture(context);
+    }
+
+    private void initGesture(Context context) {
+        setLongClickable(true);
+        gestureDetector=new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+//                float x = e2.getX() - e1.getX();
+//                float y = e2.getY() - e1.getY();
+
+                MyLog.i("distanceX"+distanceX);
+
+                MyLog.i("distanceY"+distanceY);
+//                if (x > 0) {
+//                    //右滑
+//
+//                } else if (x < 0) {
+//                    //左滑
+//                    MyLog.i("左滑");
+//                }
+                maginleft=maginleft;
+                if (maginleft>mDeleteBtnWidth){
+                    maginleft=mDeleteBtnWidth;
+                }else if (maginleft>0){
+                    maginleft=0;
+                }
+                mLayoutParams.leftMargin = -(int) maginleft;
+                mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
+
+                return true;
+            }
+
+        });
+    }
+
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (isDeleteShown){
+            turnToNormal();
+            return false;
+        }
+        return super.onInterceptTouchEvent(ev);
+    }
+
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        if (isDeleteShown){
+//            turnToNormal();
+//            return true;
+//        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
+//
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                performActionDown(ev);
+                MyLog.i("ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
+                MyLog.i("ACTION_MOVE");
+                if (first){
+                    performActionDown(ev);
+                    first=false;
+                }
                 return performActionMove(ev);
             case MotionEvent.ACTION_UP:
+                 MyLog.i("ACTION_UP");
                  performActionUp();
+                 first=true;
         }
         return super.onTouchEvent(ev);
     }
     // 处理action_down事件
     private void performActionDown(MotionEvent ev) {
-        if(isDeleteShown) {
-            turnToNormal();
-        }
 
+        if (isDeleteShown){
+            turnToNormal();
+            mPointChild=null;
+        }
         mDownX = (int) ev.getX();
         mDownY = (int) ev.getY();
         // 获取当前点的item
-        mPointChild = (ViewGroup) getChildAt(pointToPosition(mDownX, mDownY)
-                - getFirstVisiblePosition());
+        int position=pointToPosition(mDownX, mDownY)
+                - getFirstVisiblePosition();
+        mPointChild = (ViewGroup) getChildAt(position);
+        MyLog.i("当前点击 item=="+position);
         // 获取删除按钮的宽度
+        if (mPointChild==null){
+            return;
+        }
         mDeleteBtnWidth = mPointChild.getChildAt(1).getLayoutParams().width;
 //        MyLog.i("删除按钮的宽度==="+mDeleteBtnWidth);
         mLayoutParams = (LinearLayout.LayoutParams) mPointChild.getChildAt(0)
@@ -97,26 +176,39 @@ public class DeleListView extends ListView {
 //        MyLog.i("屏幕宽度的宽度==="+mScreenWidth);
         mLayoutParams.width = mScreenWidth;
         mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
+
     }
 
     // 处理action_move事件
     private boolean performActionMove(MotionEvent ev) {
+        if (mPointChild==null){
+            return super.onTouchEvent(ev);
+        }
         int nowX = (int) ev.getX();
         int nowY = (int) ev.getY();
         if(Math.abs(nowX - mDownX) > Math.abs(nowY - mDownY)) {
             // 如果向左滑动
-            if(nowX < mDownX) {
-                // 计算要偏移的距离
-                int scroll = (nowX - mDownX) / 2;
-                // 如果大于了删除按钮的宽度， 则最大为删除按钮的宽度
-                if(-scroll >= mDeleteBtnWidth) {
-                    scroll = -mDeleteBtnWidth;
-                }
-                // 重新设置leftMargin
-                mLayoutParams.leftMargin = scroll;
-                mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
+            // 计算要偏移的距离
+
+            int scroll = (nowX - mDownX);
+            // 如果大于了删除按钮的宽度， 则最大为删除按钮的宽度
+
+            if (scroll>0){
+                maginleft=maginleft+15;
+            }else {
+                maginleft=maginleft-15;
             }
 
+            if (maginleft<=-mDeleteBtnWidth){
+                maginleft=-mDeleteBtnWidth;
+            }else if (maginleft>=0){
+                maginleft=0;
+            }
+            // 重新设置leftMargin
+            MyLog.i("scroll=="+scroll);
+            mLayoutParams.leftMargin = maginleft;
+            mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
+            mDownX=nowX;
             return true;
         }
         return super.onTouchEvent(ev);
@@ -146,7 +238,8 @@ public class DeleListView extends ListView {
      * 变为正常状态
      */
     public void turnToNormal() {
-        mLayoutParams.leftMargin = 0;
+        maginleft=0;
+        mLayoutParams.leftMargin = maginleft;
         mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
         isDeleteShown = false;
     }

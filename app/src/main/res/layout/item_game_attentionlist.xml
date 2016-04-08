@@ -76,7 +76,7 @@
             android:layout_below="@+id/name_item_gameattention"
             android:layout_marginLeft="9.33dp"
             android:text="游戏类型：RPG\n游戏阶段：内测阶段"
-            android:ellipsize="end"
+            android:lineSpacingExtra="5px"
             />
 
         <Button

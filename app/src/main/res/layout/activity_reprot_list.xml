@@ -5,5 +5,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     >
+    <include
+        android:id="@+id/titlebar_reportlist"
+        layout="@layout/titlebar_save"/>
+    <com.view.messagecenter.DeleListView
+        android:id="@+id/listview_reportlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="65dp"
+        android:src="@drawable/addgameicon"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="159dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="您还没有上传游戏哦！"
+        android:textSize="15dp"
+        android:textColor="#B4B4B4"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="37dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:textColor="#FF9D00"
+        android:gravity="center"
+        android:text="请前往4stest平台上传游戏\nwww.4stest.com"
+        android:lineSpacingExtra="6dp"
+        android:textSize="15dp"
+        />
 </LinearLayout>

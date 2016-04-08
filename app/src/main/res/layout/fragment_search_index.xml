@@ -34,6 +34,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             >
             <TextView
                 android:layout_width="0dp"
@@ -210,12 +211,12 @@
                 />
             <ImageView
                 android:id="@+id/delehistory_search"
-                android:layout_width="17dp"
+                android:layout_width="34dp"
                 android:layout_height="17dp"
                 android:src="@drawable/delete"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="17dp"
+                android:layout_marginRight="10dp"
                 />
             <LinearLayout
                 android:id="@+id/contianer_searchhistory"
@@ -226,6 +227,5 @@
                 android:layout_marginTop="10dp"
                 ></LinearLayout>
         </RelativeLayout>
-
     </LinearLayout>
 </ScrollView>

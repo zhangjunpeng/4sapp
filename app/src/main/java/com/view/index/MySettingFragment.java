@@ -32,6 +32,7 @@ import com.view.accountsetting.MyAcountSettingActivity;
 import com.view.activity.SelectPicActivity;
 import com.test4s.myapp.R;
 import com.view.myattention.AttentionActivity;
+import com.view.myreport.ReprotListActivity;
 import com.view.setting.SettingActivity;
 
 import org.json.JSONException;
@@ -102,6 +103,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
         view.findViewById(R.id.messagecenter_my).setOnClickListener(this);
         view.findViewById(R.id.pc_my).setOnClickListener(this);
         view.findViewById(R.id.myattention_mysetting).setOnClickListener(this);
+        view.findViewById(R.id.myreport_my).setOnClickListener(this);
 
         myAccount=MyAccount.getInstance();
 
@@ -223,6 +225,16 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
             case R.id.myattention_mysetting:
                 if (MyAccount.isLogin) {
                     Intent intent1 = new Intent(getActivity(), AttentionActivity.class);
+                    startActivity(intent1);
+                    getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                }else {
+                    //未登录
+                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.myreport_my:
+                if (MyAccount.isLogin) {
+                    Intent intent1 = new Intent(getActivity(), ReprotListActivity.class);
                     startActivity(intent1);
                     getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }else {

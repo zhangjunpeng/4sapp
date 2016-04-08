@@ -17,14 +17,39 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
             />
-        <SearchView
-            android:id="@+id/searchview_search"
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_height="match_parent">
-        </SearchView>
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/border_edit_gray"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            >
+            <EditText
+                android:id="@+id/edit_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:textColor="#fff"
+                android:textSize="17dp"
+                android:layout_marginLeft="13dp"
+                android:maxLines="1"
+                android:layout_toLeftOf="@+id/clearinput_search"
+                android:layout_marginRight="5dp"
+                />
+            <ImageView
+                android:id="@+id/clearinput_search"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/clearinput"
+                android:visibility="invisible"
+                android:layout_marginRight="13dp"
+                />
+        </RelativeLayout>
         <ImageView
             android:id="@+id/search_search"
             android:layout_width="20dp"

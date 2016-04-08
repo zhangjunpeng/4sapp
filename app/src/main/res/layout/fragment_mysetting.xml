@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#E7E7E7"
+    android:background="#F1F5F8"
     >
     
     <RelativeLayout
@@ -63,12 +63,18 @@
 
         
     </RelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CACACA"
+        android:layout_marginTop="20dp"
+        />
     <RelativeLayout
         android:id="@+id/messagecenter_my"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="#fff"
-        android:layout_marginTop="20dp"
+
         >
         <ImageView
             android:id="@+id/image_messcenter_my"
@@ -162,6 +168,7 @@
         android:background="#B9B9B9"
         />
     <RelativeLayout
+        android:id="@+id/myreport_my"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="#fff"
@@ -247,6 +254,7 @@
         android:background="#CACACA"
         android:layout_marginTop="20dp"
         />
+
     <RelativeLayout
         android:id="@+id/seting_mysetting"
         android:layout_width="match_parent"
@@ -282,5 +290,9 @@
             android:layout_marginRight="24dp"
             />
     </RelativeLayout>
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CACACA"
+        />
 </LinearLayout>
