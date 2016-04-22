@@ -11,6 +11,33 @@ public class InvesmentSimpleInfo {
     private String company_intro;
     private String invest_cat;
     private String invest_stage;
+    private String area_name;
+    private String invest_cat_name;
+    private String invest_stage_name;
+
+    public String getArea_name() {
+        return area_name;
+    }
+
+    public void setArea_name(String area_name) {
+        this.area_name = area_name;
+    }
+
+    public String getInvest_cat_name() {
+        return invest_cat_name;
+    }
+
+    public void setInvest_cat_name(String invest_cat_name) {
+        this.invest_cat_name = invest_cat_name;
+    }
+
+    public String getInvest_stage_name() {
+        return invest_stage_name;
+    }
+
+    public void setInvest_stage_name(String invest_stage_name) {
+        this.invest_stage_name = invest_stage_name;
+    }
 
     public String getInvest_cat() {
         return invest_cat;

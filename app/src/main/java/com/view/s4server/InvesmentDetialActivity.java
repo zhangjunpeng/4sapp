@@ -22,12 +22,15 @@ import com.app.view.HorizontalListView;
 import com.app.view.RoundImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.adapter.CP_HL_Adapter;
 import com.test4s.adapter.IP_HL_Adapter;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
 import com.view.index.IndexItemSipleInfo;
+import com.view.myattention.AttentionChange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +41,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvesmentDetialActivity extends AppCompatActivity implements View.OnClickListener{
+public class InvesmentDetialActivity extends BaseActivity implements View.OnClickListener{
 
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
@@ -51,6 +54,7 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
     private TextView all;
     private TextView name;
     private ImageView icon;
+    private ImageView back;
 
     String user_id;
     String identity_cat;
@@ -67,6 +71,10 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
     List<LinearLayout> content;
     private boolean flag_showall=false;
     private float density;
+    private boolean focus=false;
+
+    LinearLayout div_intro;
+    LinearLayout div_anli;
 
 
     @Override
@@ -90,7 +98,7 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_tzdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_tzDetail);
-        care= (ImageView) findViewById(R.id.care_tzdetatil);
+        care= (ImageView) findViewById(R.id.attention_tzdetail);
         name_title= (TextView) findViewById(R.id.title_tzdetail);
         care_title= (ImageView) findViewById(R.id.care_tzdetatil);
         info= (TextView) findViewById(R.id.info_tzdetail);
@@ -99,6 +107,9 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
         name= (TextView) findViewById(R.id.name_tzdetail);
         icon= (ImageView) findViewById(R.id.roundImage_tzdetail);
         continar= (LinearLayout) findViewById(R.id.contianer_tzdetail);
+
+        div_intro= (LinearLayout) findViewById(R.id.div_intro_tzdetail);
+        div_anli= (LinearLayout) findViewById(R.id.div_anli_tzdetail);
 
 
         content=new ArrayList<>();
@@ -119,6 +130,9 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
         BaseParams baseParams=new BaseParams("index/detail");
         baseParams.addParams("user_id",user_id);
         baseParams.addParams("identity_cat",identity_cat);
+        if (MyAccount.isLogin){
+            baseParams.addParams("token",MyAccount.getInstance().getToken());
+        }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(60*1000*60);
         x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
@@ -151,6 +165,15 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
             }
         });
     }
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care.setImageResource(R.drawable.attention);
+        }
+    }
 
     private void jsonparser(String res) {
         try {
@@ -167,6 +190,12 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
                 invest_catstring=jinfo.getString("invest_cat");
                 invest_stagestring=jinfo.getString("invest_stage");
                 areastring=jinfo.getString("area");
+                String fo=jinfo.getString("focus");
+                if (fo.equals("false")||fo.equals("0")){
+                    focus=false;
+                }else if(fo.equals("true")||fo.equals("1")){
+                    focus=true;
+                }
                 invescases=new ArrayList<>();
                 JSONArray cases=jinfo.getJSONArray("invest_case");
                 for (int i=0;i<cases.length();i++){
@@ -189,12 +218,27 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
     private void initView() {
         name_title.setText(namestring);
         name.setText(namestring);
+        if (focus){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }
         Picasso.with(this)
                 .load(Url.prePic+logostring)
                 .into(icon);
-        intro.setText(introstring.substring(0,74)+"...");
+        if (TextUtils.isEmpty(introstring)){
+            div_intro.setVisibility(View.GONE);
+        }else {
+            intro.setText(introstring);
+            all.setVisibility(View.INVISIBLE);
+        }
+
         info.setText("所在区域 ："+areastring+"\n机构类型 ："+invest_catstring+"\n投资阶段 ："+invest_stagestring);
-        addcase(invescases);
+        MyLog.i("ivescase size==="+invescases.size());
+        if (invescases.size()==0){
+            div_anli.setVisibility(View.GONE);
+        }else {
+            addcase(invescases);
+        }
     }
 
 
@@ -207,17 +251,17 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-200*density){
                     name_title.setVisibility(View.INVISIBLE);
-                    care.setVisibility(View.INVISIBLE);
+                    care_title.setVisibility(View.INVISIBLE);
                 }else {
                     name_title.setVisibility(View.VISIBLE);
-                    care.setVisibility(View.VISIBLE);
+                    care_title.setVisibility(View.VISIBLE);
                 }
                 if (scrollRange + verticalOffset == 0) {
 
@@ -228,25 +272,28 @@ public class InvesmentDetialActivity extends AppCompatActivity implements View.O
                 }
             }
         });
-        intro.setOnClickListener(new View.OnClickListener() {
+
+        View.OnClickListener myListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag_showall=!flag_showall;
-                if (flag_showall){
-
-                    intro.setEllipsize(null);
-                    intro.setMaxLines(100);
-                    intro.setText(introstring);
-                    all.setText("收起");
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("4",user_id, InvesmentDetialActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("4",user_id,InvesmentDetialActivity.this);
+                    }
+                    changeCare(focus);
                 }else {
-                    String into=introstring.substring(0,73);
-                    intro.setText(into+"...");
-                    intro.setMaxLines(3);
-                    intro.setEllipsize(TextUtils.TruncateAt.END);
-                    all.setText("全部");
+                    //未登录
+                    goLogin(InvesmentDetialActivity.this);
                 }
+
             }
-        });
+        };
+        care_title.setOnClickListener(myListener);
+        care.setOnClickListener(myListener);
         findViewById(R.id.back_tzdetail).setOnClickListener(this);
     }
 

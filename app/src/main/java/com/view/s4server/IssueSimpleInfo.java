@@ -12,6 +12,33 @@ public class IssueSimpleInfo {
     private String company_intro;
     private String business_cat;
     private String coop_cat;
+    private String area_name;
+    private String busine_cat_name;
+    private String coop_cat_name;
+
+    public String getArea_name() {
+        return area_name;
+    }
+
+    public void setArea_name(String area_name) {
+        this.area_name = area_name;
+    }
+
+    public String getBusine_cat_name() {
+        return busine_cat_name;
+    }
+
+    public void setBusine_cat_name(String busine_cat_name) {
+        this.busine_cat_name = busine_cat_name;
+    }
+
+    public String getCoop_cat_name() {
+        return coop_cat_name;
+    }
+
+    public void setCoop_cat_name(String coop_cat_name) {
+        this.coop_cat_name = coop_cat_name;
+    }
 
     public String getBusiness_cat() {
         return business_cat;

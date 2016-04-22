@@ -153,6 +153,7 @@ public class InformationFragment extends Fragment {
                     newsinfo.setComments(info.getString("comments"));
                     newsinfo.setCover_img(info.getString("cover_img"));
                     newsinfo.setUrl(info.getString("url"));
+                    newsinfo.setTime(info.getString("time"));
                     newInfos.add(newsinfo);
                 }
             }

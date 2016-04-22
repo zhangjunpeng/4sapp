@@ -1,5 +1,6 @@
 package com.view.myattention;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +22,9 @@ import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.ListActivity;
 import com.view.game.GameDetailActivity;
+import com.view.game.GameListActivity;
 import com.view.s4server.CPDetailActivity;
 import com.view.s4server.CPSimpleInfo;
 import com.view.s4server.IPDetailActivity;
@@ -45,7 +48,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/3/19.
  */
-public class AttentionFragment extends Fragment {
+public class AttentionFragment extends Fragment implements View.OnClickListener {
 
     private String tag;
     String[] titles={"game","cp","ip","inves","issue","outsource"};
@@ -54,6 +57,7 @@ public class AttentionFragment extends Fragment {
     List<Object> datalist;
     BaseAdapter adapter = new OutSourceAttentionAdapter(getActivity(),datalist,listView);
     Button wantcare;
+    private final int ToDetail=301;
     int p=1;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class AttentionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_attention,container,false);
         listView= (PullToRefreshListView) view.findViewById(R.id.listview_attention_fragment);
+        wantcare= (Button) view.findViewById(R.id.want_care);
         datalist=new ArrayList<>();
         initAdapter();
         initData("1");
@@ -126,7 +131,7 @@ public class AttentionFragment extends Fragment {
                         break;
 
                 }
-                startActivity(intent);
+                startActivityForResult(intent,ToDetail);
                 getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 MyLog.i("Item click finish");
             }
@@ -146,6 +151,40 @@ public class AttentionFragment extends Fragment {
             }
         });
 
+        wantcare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=null;
+                switch (tag){
+                    case "game":
+                        intent=new Intent(getActivity(), GameListActivity.class);
+                        break;
+                    case "cp":
+                        intent=new Intent(getActivity(), ListActivity.class);
+                        intent.putExtra("tag",ListActivity.CP_TAG);
+                        break;
+                    case "inves":
+                        intent=new Intent(getActivity(), ListActivity.class);
+                        intent.putExtra("tag",ListActivity.Invesment_TAG);
+                        break;
+                    case "ip":
+                        intent=new Intent(getActivity(), ListActivity.class);
+                        intent.putExtra("tag",ListActivity.IP_TAG);
+                        break;
+                    case "issue":
+                        intent=new Intent(getActivity(), ListActivity.class);
+                        intent.putExtra("tag",ListActivity.Issue_TAG);
+                        break;
+                    case "outsource":
+                        intent=new Intent(getActivity(), ListActivity.class);
+                        intent.putExtra("tag",ListActivity.OutSource_TAG);
+                        break;
+
+                }
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+            }
+        });
     }
 
     public void initData(String p){
@@ -319,7 +358,7 @@ public class AttentionFragment extends Fragment {
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject2=jsonArray.getJSONObject(i);
                     IPSimpleInfo ipSimpleInfo=new IPSimpleInfo();
-                    ipSimpleInfo.setId(jsonObject2.getString("id"));
+                    ipSimpleInfo.setId(jsonObject2.getString("ip_id"));
                     ipSimpleInfo.setLogo(jsonObject2.getString("ip_logo"));
                     ipSimpleInfo.setIp_name(jsonObject2.getString("ip_name"));
                     ipSimpleInfo.setIp_cat(jsonObject2.getString("ip_cat"));
@@ -436,5 +475,17 @@ public class AttentionFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onClick(View v) {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==ToDetail&&requestCode== Activity.RESULT_OK){
+            MyLog.i("fragment onActivityResult");
+            initData("1");
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

@@ -1,8 +1,10 @@
 package com.view.accountsetting;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -50,10 +52,19 @@ public class SetJobFragment extends BaseFragment {
 
     private MyAdapter adapter;
 
+    private String tag="set";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         useInfo= MyAccount.getInstance().getUserInfo();
-        job_id_selected=useInfo.getJob_id();
+        if (useInfo!=null) {
+            job_id_selected = useInfo.getJob_id();
+        }
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            tag=bundle.getString("tag","set");
+        }
+
         initListData();
         super.onCreate(savedInstanceState);
     }
@@ -144,10 +155,18 @@ public class SetJobFragment extends BaseFragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
-                FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                switch (tag){
+                    case "set":
+                        MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                        FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
+                        transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                        break;
+                    case "pc":
+                        getActivity().finish();
+                        break;
+                }
+
             }
         });
 
@@ -181,11 +200,22 @@ public class SetJobFragment extends BaseFragment {
                     if (su&&code==200){
                         useInfo.setJob_id(job_id);
                         useInfo.setJob_name(job_name);
-                        MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                        transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+                        FragmentManager manager=getFragmentManager();
+                        switch (tag){
+                            case "set":
+
+                                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+
+                                transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                                break;
+                            case "pc":
+                                getActivity().setResult(Activity.RESULT_OK);
+                                getActivity().finish();
+                                break;
+                        }
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

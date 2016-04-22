@@ -21,6 +21,7 @@
         android:layout_marginTop="18dp"
         >
         <LinearLayout
+            android:id="@+id/linear_weixin_bind"
             android:layout_width="match_parent"
             android:layout_height="47.66dp"
             android:orientation="horizontal"
@@ -49,8 +50,7 @@
                 android:textSize="12dp"
                 android:textColor="#FF9D00"
                 android:layout_marginRight="12.33dp"
-
-                />
+                android:id="@+id/text_weixin_bind" />
             <ImageView
                 android:layout_width="6dp"
                 android:layout_height="12.33dp"
@@ -66,6 +66,7 @@
             android:layout_gravity="center_horizontal"
             />
         <LinearLayout
+            android:id="@+id/linear_qq_bind"
             android:layout_width="match_parent"
             android:layout_height="47.66dp"
             android:orientation="horizontal"
@@ -88,13 +89,13 @@
 
                 />
             <TextView
+                android:id="@+id/text_qq_bind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="绑定"
                 android:textSize="12dp"
                 android:textColor="#FF9D00"
                 android:layout_marginRight="12.33dp"
-
                 />
             <ImageView
                 android:layout_width="6dp"
@@ -111,6 +112,7 @@
             android:layout_gravity="center_horizontal"
             />
         <LinearLayout
+            android:id="@+id/linear_sina_bind"
             android:layout_width="match_parent"
             android:layout_height="47.66dp"
             android:orientation="horizontal"
@@ -130,9 +132,9 @@
                 android:textSize="13.66dp"
                 android:textColor="#7C7C7C"
                 android:layout_marginLeft="33.33dp"
-
                 />
             <TextView
+                android:id="@+id/text_sina_bind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="绑定"

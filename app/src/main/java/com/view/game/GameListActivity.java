@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.app.tools.ScreenUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.adapter.GameAdapter;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
@@ -30,6 +32,7 @@ import com.test4s.net.BaseParams;
 import com.test4s.net.GameListParser;
 import com.test4s.jsonparser.GameJsonParser;
 import com.test4s.net.Url;
+import com.view.search.SearchActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,9 +49,12 @@ public class GameListActivity extends Activity implements View.OnClickListener{
 
     ImageView back;
     TextView title;
+    ImageView search;
     private List<GameInfo> gameInfos;
     MyGameListAdapter gameAdapter;
     int p=1;
+
+    String packageurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class GameListActivity extends Activity implements View.OnClickListener{
 
         back= (ImageView) findViewById(R.id.back_titlebar);
         title= (TextView) findViewById(R.id.title_titlebar);
+        search= (ImageView) findViewById(R.id.search_titlebar);
         title.setText("游 戏");
 
         back.setImageResource(R.drawable.back);
@@ -73,6 +80,15 @@ public class GameListActivity extends Activity implements View.OnClickListener{
         gameAdapter=new MyGameListAdapter(this,gameInfos);
         pullToRefreshListView.setAdapter(gameAdapter);
         initData("1");
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(GameListActivity.this, SearchActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+            }
+        });
 
 
     }
@@ -139,6 +155,7 @@ public class GameListActivity extends Activity implements View.OnClickListener{
             if (su&&code==200){
                 JSONObject jsonObject1=jsonObject.getJSONObject("data");
                 Url.prePic=jsonObject1.getString("prefixPic");
+                packageurl=jsonObject1.getString("prefixPackage");
                 JSONArray jsonArray=jsonObject1.getJSONArray("gameList");
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject game=jsonArray.getJSONObject(i);
@@ -152,6 +169,8 @@ public class GameListActivity extends Activity implements View.OnClickListener{
                     gameInfo.setGame_size(game.getString("game_size"));
                     gameInfo.setNorms(game.getString("norms"));
                     gameInfo.setGame_grade(game.getString("game_grade"));
+                    gameInfo.setPack(game.getString("pack"));
+                    gameInfo.setChecked(game.getString("checked"));
                     gameInfos.add(gameInfo);
                 }
             }
@@ -198,7 +217,12 @@ public class GameListActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()){
+            case R.id.back_titlebar:
+                finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+                break;
+        }
     }
 
     class MyGameListAdapter extends BaseAdapter{
@@ -251,19 +275,34 @@ public class GameListActivity extends Activity implements View.OnClickListener{
             viewHolder.name.setText(gameInfo.getGame_name());
             if ("1".equals(gameInfo.getNorms())){
                 viewHolder.norms.setVisibility(View.VISIBLE);
+            }else if("0".equals(gameInfo.getNorms())){
+                viewHolder.norms.setVisibility(View.INVISIBLE);
             }
             String down_nums=gameInfo.getGame_download_nums();
             Long nums=Long.parseLong(down_nums);
             if (nums>100000){
                 down_nums=(nums/10000)+"万";
             }
-            viewHolder.info.setText(down_nums+"下载/"+gameInfo.getGame_size()+"M\n"+gameInfo.getRequire());
-            viewHolder.down.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    downLoadGame(Url.prePic+gameInfo.getGame_download_url());
-                }
-            });
+            String mess="";
+            if ("1".equals(gameInfo.getPack())&&"1".equals(gameInfo.getChecked())){
+                mess=down_nums+"下载/"+gameInfo.getGame_size()+"M\n"+gameInfo.getRequire();
+                viewHolder.down.setVisibility(View.VISIBLE);
+                viewHolder.down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        downLoadGame(packageurl+gameInfo.getGame_download_url());
+                        if (MyAccount.isLogin){
+                            addMyEvaluation(gameInfo.getGame_id());
+                        }
+                    }
+                });
+            }else {
+                viewHolder.down.setClickable(false);
+                viewHolder.down.setVisibility(View.INVISIBLE);
+                mess=gameInfo.getRequire()+"\n";
+
+            }
+            viewHolder.info.setText(mess);
 
             return convertView;
         }
@@ -278,9 +317,37 @@ public class GameListActivity extends Activity implements View.OnClickListener{
     }
     private void downLoadGame(String url){
         //调用外部浏览器下载文件
+        MyLog.i("Url==="+url);
         Uri uri = Uri.parse(url);
         Intent downloadIntent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(downloadIntent);
+    }
+    private void addMyEvaluation(String game_id){
+        BaseParams baseParams=new BaseParams("test/downloadgame");
+        baseParams.addParams("game_id",game_id);
+        baseParams.addParams("token",MyAccount.getInstance().getToken());
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("add game to eva back=="+result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
 }

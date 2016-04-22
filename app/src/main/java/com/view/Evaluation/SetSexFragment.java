@@ -1,5 +1,6 @@
 package com.view.Evaluation;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,11 +14,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.view.accountsetting.BaseFragment;
 import com.view.accountsetting.JobInfo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +102,39 @@ public class SetSexFragment extends BaseFragment{
         params.addParams("token", MyAccount.getInstance().getToken());
         params.addParams("game_id",gameid);
         params.addParams("key","sex");
-        params.addParams("val",sex);
+        params.addParams("val",sexselect);
+        x.http().post(params.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("saveInfo=="+result);
+                try {
+                    JSONObject res=new JSONObject(result);
+                    boolean su=res.getBoolean("success");
+                    int code=res.getInt("code");
+                    if (su&&code==200){
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     private void initView() {

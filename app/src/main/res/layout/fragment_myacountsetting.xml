@@ -62,6 +62,7 @@
                     android:layout_marginTop="25dp"
                     android:orientation="horizontal"
                     android:gravity="center"
+                    android:id="@+id/ueser_iden_myacc"
                     >
                     <TextView
                         android:layout_margin="2dp"
@@ -69,9 +70,10 @@
                         android:layout_width="46.67dp"
                         android:layout_height="20dp"
                         android:background="@drawable/borderradius"
-                        android:text="CP"
+                        android:text="开发者"
                         android:textSize="10dp"
                         android:textColor="#fff"
+                        android:visibility="gone"
                         android:gravity="center"
                         />
                     <TextView
@@ -83,6 +85,8 @@
                         android:text="投资人"
                         android:textSize="10dp"
                         android:textColor="#fff"
+                        android:visibility="gone"
+
                         android:gravity="center"
                         />
                     <TextView
@@ -93,6 +97,8 @@
                         android:background="@drawable/borderradius"
                         android:text="发行方"
                         android:textSize="10dp"
+                        android:visibility="gone"
+
                         android:textColor="#fff"
                         android:gravity="center"
                         />
@@ -104,6 +110,7 @@
                         android:background="@drawable/borderradius"
                         android:text="外包"
                         android:textSize="10dp"
+                        android:visibility="gone"
 
                         android:textColor="#fff"
                         android:gravity="center"

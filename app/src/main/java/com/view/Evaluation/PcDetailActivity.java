@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class PcDetailActivity extends BaseActivity {
     private TextView phoneBrandText;
     private TextView adviseText;
 
-    ListView listview;
+    LinearLayout list;
     List<Question> quetions;
     
     @Override
@@ -98,9 +99,16 @@ public class PcDetailActivity extends BaseActivity {
         phoneBrandText= (TextView) findViewById(R.id.phonebrand_pcdetail);
 
         adviseText= (TextView) findViewById(R.id.advise_pcdetail);
-        listview= (ListView) findViewById(R.id.questionListview_pcdetail);
+        list= (LinearLayout) findViewById(R.id.questionListview_pcdetail);
 
         quetions=new ArrayList<>();
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         initData();
     }
@@ -161,46 +169,59 @@ public class PcDetailActivity extends BaseActivity {
         });
 
     }
+    class ViewHolder{
+        TextView question;
+        LinearLayout stars;
+    }
 
     private void initListView() {
-        listview.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return quetions.size();
-            }
+        for (int i=0;i<quetions.size();i++){
+            View convertView= LayoutInflater.from(PcDetailActivity.this).inflate(R.layout.item_listview_pcdetail,list,false);
+            ViewHolder viewHolder=new ViewHolder();
+            viewHolder.question= (TextView) convertView.findViewById(R.id.question_item_pcdetail);
+            viewHolder.stars= (LinearLayout) convertView.findViewById(R.id.stars_item_pcdetail);
 
-            @Override
-            public Object getItem(int position) {
-                return quetions.get(position);
-            }
+            Question question=quetions.get(i);
+            viewHolder.question.setText(question.getId()+"、"+question.getQues());
+            setStar(Integer.parseInt(question.getScore()),viewHolder.stars);
 
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ViewHolder viewHolder=null;
-                if (convertView==null){
-                    viewHolder=new ViewHolder();
-                    convertView= LayoutInflater.from(PcDetailActivity.this).inflate(R.layout.item_listview_pcdetail,parent,false);
-                    viewHolder.question= (TextView) convertView.findViewById(R.id.question_item_pcdetail);
-                    viewHolder.stars= (LinearLayout) convertView.findViewById(R.id.stars_item_pcdetail);
-                }else {
-                    viewHolder= (ViewHolder) convertView.getTag();
-                }
-                Question question=quetions.get(position);
-                viewHolder.question.setText(question.getId()+"、"+question.getQues());
-                setStar(Integer.parseInt(question.getScore()),viewHolder.stars);
-                return convertView;
-            }
-            class ViewHolder{
-                TextView question;
-                LinearLayout stars;
-            }
-        });
-        setListViewHeightBasedOnChildren(listview);
+            list.addView(convertView);
+        }
+//        listview.setAdapter(new BaseAdapter() {
+//            @Override
+//            public int getCount() {
+//                MyLog.i("Question size==="+quetions.size());
+//                return quetions.size();
+//            }
+//
+//            @Override
+//            public Object getItem(int position) {
+//                return quetions.get(position);
+//            }
+//
+//            @Override
+//            public long getItemId(int position) {
+//                return position;
+//            }
+//
+//            @Override
+//            public View getView(int position, View convertView, ViewGroup parent) {
+//                ViewHolder viewHolder=null;
+//                if (convertView==null){
+//                    viewHolder=new ViewHolder();
+//                    convertView= LayoutInflater.from(PcDetailActivity.this).inflate(R.layout.item_listview_pcdetail,parent,false);
+//                    viewHolder.question= (TextView) convertView.findViewById(R.id.question_item_pcdetail);
+//                    viewHolder.stars= (LinearLayout) convertView.findViewById(R.id.stars_item_pcdetail);
+//                    convertView.setTag(viewHolder);
+//                }else {
+//                    viewHolder= (ViewHolder) convertView.getTag();
+//                }
+//
+//                return convertView;
+//            }
+//
+//        });
+//        setListViewHeightBasedOnChildren(listview);
     }
 
     private void initQuestion(String result) {
@@ -212,6 +233,7 @@ public class PcDetailActivity extends BaseActivity {
                 JSONObject data=json.getJSONObject("data");
                 adviseText.setText(data.getString("advise"));
                 JSONArray quesarray=data.getJSONArray("question");
+                MyLog.i("question size=="+quesarray.length());
                 for (int i=0;i<quesarray.length();i++){
                     JSONObject ques=quesarray.getJSONObject(i);
                     Question question=new Question();
@@ -257,10 +279,22 @@ public class PcDetailActivity extends BaseActivity {
                         .into(grade);
                 name.setText(info.getString("game_name"));
                 timeText.setText(info.getString("create_time"));
-                platformText.setText(info.getString("game_platform"));
-                devText.setText(info.getString("game_dev"));
-                typeText.setText(info.getString("game_type"));
-                stageText.setText(info.getString("game_stage"));
+                if (TextUtils.isEmpty(info.getString("game_platform"))){
+                    platformText.setVisibility(View.GONE);
+                }
+                if (TextUtils.isEmpty(info.getString("game_dev"))){
+                    devText.setVisibility(View.GONE);
+                }
+                if (TextUtils.isEmpty(info.getString("game_type"))){
+                    typeText.setVisibility(View.GONE);
+                }
+                if (TextUtils.isEmpty(info.getString("game_stage"))){
+                    stageText.setVisibility(View.GONE);
+                }
+                platformText.setText(" "+info.getString("game_platform")+" ");
+                devText.setText(" "+info.getString("game_dev")+" ");
+                typeText.setText(" "+info.getString("game_type")+" ");
+                stageText.setText(" "+info.getString("game_stage")+" ");
 
                 ageText.setText(info.getString("age"));
                 String sex=info.getString("sex");

@@ -106,6 +106,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         fragment=new aboutusfragment();
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         fragmentManager.beginTransaction().replace(R.id.contianer_setting,fragment).commit();
+        title.setText("关于我们");
         MyLog.i("点击about_us2");
     }
     public void toAdviseReprot(){
@@ -115,6 +116,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         transaction.replace(R.id.contianer_setting,fragment).commit();
+        title.setText("意见反馈");
         MyLog.i("点击advisereport2");
     }
     public void toServiceDeal(){
@@ -124,6 +126,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         transaction.replace(R.id.contianer_setting,fragment).commit();
+        title.setText("用户服务协议");
         MyLog.i("点击servicedeal2");
     }
     private void backToSetting(){
@@ -132,6 +135,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
         transaction.replace(R.id.contianer_setting,fragment).commit();
+        title.setText("设 置");
+
     }
     private void backAboutus() {
         tag="aboutus";
@@ -139,6 +144,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
         transaction.replace(R.id.contianer_setting,fragment).commit();
+        title.setText("关于我们");
     }
 
     @Override

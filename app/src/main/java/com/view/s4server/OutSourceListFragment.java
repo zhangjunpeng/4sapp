@@ -49,6 +49,8 @@ public class OutSourceListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         osSimpleInfos=new ArrayList<>();
+        myAdapter=new MyOutSourceListAdapter(getActivity(),osSimpleInfos);
+
         super.onCreate(savedInstanceState);
     }
 
@@ -58,7 +60,6 @@ public class OutSourceListFragment extends Fragment{
         view=inflater.inflate(R.layout.fragment_list,null);
         listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
 
-        myAdapter=new MyOutSourceListAdapter(getActivity(),osSimpleInfos);
         listView.setAdapter(myAdapter);
         initData(1+"");
         initListView();
@@ -75,7 +76,6 @@ public class OutSourceListFragment extends Fragment{
             public void onSuccess(String result) {
                 MyLog.i("outsourcelist==="+result);
                 jsonParser(result);
-                myAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -90,6 +90,8 @@ public class OutSourceListFragment extends Fragment{
 
             @Override
             public void onFinished() {
+                listView.onRefreshComplete();
+                myAdapter.notifyDataSetChanged();
 
             }
         });
@@ -134,24 +136,24 @@ public class OutSourceListFragment extends Fragment{
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 osSimpleInfos.clear();
                 initData("1");
-                myAdapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
+
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 p++;
                 initData(p+"");
-                listView.onRefreshComplete();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(getActivity(),IPDetailActivity.class);
+                Intent intent=new Intent(getActivity(),OutSourceActivity.class);
                 OutSourceSimpleInfo outsoucrxe=osSimpleInfos.get((int) id);
-                intent.putExtra("id",outsoucrxe.getUser_id());
+                intent.putExtra("user_id",outsoucrxe.getUser_id());
+                intent.putExtra("identity_cat",outsoucrxe.getIdentity_cat());
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
 

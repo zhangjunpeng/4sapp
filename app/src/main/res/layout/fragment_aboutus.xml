@@ -39,6 +39,7 @@
             />
     </LinearLayout>
     <RelativeLayout
+        android:id="@+id/phone_aboutus"
         android:layout_width="match_parent"
         android:layout_height="71dp"
         android:layout_marginTop="21dp"
@@ -62,7 +63,6 @@
             android:textColor="#7C7C7C"
             />
         <LinearLayout
-            android:id="@+id/phone_aboutus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

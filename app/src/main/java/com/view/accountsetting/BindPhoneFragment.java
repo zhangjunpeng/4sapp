@@ -129,6 +129,7 @@ public class BindPhoneFragment extends BaseFragment implements View.OnClickListe
                 checkPhone();
                 break;
             case R.id.back_savebar:
+                ClearWindows.clearInput(getActivity(),phone_input);
                 MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                 FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);

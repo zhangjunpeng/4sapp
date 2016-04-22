@@ -93,7 +93,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:visibility="invisible"
-                        android:layout_marginRight="58dp"
+                        android:layout_marginRight="18dp"
                         />
                     <ImageView
                         android:id="@+id/share_ipdetail"
@@ -103,6 +103,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="18dp"
+                        android:visibility="gone"
                         />
                     <TextView
                         android:id="@+id/title_ipdetail"
@@ -180,7 +181,6 @@
                     android:id="@+id/introduction_ipdetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxLines="3"
                     android:textSize="12dp"
                     android:lineSpacingExtra="5px"
                     android:textColor="#7C7C7C"
@@ -197,12 +197,18 @@
                     android:layout_marginRight="10dp"
                     />
             </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/div_image_ipdetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="18dp"
+                >
             <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginRight="14dp"
             android:layout_marginLeft="14dp"
-            android:layout_marginTop="18dp"
             android:background="#b4b4b4"
             />
             <TextView
@@ -222,12 +228,19 @@
                 >
 
             </LinearLayout>
+            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/div_video_ipdetail"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="vertical"
+            android:layout_marginTop="18dp"
+            >
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginRight="14dp"
                 android:layout_marginLeft="14dp"
-                android:layout_marginTop="18dp"
                 android:background="#b4b4b4"
                 />
             <TextView
@@ -248,12 +261,19 @@
                 android:orientation="vertical"
                 android:layout_marginTop="11dp"
                 ></WebView>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/div_des_ipdetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical"
+                >
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginRight="14dp"
                 android:layout_marginLeft="14dp"
-                android:layout_marginTop="18dp"
                 android:background="#b4b4b4"
                 />
             <TextView
@@ -271,8 +291,21 @@
                 android:layout_height="wrap_content"
 
                 ></ListView>
-
-
+            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/div_relate_ipdetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginRight="14dp"
+                android:layout_marginLeft="14dp"
+                android:background="#b4b4b4"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -290,6 +323,7 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="50dp"
                 ></ListView>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

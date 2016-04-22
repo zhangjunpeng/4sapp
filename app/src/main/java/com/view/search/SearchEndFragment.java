@@ -38,11 +38,13 @@ public class SearchEndFragment extends Fragment {
     private String keyword;
     private String identity_cat;
     private List<Object> datalist;
+    private SearchEndActivity activity;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        keyword=getArguments().getString("keyword","game");
-        identity_cat=getArguments().getString("identity_cat",identity_cat);
-
+        keyword=getArguments().getString("keyword","");
+        MyLog.i("keyword");
+        identity_cat=getArguments().getString("identity_cat","1");
+        activity= (SearchEndActivity) getActivity();
         super.onCreate(savedInstanceState);
     }
 
@@ -56,7 +58,7 @@ public class SearchEndFragment extends Fragment {
         return view;
     }
     private void initData() {
-        Search.search(keyword, identity_cat, new Callback.CommonCallback<String>() {
+        Search.search(activity.keyword, identity_cat, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 MyLog.i("search back"+result);
@@ -113,7 +115,11 @@ public class SearchEndFragment extends Fragment {
     }
 
     private void initView() {
-        listView.setAdapter(new MyListAdapter(getActivity(),datalist));
+        if (datalist.size()==0){
+            listView.setVisibility(View.GONE);
+        }else {
+            listView.setAdapter(new MyListAdapter(getActivity(), datalist));
+        }
     }
 
     class MyListAdapter extends BaseAdapter{

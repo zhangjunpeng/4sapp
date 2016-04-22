@@ -140,6 +140,8 @@ public class SelectPicActivity extends Activity implements OnClickListener{
         if(resultCode == Activity.RESULT_OK)
         {
             doPhoto(requestCode,data);
+        }else if(resultCode==Activity.RESULT_CANCELED){
+            finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -34,15 +34,20 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
 import com.app.tools.StringTools;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
+import com.test4s.gdb.IP;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.myattention.AttentionChange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +58,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IPDetailActivity extends AppCompatActivity implements View.OnClickListener{
+public class IPDetailActivity extends BaseActivity implements View.OnClickListener{
 
     String id;
 
@@ -62,7 +67,7 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
 
     ImageView back;
     TextView title;
-    ImageView care;
+    ImageView care_title;
     ImageView share;
 
     TextView name_title;
@@ -74,6 +79,7 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
     ListView deslistView;
     ListView otheripListView;
     TextView all;
+    ImageView care_detail;
 
 
     LinearLayout ipshotContinar;
@@ -92,8 +98,9 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
 
     List<String> ipshot;
 
-    List<IPSimpleInfo> ipderivatives;
+    List<IPDesInfo> ipderivatives;
     List<IPSimpleInfo> otherIp;
+
 
     Toolbar toolbar;
 
@@ -102,6 +109,13 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
 
     RelativeLayout intro_re;
     boolean flag_showall=false;
+
+    boolean focus=false;
+
+    private LinearLayout div_image;
+    private LinearLayout div_video;
+    private LinearLayout div_des;
+    private LinearLayout div_relate;
 
 
     @Override
@@ -128,7 +142,7 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
         ipshotContinar= (LinearLayout) findViewById(R.id.imageContinar_ipdetail);
         back= (ImageView) findViewById(R.id.back_ipdetail);
         name_title= (TextView) findViewById(R.id.title_ipdetail);
-        care= (ImageView) findViewById(R.id.care_ipdetatil);
+        care_title= (ImageView) findViewById(R.id.care_ipdetatil);
         toolbar= (Toolbar) findViewById(R.id.toolbar_ipDetail);
 
         icon= (ImageView) findViewById(R.id.roundImage_ipdetail);
@@ -139,12 +153,15 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
         otheripListView= (ListView) findViewById(R.id.relatedip_ipdetail);
         intro_re= (RelativeLayout) findViewById(R.id.intro_ipdetail_re);
         all= (TextView) findViewById(R.id.all_ipdetail);
+        care_detail= (ImageView) findViewById(R.id.connect_ip);
+
+        div_image= (LinearLayout) findViewById(R.id.div_image_ipdetail);
+        div_video= (LinearLayout) findViewById(R.id.div_video_ipdetail);
+        div_des= (LinearLayout) findViewById(R.id.div_des_ipdetail);
+        div_relate= (LinearLayout) findViewById(R.id.div_relate_ipdetail);
 
 
 
-
-
-        intro_re.setOnClickListener(this);
         findViewById(R.id.back_ipdetail).setOnClickListener(this);
 
         webView= (WebView) findViewById(R.id.video_ipdetail);
@@ -185,27 +202,58 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-200*density){
                     name_title.setVisibility(View.INVISIBLE);
-                    care.setVisibility(View.INVISIBLE);
+                    care_title.setVisibility(View.INVISIBLE);
                 }else {
                     name_title.setVisibility(View.VISIBLE);
-                    care.setVisibility(View.VISIBLE);
+                    care_title.setVisibility(View.VISIBLE);
                 }
                 if (scrollRange + verticalOffset == 0) {
 
                     isShow = true;
                 } else if(isShow) {
-
                     isShow = false;
                 }
             }
         });
+        View.OnClickListener myListener=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("5",id, IPDetailActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("5",id,IPDetailActivity.this);
+                    }
+                    changeCare(focus);
+                }else {
+                    //未登录
+                    goLogin(IPDetailActivity.this);
+                }
+
+            }
+        };
+        care_title.setOnClickListener(myListener);
+        care_detail.setOnClickListener(myListener);
+
+        otheripListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(IPDetailActivity.this,IPDetailActivity.class);
+                intent.putExtra("id",otherIp.get(position).getId());
+                startActivity(intent);
+                finish();
+            }
+        });
+
     }
 
     @Override
@@ -251,6 +299,9 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
     private void initData(String id) {
         BaseParams baseParams=new BaseParams("index/ipdetail");
         baseParams.addParams("id",id);
+        if (MyAccount.isLogin){
+            baseParams.addParams("token",MyAccount.getInstance().getToken());
+        }
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
@@ -302,6 +353,13 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
             over_time=info.getString("over_time");
             ip_info=info.getString("ip_info");
             video_url=info.getString("video_url");
+            String fo=info.getString("focus");
+            if (fo.equals("false")||fo.equals("0")){
+                focus=false;
+            }else if(fo.equals("true")||fo.equals("1")){
+                focus=true;
+            }
+
             JSONArray ipshotArray=info.getJSONArray("ip_shot");
             if (ipshotArray!=null){
                 MyLog.i("ip_shot not null");
@@ -318,12 +376,14 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
                 MyLog.i("derivatives not null");
             for (int i=0;i<derivatives.length();i++){
                 JSONObject ip=derivatives.getJSONObject(i);
-                IPSimpleInfo ipSimpleInfo=new IPSimpleInfo();
-                ipSimpleInfo.setLogo(ip.getString("ip_logo"));
-                ipSimpleInfo.setIp_name(ip.getString("ip_name"));
-                ipSimpleInfo.setIp_info(ip.getString("ip_info"));
-                ipSimpleInfo.setOver_time(ip.getString("over_time"));
-                ipderivatives.add(ipSimpleInfo);
+                IPDesInfo ipDesInfo=new IPDesInfo();
+                ipDesInfo.setName(ip.getString("name"));
+                ipDesInfo.setInfo(ip.getString("info"));
+                ipDesInfo.setYear(ip.getString("year"));
+                ipDesInfo.setMonth(ip.getString("month"));
+                ipDesInfo.setLogo(ip.getString("logo"));
+                ipDesInfo.setIp_info(ip.getString("ip_info"));
+                ipderivatives.add(ipDesInfo);
             }
             } else {
                 MyLog.i("derivatives null");
@@ -347,7 +407,7 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
             }
             MyLog.i("ipdetail解析完成");
 
-            initIpshot();
+
             initView();
 
         } catch (JSONException e) {
@@ -355,36 +415,64 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
         }
 
     }
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care_detail.setImageResource(R.drawable.attention_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care_detail.setImageResource(R.drawable.attention);
+        }
+    }
 
     private void initView() {
+
+        if (TextUtils.isEmpty(ip_info)){
+        }else {
+
+                ipintro.setText(ip_info);
+                intro_re.setClickable(false);
+                all.setVisibility(View.INVISIBLE);
+
+        }
+        MyLog.i("ipshot size=="+ipshot.size());
+        if (ipshot.size()==0){
+            div_image.setVisibility(View.GONE);
+        }else {
+            initIpshot();
+        }
+
+        if (ipderivatives.size()==0){
+            div_des.setVisibility(View.GONE);
+        }else {
+            deslistView.setAdapter(new MyDesAdapter(this, ipderivatives));
+            setListViewHeightBasedOnChildren(deslistView);
+        }
+
+        if (otherIp.size()==0){
+            div_relate.setVisibility(View.GONE);
+        }else {
+            otheripListView.setAdapter(new MyIpListAdapter(this, otherIp));
+            setListViewHeightBasedOnChildren(otheripListView);
+        }
+        if (focus){
+            care_title.setImageResource(R.drawable.cared);
+            care_detail.setImageResource(R.drawable.attention_has);
+        }
+
+        if (TextUtils.isEmpty(video_url)){
+            div_video.setVisibility(View.GONE);
+        }else {
+            webView.loadUrl(video_url);
+        }
+
         Picasso.with(this)
                 .load(Url.prePic+ip_logo)
                 .into(icon);
         name_ipdetail.setText(ip_name);
         name_title.setText(ip_name);
-
         ipcat.setText("类型 ："+ip_cat+"\n风格 ："+ip_style+"\n授权范围 ："+uthority+"\n上市时间 ："+over_time);
 
-        ipintro.setText(ip_info.substring(0,74)+"...");
-
-        deslistView.setAdapter(new MyDesAdapter(this,ipderivatives));
-        otheripListView.setAdapter(new MyIpListAdapter(this,otherIp));
-
-
-
-
-        webView.loadUrl(video_url);
-        setListViewHeightBasedOnChildren(deslistView);
-        setListViewHeightBasedOnChildren(otheripListView);
-        otheripListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(IPDetailActivity.this,IPDetailActivity.class);
-                intent.putExtra("id",otherIp.get(position).getId());
-                startActivity(intent);
-                finish();
-            }
-        });
 
     }
     public void setListViewHeightBasedOnChildren(ListView listView) {
@@ -413,22 +501,6 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.intro_ipdetail_re:
-                flag_showall=!flag_showall;
-                if (flag_showall){
-
-                    ipintro.setEllipsize(null);
-                    ipintro.setMaxLines(100);
-                    ipintro.setText(ip_info);
-                    all.setText("收起");
-                }else {
-                    String into=ip_info.substring(0,73);
-                    ipintro.setText(into+"...");
-                    ipintro.setMaxLines(3);
-                    ipintro.setEllipsize(TextUtils.TruncateAt.END);
-                    all.setText("全部");
-                }
-                break;
             case R.id.back_ipdetail:
                 finish();
                 break;
@@ -436,10 +508,10 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
     }
 
     class MyDesAdapter extends BaseAdapter{
-        List<IPSimpleInfo> list;
+        List<IPDesInfo> list;
         Context context;
 
-        public MyDesAdapter(Context context, List<IPSimpleInfo> list){
+        public MyDesAdapter(Context context, List<IPDesInfo> list){
             this.context=context;
             this.list=list;
         }
@@ -474,13 +546,13 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
                 viewHolder= (ViewHolder) convertView.getTag();
             }
 
-            IPSimpleInfo ipSimpleInfo=list.get(position);
+            IPDesInfo ipDesInfo=list.get(position);
 
-            Picasso.with(context).load(Url.prePic+ipSimpleInfo.getLogo())
+            Picasso.with(context).load(Url.prePic+ipDesInfo.getLogo())
                     .into(viewHolder.icon);
-            viewHolder.name.setText(ipSimpleInfo.getIp_name());
-            viewHolder.intro.setText("简介 ："+ipSimpleInfo.getIp_info());
-            viewHolder.voertime.setText("上线时间 ："+ipSimpleInfo.getOver_time());
+            viewHolder.name.setText(ipDesInfo.getName());
+            viewHolder.intro.setText("简介 ："+ipDesInfo.getInfo());
+            viewHolder.voertime.setText("上线时间 ："+ipDesInfo.getYear()+"-"+ipDesInfo.getMonth());
             return convertView;
         }
         class ViewHolder{
@@ -498,6 +570,7 @@ public class IPDetailActivity extends AppCompatActivity implements View.OnClickL
             MyLog.i("ipshot null");
             return;
         }
+        MyLog.i("ipshot size=="+ipshot.size());
         for (int i=0;i<ipshot.size();i++){
             ImageView imageView=new ImageView(this);
             int height=getWindow().getAttributes().height;

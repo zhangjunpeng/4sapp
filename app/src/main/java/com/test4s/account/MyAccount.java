@@ -126,7 +126,6 @@ public class MyAccount {
         editor.putString("nickname","");
         editor.putString("token","");
         editor.putString("avatar","");
-
         editor.commit();
     }
 

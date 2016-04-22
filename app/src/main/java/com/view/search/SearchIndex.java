@@ -17,6 +17,7 @@ import com.test4s.gdb.HistoryDao;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
+import com.view.accountsetting.BaseFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 /**
  * Created by Administrator on 2016/3/22.
  */
-public class SearchIndex extends Fragment{
+public class SearchIndex extends BaseFragment{
 
     private int[] rmid={R.id.rm_search1,R.id.rm_search2,R.id.rm_search3,
                         R.id.rm_search4,R.id.rm_search5,R.id.rm_search6,
@@ -176,8 +178,16 @@ public class SearchIndex extends Fragment{
         getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
     }
     public void addHistory(String message){
-        History history=new History();
-        history.setKeyword(message);
-        historyDao.insert(history);
+        Query query=historyDao.queryBuilder()
+                .where(HistoryDao.Properties.Keyword.eq(message))
+                .build();
+        if (query.list().size()==0){
+            History history=new History();
+            history.setKeyword(message);
+            historyDao.insert(history);
+        }
+        QueryBuilder.LOG_SQL=true;
+        QueryBuilder.LOG_VALUES=true;
+
     }
 }

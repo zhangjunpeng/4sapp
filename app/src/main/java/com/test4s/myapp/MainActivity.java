@@ -1,5 +1,6 @@
 package com.test4s.myapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -7,7 +8,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.DisplayMetrics;
+import android.view.GestureDetector;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.Window;
@@ -15,8 +21,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
+import com.view.activity.BaseActivity;
 import com.view.index.GameFragment;
 import com.view.index.IndexFragment;
 import com.view.index.InformationFragment;
@@ -30,7 +39,7 @@ import java.util.List;
 
 import cn.jpush.android.api.JPushInterface;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener{
+public class MainActivity extends FragmentActivity implements View.OnClickListener,GestureDetector.OnGestureListener{
 
     DaoSession daoSession;
     private List<Fragment> fragments;
@@ -60,6 +69,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     TextView infoText;
     TextView myText;
 
+    GestureDetector mGestureDetector;
+    private Dialog dialog;
+    private float density;
+    private int windowWidth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +96,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
+        mGestureDetector=new GestureDetector(this,this);
+
         fm=getSupportFragmentManager();
 
         daoSession=MyApplication.daoSession;
@@ -103,20 +119,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setImageColor(0);
         fm.beginTransaction().replace(R.id.frameLayout_main,indexFragment).commit();
 
-    }
 
-    @Override
-    protected void onResume() {
-        JPushInterface.onResume(this);
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        JPushInterface.onPause(this);
-        super.onPause();
+        //获取屏幕密度
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
+        windowWidth=metric.widthPixels;
 
     }
+
+
 
     protected void setImmerseLayout(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -181,7 +193,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
         imageViewList.get(position).setSelected(true);
-        textViewList.get(position).setTextColor(Color.rgb(55,229,144));
+        textViewList.get(position).setTextColor(Color.rgb(255,157,0));
 
 
     }
@@ -217,4 +229,147 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         return true;
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+        int mini_width=120;
+        int mini_speed=0;
+        if (e1==null||e2==null){
+            return false;
+        }
+        float distance_right=e2.getX()-e1.getX();
+        float distance_left=e1.getX()-e2.getX();
+        float distance_down=e2.getY()-e1.getY();
+        float distance_up=e1.getY()-e2.getY();
+        if(distance_right>mini_width && Math.abs(distanceX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向右滑动");
+        }
+        else if(distance_left>mini_width && Math.abs(distanceX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向左滑动");
+        }
+        else if(distance_down>mini_width && Math.abs(distanceX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向下滑动");
+            return true;
+
+        }
+        else if(distance_up>mini_width && Math.abs(distanceX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向上滑动");
+            return true;
+
+        }
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        // TODO Auto-generated method stub
+        int mini_width=120;
+        int mini_speed=0;
+        if (e1==null||e2==null){
+            return false;
+        }
+        float distance_right=e2.getX()-e1.getX();
+        float distance_left=e1.getX()-e2.getX();
+        float distance_down=e2.getY()-e1.getY();
+        float distance_up=e1.getY()-e2.getY();
+        if(distance_right>mini_width && Math.abs(velocityX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向右滑动");
+        }
+        else if(distance_left>mini_width && Math.abs(velocityX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向左滑动");
+        }
+        else if(distance_down>mini_width && Math.abs(velocityX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向下滑动");
+            return true;
+
+        }
+        else if(distance_up>mini_width && Math.abs(velocityX)>mini_speed)
+        {
+            MyLog.i( "onFling-"+"向上滑动");
+            return true;
+
+        }
+        return true;
+    }
+
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+//            if((System.currentTimeMillis()-exitTime) > 2000){
+//                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+//                exitTime = System.currentTimeMillis();
+//            } else {
+//                finish();
+//                System.exit(0);
+//            }
+            showDialog();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    public void showDialog(){
+        dialog=new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view= LayoutInflater.from(this).inflate(R.layout.dialog_setting,null);
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        dialog.setContentView(view,params);
+        TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
+        TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
+        TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
+        mes.setText("确定退出程序吗？");
+        clear.setText("退出");
+        clear.setTextColor(Color.rgb(255,157,0));
+        dialog.show();
+        channel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+                dialog.dismiss();
+            }
+        });
+    }
 }

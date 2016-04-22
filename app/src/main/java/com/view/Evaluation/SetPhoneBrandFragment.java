@@ -59,7 +59,17 @@ public class SetPhoneBrandFragment extends BaseFragment {
     private MyAdapter adapter;
 
 
+    private String tag="set";
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            tag=bundle.getString("tag","set");
+        }
+    }
 
     @Nullable
     @Override
@@ -79,10 +89,18 @@ public class SetPhoneBrandFragment extends BaseFragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
-                FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                switch (tag){
+                    case "set":
+                        MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                        FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
+                        transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                        break;
+                    case "pc":
+                        getActivity().finish();
+                        break;
+                }
+
             }
         });
 

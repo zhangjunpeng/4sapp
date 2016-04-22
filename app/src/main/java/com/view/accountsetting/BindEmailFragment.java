@@ -213,7 +213,11 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                     int code=js.getInt("code");
                     if (su&&code==200){
                         Toast.makeText(getActivity(),"邮箱绑定成功",Toast.LENGTH_SHORT).show();
+                        userInfo.setEmail(email);
                         MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                        Bundle bundle=new Bundle();
+                        bundle.putString("tag","init");
+                        myAcountSettingFragment.setArguments(bundle);
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
@@ -304,6 +308,11 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                 bindEamil();
                 break;
             case R.id.back_savebar:
+                if (email_editText!=null&&code_editText!=null) {
+                    ClearWindows.clearInput(getActivity(), email_editText);
+                    ClearWindows.clearInput(getActivity(), code_editText);
+                }
+
                 MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                 FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);

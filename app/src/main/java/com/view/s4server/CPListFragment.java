@@ -23,6 +23,9 @@ import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.x;
 
@@ -42,15 +45,18 @@ public class CPListFragment extends Fragment {
     ImageView back;
     ImageView search;
 
+    int p=1;
+
     List<CPSimpleInfo> cpSimpleInfos;
+
+    private CpAdapter adapter;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cpSimpleInfos=new ArrayList<>();
-        int p=1;
-        initData(p+"");
+        adapter=new CpAdapter(getActivity(),cpSimpleInfos);
     }
 
     private void initData(String p) {
@@ -58,12 +64,13 @@ public class CPListFragment extends Fragment {
         baseParams.addParams("p",p);
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(10*60*1000);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
-            String res="";
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+
             @Override
             public void onSuccess(String result) {
                 MyLog.i("cplist success=="+result);
-                res=result;
+                getcplistparser(result);
+
             }
 
             @Override
@@ -78,36 +85,31 @@ public class CPListFragment extends Fragment {
 
             @Override
             public void onFinished() {
-                cpSimpleInfos= CPJsonParser.getInstance().getcplistparser(res);
-                initListView();
-            }
-
-            @Override
-            public boolean onCache(String result) {
-                MyLog.i("cplis cache==="+result);
-                res=result;
-                return true;
+                listView.onRefreshComplete();
+                adapter.notifyDataSetChanged();
             }
         });
     }
 
     private void initListView() {
 
-        listView.setAdapter(new CpAdapter(getActivity(),cpSimpleInfos));
-
-
+        listView.setMode(PullToRefreshBase.Mode.BOTH);
         listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
 
             //下拉刷新
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 MyLog.i("下拉刷新");
+                cpSimpleInfos.clear();
+                p=1;
+                initData(p+"");
             }
-
             //上拉加载
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 MyLog.i("上拉加载");
+                p++;
+                initData(p+"");
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,7 +117,7 @@ public class CPListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent=new Intent(getActivity(),CPDetailActivity.class);
                 CPSimpleInfo cpSimpleInfo=cpSimpleInfos.get((int) id);
-                intent.putExtra("id",cpSimpleInfo.getUser_id());
+                intent.putExtra("user_id",cpSimpleInfo.getUser_id());
                 intent.putExtra("identity_cat",cpSimpleInfo.getIdentity_cat());
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
@@ -133,10 +135,10 @@ public class CPListFragment extends Fragment {
         back= (ImageView) view.findViewById(R.id.back_titlebar);
         search= (ImageView) view.findViewById(R.id.search_titlebar);
 
+        listView.setAdapter(adapter);
 
-        listView.setMode(PullToRefreshBase.Mode.BOTH);
-//        initListView();
         initData("1");
+        initListView();
         return view;
     }
     class CpAdapter extends BaseAdapter{
@@ -191,5 +193,31 @@ public class CPListFragment extends Fragment {
             TextView name;
             TextView intro;
         }
+    }
+    public void getcplistparser(String result){
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            boolean su=jsonObject.getBoolean("success");
+            int code=jsonObject.getInt("code");
+            if (su&&code==200){
+                JSONObject jsonObject1=jsonObject.getJSONObject("data");
+                Url.prePic=jsonObject1.getString("prefixPic");
+                JSONArray ja=jsonObject1.getJSONArray("cpList");
+                for (int i=0;i<ja.length();i++){
+                    JSONObject jsonObject2=ja.getJSONObject(i);
+                    CPSimpleInfo cpSimpleInfo=new CPSimpleInfo();
+                    cpSimpleInfo.setUser_id(jsonObject2.getString("user_id"));
+                    cpSimpleInfo.setIdentity_cat(jsonObject2.getString("identity_cat"));
+                    cpSimpleInfo.setLogo(jsonObject2.getString("logo"));
+                    cpSimpleInfo.setCompany_intro(jsonObject2.getString("company_intro"));
+                    cpSimpleInfo.setCompany_name(jsonObject2.getString("company_name"));
+                    cpSimpleInfos.add(cpSimpleInfo);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -61,6 +61,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 case 1:
                     getCode.setBackgroundResource(R.drawable.border_getcode_orange);
                     getCode.setText("重新获取");
+                    getCode.setClickable(true);
                     break;
             }
         }
@@ -136,7 +137,9 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                     showwarn("请输入正确的手机号码");
                     return;
                 }
+                getCode.setClickable(false);
                 getCode();
+
                 break;
             case R.id.button_reg_reg:
                 reg();
@@ -220,8 +223,11 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
     private void getCode() {
         String phone= phoneNum.getText().toString();
-        GetCodeParams getCodeParams=new GetCodeParams(phone);
-        x.http().post(getCodeParams, new Callback.CommonCallback<String>() {
+        BaseParams baseParams=new BaseParams("sms/index");
+        baseParams.addParams("phone",phone);
+        baseParams.addParams("type","reg");
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 MyLog.i("GetCode_back:::"+result);
@@ -229,10 +235,14 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                     JSONObject jsonObject=new JSONObject(result);
                     boolean success=jsonObject.getBoolean("success");
                     int code=jsonObject.getInt("code");
-                    if (success&&code==200){
-                        JSONObject jsonObject1=jsonObject.getJSONObject("data");
-                        pa=jsonObject1.getString("pa");
+                    if (success&&code==200) {
+                        JSONObject jsonObject1 = jsonObject.getJSONObject("data");
+                        pa = jsonObject1.getString("pa");
                         codeChange();
+                    }else {
+                        String mes=jsonObject.getString("msg");
+                        showwarn(mes);
+                        getCode.setClickable(true);
                     }
 
                 } catch (JSONException e) {
@@ -243,7 +253,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                getCode.setClickable(true);
             }
 
             @Override
@@ -261,7 +271,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
     private void codeChange() {
         ClearWindows.clearInput(getActivity(),phoneNum);
-        getCode.setClickable(false);
+
         getCode.setBackgroundResource(R.drawable.border_getcode_gray);
         new Thread(new Runnable() {
             @Override

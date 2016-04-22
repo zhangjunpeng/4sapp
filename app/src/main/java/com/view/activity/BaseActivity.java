@@ -12,10 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
+import com.test4s.account.AccountActivity;
+import com.test4s.myapp.R;
 
 /**
  * Created by Administrator on 2015/12/1.
@@ -40,6 +45,7 @@ public class BaseActivity  extends AppCompatActivity {
         }
 
         int totalHeight = 0;
+        MyLog.i("list count==="+listAdapter.getCount());
         for (int i = 0, len = listAdapter.getCount(); i < len; i++) {
             // listAdapter.getCount()返回数据项的数目
             View listItem = listAdapter.getView(i, null, listView);
@@ -49,10 +55,28 @@ public class BaseActivity  extends AppCompatActivity {
             totalHeight += listItem.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight+ (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight+ (listView.getDividerHeight() * (listAdapter.getCount() ));
         // listView.getDividerHeight()获取子项间分隔符占用的高度
         // params.height最后得到整个ListView完整显示需要的高度
         listView.setLayoutParams(params);
     }
+    public void goLogin(Activity context){
+        Intent intent=new Intent(context, AccountActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+    }
 
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
+    public void getFocus(EditText editText){
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+
+    }
 }

@@ -36,7 +36,7 @@
         android:layout_marginTop="24dp"
         android:textColor="#FF9D00"
         android:gravity="center"
-        android:text="请前往4stest平台上传游戏\nwww.4stest.com"
+        android:text="请前往平台上传游戏\nwww.52game.com"
         android:lineSpacingExtra="6dp"
         android:textSize="15dp"
         />

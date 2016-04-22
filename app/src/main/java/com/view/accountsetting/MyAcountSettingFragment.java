@@ -15,12 +15,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.UploadUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
@@ -29,6 +33,7 @@ import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
 import com.view.activity.SelectPicActivity;
+import com.view.index.MySettingFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +73,7 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
     private RelativeLayout bindEmail;
     private RelativeLayout bindother;
     private RelativeLayout changepwd;
+    private LinearLayout user_iden;
 
     private TextView nick_name;
     private TextView adress;
@@ -77,6 +83,7 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
     private TextView phone;
     private TextView email;
     private TextView bind_other;
+    private ImageView back;
 
     /**
      * 去上传文件
@@ -101,11 +108,16 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
 
     private String picPath = null;
 
-    private String requestURL="http://www.4stest.com/upload.php";
+    private String requestURL="http://www.52game.com/upload.php";
 
     public static final int RequestCode_login=101;
     public static final int RequestCode_setting=102;
+    private boolean network;
 
+
+    private ImageLoader imageloder=ImageLoader.getInstance();
+
+    private String tag;
 
     @Nullable
     @Override
@@ -116,10 +128,21 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
 
         manager=getFragmentManager();
         transaction=manager.beginTransaction();
-        userInfo=MyAccount.getInstance().getUserInfo();
+
+
+        user_iden= (LinearLayout) view.findViewById(R.id.ueser_iden_myacc);
         initView();
+//        tag=getArguments().getString("tag","");
+//
+//        if ("init".equals(tag)){
+//            initUserInfo();
+//        }else if ("".equals(tag)){
+//            initData();
+//        }
         initData();
 
+
+//        initUserInfo();
 
 
         icon.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +164,13 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
         bindother.setOnClickListener(this);
 
         changepwd.setOnClickListener(this);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+            }
+        });
 
         return view;
     }
@@ -151,8 +181,9 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
 //        x.image().bind(icon, Url.prePic+userInfo.getAvatar());
 //        String identuty=userInfo.getUser_identity();
         //身份的显示与隐藏
-
+        userInfo=MyAccount.getInstance().getUserInfo();
         if (userInfo==null){
+            initUserInfo();
             return;
         }
         if (TextUtils.isEmpty(userInfo.getNickname())){
@@ -171,13 +202,30 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
             adress.setText(userInfo.getProvince_name()+" "+userInfo.getCity_name());
         }
 
+        if (TextUtils.isEmpty(userInfo.getUser_identity())){
+            user_iden.setVisibility(View.GONE);
+        }else {
+            if (userInfo.getUser_identity().contains("投资人")){
+                tz.setVisibility(View.VISIBLE);
+            }
+            if (userInfo.getUser_identity().contains("外包")){
+                wb.setVisibility(View.VISIBLE);
+            }
+            if (userInfo.getUser_identity().contains("开发者")){
+                cp.setVisibility(View.VISIBLE);
+            }
+            if (userInfo.getUser_identity().contains("发行")){
+                fx.setVisibility(View.VISIBLE);
+            }
+        }
+
         if (!userInfo.getEdu_name().equals("null")){
             edu.setText(userInfo.getEdu_name());
         }
         if (!userInfo.getJob_name().equals("null")){
             job.setText(userInfo.getJob_name());
         }
-        if (!userInfo.getGame_like().equals("null")){
+        if (!userInfo.getGame_like().equals("0")){
 
             gamelove.setText(userInfo.getGame_like());
 
@@ -194,10 +242,11 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
             email.setText(userInfo.getEmail());
         }
         if (!TextUtils.isEmpty(userInfo.getAvatar())){
-            Picasso.with(getActivity())
-                    .load(userInfo.getAvatar())
-                    .placeholder(R.drawable.default_icon)
-                    .into(icon);
+            if (userInfo.getAvatar().contains("http")) {
+                imageloder.displayImage(userInfo.getAvatar(), icon, MyDisplayImageOptions.getdefaultImageOptions());
+            }else {
+                imageloder.displayImage(Url.prePic+userInfo.getAvatar(), icon, MyDisplayImageOptions.getdefaultImageOptions());
+            }
         }
 
 
@@ -229,7 +278,7 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
         phone= (TextView) view.findViewById(R.id.phone_setting_myaccountsettting);
         email= (TextView) view.findViewById(R.id.email_setting_myaccountsettting);
         bind_other= (TextView) view.findViewById(R.id.bindother_setting_myaccountsettting);
-
+        back= (ImageView) view.findViewById(R.id.back_myacountsetting);
 
     }
 
@@ -284,16 +333,17 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        MyLog.i("onActivityResult");
+        MyLog.i("MyAccountSeting");
         if(resultCode==Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO)
         {
             picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
             MyLog.i( "最终选择的图片="+picPath);
-            Bitmap bm = BitmapFactory.decodeFile(picPath);
-            icon.setImageBitmap(bm);
+
             if(picPath!=null)
             {
+                imageloder.displayImage("file://"+picPath,icon, MyDisplayImageOptions.getdefaultImageOptions());
                 handler.sendEmptyMessage(TO_UPLOAD_FILE);
+
             }else{
                 Toast.makeText(getActivity(), "上传的文件路径出错", Toast.LENGTH_LONG).show();
             }
@@ -362,8 +412,9 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
                     if (su){
                         JSONObject jsonObject1=jsonObject.getJSONObject("data");
                         String url=jsonObject1.getString("url");
+                        String picurl=jsonObject1.getString("picpath");
 
-                        uploadurl(url);
+                        uploadurl(picurl);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -398,7 +449,9 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
             @Override
             public void onSuccess(String result) {
                 MyLog.i("上传图片链接"+result);
+                MyAccount.getInstance().setAvatar(url);
                 userInfo.setAvatar(url);
+                MySettingFragment.changeIcon=true;
             }
 
             @Override
@@ -444,4 +497,65 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
         }
 
     };
+    private void initUserInfo() {
+        BaseParams baseParams=new BaseParams("user/index");
+        baseParams.addParams("token", MyAccount.getInstance().getToken());
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("UserInfo==="+result);
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                    boolean su=jsonObject.getBoolean("success");
+                    int code=jsonObject.getInt("code");
+                    if (su&&code==200){
+                        userInfo=new UserInfo();
+                        JSONObject jsonObject2=jsonObject.getJSONObject("data");
+                        JSONObject jsonObject3=jsonObject2.getJSONObject("userInfo");
+                        userInfo.setId(jsonObject3.getString("id"));
+                        userInfo.setUsername(jsonObject3.getString("username"));
+                        userInfo.setNickname(jsonObject3.getString("nickname"));
+                        userInfo.setEmail(jsonObject3.getString("email"));
+                        userInfo.setPhone(jsonObject3.getString("phone"));
+                        userInfo.setAvatar(jsonObject3.getString("avatar"));
+                        userInfo.setUser_identity(jsonObject3.getString("user_identity"));
+                        userInfo.setGame_like(jsonObject3.getString("game_like"));
+                        userInfo.setJob_id(jsonObject3.getString("job_id"));
+                        userInfo.setEdu_id(jsonObject3.getString("edu_id"));
+                        userInfo.setProvince(jsonObject3.getString("province"));
+                        userInfo.setCity(jsonObject3.getString("city"));
+                        userInfo.setCounty(jsonObject3.getString("county"));
+                        userInfo.setAddr(jsonObject3.getString("addr"));
+                        userInfo.setProvince_name(jsonObject3.getString("province_name"));
+                        userInfo.setCity_name(jsonObject3.getString("city_name"));
+                        userInfo.setCounty_name(jsonObject3.getString("county_name"));
+                        userInfo.setEdu_name(jsonObject3.getString("edu_name"));
+                        userInfo.setJob_name(jsonObject3.getString("job_name"));
+
+                        MyAccount.getInstance().setUserInfo(userInfo);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MyLog.i("UserInfo==="+ex.toString());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                initData();
+            }
+        });
+    }
 }

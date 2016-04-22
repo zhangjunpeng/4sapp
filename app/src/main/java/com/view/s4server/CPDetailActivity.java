@@ -2,6 +2,7 @@ package com.view.s4server;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.app.view.MyScrollView;
 import com.app.view.RoundImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.gdb.GameInfo;
 import com.test4s.jsonparser.CPJsonParser;
@@ -31,6 +34,9 @@ import com.test4s.net.BaseParams;
 import com.test4s.net.CPDetailParams;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.game.GameDetailActivity;
+import com.view.myattention.AttentionChange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +47,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CPDetailActivity extends Activity {
+public class CPDetailActivity extends BaseActivity {
 
     boolean flag_showall=false;
 
@@ -77,7 +83,10 @@ public class CPDetailActivity extends Activity {
 
     List<GameInfo> othergames;
     private float density;
+    boolean focus=false;
 
+    private LinearLayout div_other;
+    private LinearLayout div_intro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +123,8 @@ public class CPDetailActivity extends Activity {
         horizontalListView= (HorizontalListView) findViewById(R.id.horListView_cpdetail);
         share= (ImageView) findViewById(R.id.share_titlebar_de);
         all= (TextView) findViewById(R.id.all_cpdetail);
-
+        div_other= (LinearLayout) findViewById(R.id.div_othergame_cpdetail);
+        div_intro= (LinearLayout) findViewById(R.id.div_intro_cpdetail);
 
         user_id=getIntent().getStringExtra("user_id");
         identity_cat=getIntent().getStringExtra("identity_cat");
@@ -136,25 +146,6 @@ public class CPDetailActivity extends Activity {
 
     private void initListener() {
 
-        intro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flag_showall=!flag_showall;
-                if (flag_showall){
-
-                    intro.setEllipsize(null);
-                    intro.setMaxLines(100);
-                    intro.setText(introstring);
-                    all.setText("收起");
-                }else {
-                    String into=introstring.substring(0,73);
-                    intro.setText(into+"...");
-                    intro.setMaxLines(3);
-                    intro.setEllipsize(TextUtils.TruncateAt.END);
-                    all.setText("全部");
-                }
-            }
-        });
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -165,11 +156,11 @@ public class CPDetailActivity extends Activity {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-200*density){
                     name_title.setVisibility(View.INVISIBLE);
                     care_title.setVisibility(View.INVISIBLE);
@@ -186,12 +177,43 @@ public class CPDetailActivity extends Activity {
                 }
             }
         });
+        View.OnClickListener myListener=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("2",user_id, CPDetailActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("2",user_id,CPDetailActivity.this);
+                    }
+                    changeCare(focus);
+                }else {
+                    //未登录
+                    goLogin(CPDetailActivity.this);
+                }
+
+            }
+        };
+        care_title.setOnClickListener(myListener);
+        care.setOnClickListener(myListener);
         findViewById(R.id.back_cpdetail).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(Activity.RESULT_OK);
                 finish();
             }
         });
+    }
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care.setImageResource(R.drawable.attention);
+        }
     }
 
     @Override
@@ -208,6 +230,9 @@ public class CPDetailActivity extends Activity {
         BaseParams baseParams=new BaseParams("index/cpdetail");
         baseParams.addParams("user_id",user_id);
         baseParams.addParams("identity_cat",identity_cat);
+        if (MyAccount.isLogin){
+            baseParams.addParams("token",MyAccount.getInstance().getToken());
+        }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(1000*60*30);
         x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
@@ -257,6 +282,12 @@ public class CPDetailActivity extends Activity {
                 phonestring=detail.getString("company_phone");
                 introstring=detail.getString("company_intro");
                 cityname=detail.getString("city_name");
+                String fo=detail.getString("focus");
+                if (fo.equals("false")||fo.equals("0")){
+                    focus=false;
+                }else if(fo.equals("true")||fo.equals("1")){
+                    focus=true;
+                }
                 othergames=new ArrayList<>();
                 JSONArray cpGames=data.getJSONArray("cpGameList");
                 for (int i=0;i<cpGames.length();i++){
@@ -282,17 +313,38 @@ public class CPDetailActivity extends Activity {
         Picasso.with(this)
                 .load(Url.prePic+logostring)
                 .into(icon);
-        intro.setText(introstring.substring(0,74)+"...");
-        info.setText("所在地 ："+cityname+"\n公司规模 ："+scalestring+"\n电话 ："+phonestring);
-        MyLog.i("other games size"+othergames.size());
-        Game_HL_Adapter gameAdaper=new Game_HL_Adapter(this,othergames);
-        horizontalListView.setAdapter(gameAdaper);
-        horizontalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            }
-        });
+        if (TextUtils.isEmpty(introstring)){
+            div_intro.setVisibility(View.GONE);
+        }else {
+            intro.setText(introstring);
+            all.setVisibility(View.INVISIBLE);
+        }
+
+        info.setText("所在地 ："+cityname+"\n公司规模 ："+scalestring+"\n电话 ："+phonestring);
+
+        if (focus){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }
+
+        MyLog.i("other games size"+othergames.size());
+        if (othergames.size()==0){
+            div_other.setVisibility(View.GONE);
+        }else {
+            Game_HL_Adapter gameAdaper=new Game_HL_Adapter(this,othergames);
+            horizontalListView.setAdapter(gameAdaper);
+            horizontalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent=new Intent(CPDetailActivity.this, GameDetailActivity.class);
+                    intent.putExtra("game_id",othergames.get(position).getGame_id());
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//                    finish();
+                }
+            });
+        }
     }
 
 
@@ -316,4 +368,8 @@ public class CPDetailActivity extends Activity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

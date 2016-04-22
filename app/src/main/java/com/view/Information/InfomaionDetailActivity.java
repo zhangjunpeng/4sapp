@@ -54,6 +54,8 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
     private View comment_pop;
     boolean flag=false;
 
+    private ImageView back;
+
     private InputPopwindow inputPopwindow;
 
     @Override
@@ -65,6 +67,7 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
 
         webview= (WebView) findViewById(R.id.webView_infodetail);
         continar= (LinearLayout) findViewById(R.id.contianer_infodetail);
+        back= (ImageView) findViewById(R.id.back_infodetail);
 
 
         click_pop=LayoutInflater.from(this).inflate(R.layout.popwindow_click,null);
@@ -155,6 +158,7 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
         BaseParams baseParams=new BaseParams("news/addcomments");
         baseParams.addParams("token",MyAccount.getInstance().getToken());
         baseParams.addParams("id",id);
+        MyLog.i("id==="+id);
         baseParams.addParams("comment_content",inputPopwindow.editText.getText().toString());
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
@@ -163,6 +167,7 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
                 MyLog.i("result"+result);
 //                Toast.makeText(InfomaionDetailActivity.this,"")
                 inputPopwindow.dismiss();
+                webview.loadUrl(prefixUrl+url);
             }
 
             @Override
@@ -184,6 +189,12 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.back_infodetail:
+                finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+                break;
+        }
 
     }
 

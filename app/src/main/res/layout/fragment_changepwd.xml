@@ -32,10 +32,11 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/oldpwd_changepwd"
                 android:hint="请输入当前密码"
                 android:textSize="12dp"
+                android:inputType="textPassword"
                 android:layout_marginLeft="34dp"
                 android:textColorHint="@color/edithint"
                 android:background="@null" />
@@ -62,10 +63,11 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/newpwd_changepwd"
                 android:hint="请输入新密码，至少6位"
                 android:textSize="12dp"
+                android:inputType="textPassword"
                 android:layout_marginLeft="34dp"
                 android:textColorHint="@color/edithint"
                 android:background="@null" />
@@ -92,11 +94,12 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/comfirpwd_changepwd"
                 android:hint="请再次输入新密码"
                 android:textSize="12dp"
                 android:layout_marginLeft="34dp"
+                android:inputType="textPassword"
                 android:textColorHint="@color/edithint"
                 android:background="@null" />
 

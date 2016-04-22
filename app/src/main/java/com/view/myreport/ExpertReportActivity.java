@@ -103,6 +103,9 @@ public class ExpertReportActivity extends BaseActivity {
                                 continue;
                             }
                             Map<String,String> map=new HashMap<String, String>();
+                            if(key.equals("id")){
+                                continue;
+                            }
                             map.put("name",key);
                             map.put("content",value);
                             datalist.add(map);
@@ -170,83 +173,69 @@ public class ExpertReportActivity extends BaseActivity {
                 viewHolder= (ViewHolder) convertView.getTag();
             }
             Map<String,String> map=datalist.get(position);
+            String content=map.get("content");
+            content=content.replace("\r","");
+            content=content.replace("&nbsp;"," ");
+            MyLog.i("content=="+content);
+            viewHolder.content.setText(content);
             switch (map.get("name")){
                 case "taste":
-                    viewHolder.name.setText("游戏体验");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("核心结论");
                     break;
                 case "method":
-                    viewHolder.name.setText("玩法");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("玩法概述");
                     break;
                 case "advantage":
                     viewHolder.name.setText("优势");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "bad":
                     viewHolder.name.setText("劣势");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "art_quality":
-                    viewHolder.name.setText("美术品质");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("感官表现");
                     break;
                 case "music":
                     viewHolder.name.setText("音乐和音效");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "battle_show":
-                    viewHolder.name.setText("核心战斗表现");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("背景题材");
                     break;
                 case "mode_style":
-                    viewHolder.name.setText("操作方式");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("交互操作");
                     break;
                 case "game_ui":
                     viewHolder.name.setText("游戏UI");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "funny":
                     viewHolder.name.setText("可玩性");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "rational":
                     viewHolder.name.setText("合理性");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "plentiful":
                     viewHolder.name.setText("丰富性");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "new_hand":
                     viewHolder.name.setText("新手引导");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "business":
                     viewHolder.name.setText("商业化");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "social":
                     viewHolder.name.setText("社交内容");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "other":
                     viewHolder.name.setText("其他");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "procedures":
                     viewHolder.name.setText("程序底层");
-                    viewHolder.content.setText(map.get("content"));
                     break;
                 case "advise":
-                    viewHolder.name.setText("问题反馈与改进意见");
-                    viewHolder.content.setText(map.get("content"));
+                    viewHolder.name.setText("优化建议");
                     break;
 
             }
 
-            viewHolder.content.setText(map.get("content"));
             return convertView;
         }
 

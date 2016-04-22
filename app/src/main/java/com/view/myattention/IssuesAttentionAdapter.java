@@ -92,7 +92,7 @@ public class IssuesAttentionAdapter extends BaseAdapter {
             public void onClick(View v) {
                 list.remove(position);
                 notifyDataSetChanged();
-                AttentionChange.removeAttention("6", issueSimpleInfo.getUser_id(), new Callback.CommonCallback<String>() {
+                AttentionChange.removeAttention2("6", issueSimpleInfo.getUser_id(), new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         MyLog.i("adapter==="+result);

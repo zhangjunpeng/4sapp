@@ -29,7 +29,9 @@ import org.xutils.common.Callback;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/2/18.
@@ -41,6 +43,7 @@ public class IssueListFragment extends Fragment{
     PullToRefreshListView listView;
     MyIssueAdapter myAdapter;
 
+
     private TextView title;
     private ImageView search;
     private ImageView back;
@@ -50,7 +53,6 @@ public class IssueListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         issueSimpleInfos=new ArrayList<>();
-        initData("1");
         super.onCreate(savedInstanceState);
     }
 
@@ -60,8 +62,10 @@ public class IssueListFragment extends Fragment{
         view=inflater.inflate(R.layout.fragment_list,null);
         listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
         myAdapter=new MyIssueAdapter(getActivity(),issueSimpleInfos);
-        initLisener();
+        listView.setAdapter(myAdapter);
 
+        initLisener();
+        initData("1");
         return view;
     }
 
@@ -70,18 +74,15 @@ public class IssueListFragment extends Fragment{
         listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                issueSimpleInfos=new ArrayList<IssueSimpleInfo>();
+                issueSimpleInfos.clear();
                 initData("1");
-                myAdapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
+
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 p++;
                 initData(p+"");
-                myAdapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,7 +90,8 @@ public class IssueListFragment extends Fragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent=new Intent(getActivity(),IssueDetailActivity.class);
                 IssueSimpleInfo info=issueSimpleInfos.get((int) id);
-                intent.putExtra("id",info.getUser_id());
+                intent.putExtra("user_id",info.getUser_id());
+                intent.putExtra("identity_cat",info.getIdentity_cat());
                 startActivity(intent);
             }
         });
@@ -100,7 +102,7 @@ public class IssueListFragment extends Fragment{
         baseParams.addParams("p",p);
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(30*60*1000);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             String res;
 
             @Override
@@ -122,16 +124,11 @@ public class IssueListFragment extends Fragment{
             @Override
             public void onFinished() {
                 jsonParser(res);
-                initView();
+                myAdapter.notifyDataSetChanged();
+                listView.onRefreshComplete();
 
             }
 
-            @Override
-            public boolean onCache(String result) {
-                res=result;
-
-                return true;
-            }
         });
     }
 
@@ -143,6 +140,7 @@ public class IssueListFragment extends Fragment{
             if (su&&code==200){
                 JSONObject jsonObject1=jsonObject.getJSONObject("data");
                 Url.prePic=jsonObject1.getString("prefixPic");
+
                 JSONArray issues=jsonObject1.getJSONArray("issueList");
                 for (int i=0;i<issues.length();i++){
                     JSONObject jsonObject2=issues.getJSONObject(i);
@@ -152,6 +150,9 @@ public class IssueListFragment extends Fragment{
                     issueSimpleInfo.setIdentity_cat(jsonObject2.getString("identity_cat"));
                     issueSimpleInfo.setCompany_name(jsonObject2.getString("company_name"));
                     issueSimpleInfo.setCompany_intro(jsonObject2.getString("company_intro"));
+                    issueSimpleInfo.setArea_name(jsonObject2.getString("area_name"));
+                    issueSimpleInfo.setBusine_cat_name(jsonObject2.getString("busine_cat_name"));
+                    issueSimpleInfo.setCoop_cat_name(jsonObject2.getString("coop_cat_name"));
                     issueSimpleInfos.add(issueSimpleInfo);
                 }
             }
@@ -161,9 +162,6 @@ public class IssueListFragment extends Fragment{
         }
     }
 
-    private void initView() {
-        listView.setAdapter(myAdapter);
-    }
 
     class MyIssueAdapter extends BaseAdapter{
         List<IssueSimpleInfo> list;
@@ -193,11 +191,11 @@ public class IssueListFragment extends Fragment{
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
             if (convertView==null){
-                convertView=LayoutInflater.from(context).inflate(R.layout.item_cplistfragment,null);
+                convertView= LayoutInflater.from(context).inflate(R.layout.item_iplistfragment,null);
                 viewHolder=new ViewHolder();
-                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_cplist_listac);
-                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_cp_listac);
-                viewHolder.intro= (TextView) convertView.findViewById(R.id.introuduction_item_cp_listac);
+                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_iplist);
+                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_iplist);
+                viewHolder.intro= (TextView) convertView.findViewById(R.id.introuduction_item_iplist);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder= (ViewHolder) convertView.getTag();
@@ -208,7 +206,15 @@ public class IssueListFragment extends Fragment{
                     .placeholder(R.drawable.default_icon)
                     .into(viewHolder.icon);
             viewHolder.name.setText(issueSimpleInfo.getCompany_name());
-            viewHolder.intro.setText(issueSimpleInfo.getCompany_intro());
+//            String area="";
+//            for (int i=0;i<areadrr.size();i++){
+//                Map<String,String> map=areadrr.get(i);
+//                if (map.get("id").equals(issueSimpleInfo.getArea_id())){
+//                    area=map.get("name");
+//                }
+//            }
+            String mess="所在区域: "+issueSimpleInfo.getArea_name()+"\n业务类型: "+issueSimpleInfo.getBusine_cat_name()+"\n合作类型： "+issueSimpleInfo.getCoop_cat_name();
+            viewHolder.intro.setText(mess);
             return convertView;
         }
         class ViewHolder{

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.ClearWindows;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
@@ -81,7 +82,7 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length()>6){
+                if (s.length()>=6){
                     changeButton();
                 }
             }
@@ -103,7 +104,7 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
         oldpwd=pwd_edit.getText().toString();
         newpwd=newpwd_edit.getText().toString();
         String c_pwd=cpwd_edit.getText().toString();
-        if (newpwd.equals(c_pwd)&&oldpwd.length()>6&&newpwd.length()>6){
+        if (newpwd.equals(c_pwd)&&oldpwd.length()>6&&newpwd.length()>=6){
             changeButton.setBackgroundResource(R.drawable.border_button_orange);
             changeButton.setClickable(true);
         }
@@ -158,6 +159,10 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.back_savebar:
+                ClearWindows.clearInput(getActivity(),pwd_edit);
+                ClearWindows.clearInput(getActivity(),newpwd_edit);
+                ClearWindows.clearInput(getActivity(),cpwd_edit);
+
                 MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                 FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);

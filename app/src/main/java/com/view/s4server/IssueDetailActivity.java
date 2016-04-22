@@ -24,9 +24,12 @@ import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.myattention.AttentionChange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +40,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssueDetailActivity extends AppCompatActivity {
+public class IssueDetailActivity extends BaseActivity {
 
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
@@ -66,7 +69,9 @@ public class IssueDetailActivity extends AppCompatActivity {
     List<LinearLayout> content;
     private boolean flag_showall=false;
     private float density;
+    private boolean focus=false;
 
+    private LinearLayout div_anli;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +93,7 @@ public class IssueDetailActivity extends AppCompatActivity {
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_fxdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_fxDetail);
-        care= (ImageView) findViewById(R.id.care_fxdetatil);
+        care= (ImageView) findViewById(R.id.connect_fx);
         name_title= (TextView) findViewById(R.id.title_fxdetail);
         care_title= (ImageView) findViewById(R.id.care_fxdetatil);
         info= (TextView) findViewById(R.id.info_fxdetail);
@@ -98,6 +103,7 @@ public class IssueDetailActivity extends AppCompatActivity {
         icon= (ImageView) findViewById(R.id.roundImage_fxdetail);
         continar= (LinearLayout) findViewById(R.id.contianer_fxdetail);
 
+        div_anli= (LinearLayout) findViewById(R.id.div_anli_fxdetail);
 
         content=new ArrayList<>();
 
@@ -117,6 +123,9 @@ public class IssueDetailActivity extends AppCompatActivity {
         BaseParams baseParams=new BaseParams("index/detail");
         baseParams.addParams("user_id",user_id);
         baseParams.addParams("identity_cat",identity_cat);
+        if (MyAccount.isLogin){
+            baseParams.addParams("token",MyAccount.getInstance().getToken());
+        }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(60*1000*60);
         x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
@@ -165,6 +174,13 @@ public class IssueDetailActivity extends AppCompatActivity {
                 scalestring=jinfo.getString("company_scale");
                 coop_catstring=jinfo.getString("coop_cat");
                 areastring=jinfo.getString("area");
+                String fo=jinfo.getString("focus");
+                if (fo.equals("false")||fo.equals("0")){
+                    focus=false;
+                }else if(fo.equals("true")||fo.equals("1")){
+                    focus=true;
+                }
+
                 issuecases=new ArrayList<>();
                 JSONArray cases=jinfo.getJSONArray("issue_case");
                 for (int i=0;i<cases.length();i++){
@@ -186,12 +202,25 @@ public class IssueDetailActivity extends AppCompatActivity {
     private void initView() {
         name_title.setText(namestring);
         name.setText(namestring);
+        if (focus){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }
         Picasso.with(this)
                 .load(Url.prePic+logostring)
                 .into(icon);
-        intro.setText(introstring.substring(0,74)+"...");
+        if (TextUtils.isEmpty(introstring)){
+
+        }else {
+            intro.setText(introstring);
+            all.setVisibility(View.INVISIBLE);
+        }
         info.setText("所在区域 ："+areastring+"\n业务类型 ："+business_catstring+"\n合作类型 ："+coop_catstring+"\n公司规模 ："+scalestring);
-        addcase(issuecases);
+        if (issuecases.size()==0){
+            div_anli.setVisibility(View.GONE);
+        }else {
+            addcase(issuecases);
+        }
     }
 
     private void initListener() {
@@ -205,17 +234,17 @@ public class IssueDetailActivity extends AppCompatActivity {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-200*density){
                     name_title.setVisibility(View.INVISIBLE);
-                    care.setVisibility(View.INVISIBLE);
+                    care_title.setVisibility(View.INVISIBLE);
                 }else {
                     name_title.setVisibility(View.VISIBLE);
-                    care.setVisibility(View.VISIBLE);
+                    care_title.setVisibility(View.VISIBLE);
                 }
                 if (scrollRange + verticalOffset == 0) {
 
@@ -226,25 +255,27 @@ public class IssueDetailActivity extends AppCompatActivity {
                 }
             }
         });
-        intro.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener myListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag_showall=!flag_showall;
-                if (flag_showall){
-
-                    intro.setEllipsize(null);
-                    intro.setMaxLines(100);
-                    intro.setText(introstring);
-                    all.setText("收起");
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("6",user_id, IssueDetailActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("6",user_id,IssueDetailActivity.this);
+                    }
+                    changeCare(focus);
                 }else {
-                    String into=introstring.substring(0,73);
-                    intro.setText(into+"...");
-                    intro.setMaxLines(3);
-                    intro.setEllipsize(TextUtils.TruncateAt.END);
-                    all.setText("全部");
+                    //未登录
+                    goLogin(IssueDetailActivity.this);
                 }
+
             }
-        });
+        };
+        care_title.setOnClickListener(myListener);
+        care.setOnClickListener(myListener);
         findViewById(R.id.back_fxdetail).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,6 +328,15 @@ public class IssueDetailActivity extends AppCompatActivity {
             MyLog.i("addView6");
         }
 
+    }
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care.setImageResource(R.drawable.attention);
+        }
     }
     class ViewHolder{
         TextView time;

@@ -29,7 +29,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="18dp"
                 android:src="@drawable/share"
-                android:id="@+id/share_infodetail" />
+                android:id="@+id/share_infodetail"
+                android:visibility="invisible"
+                />
 
         </RelativeLayout>
 

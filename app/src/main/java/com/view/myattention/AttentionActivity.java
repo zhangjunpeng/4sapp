@@ -114,6 +114,12 @@ public class AttentionActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.back_savebar:
+                finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+                break;
+        }
 
     }
 

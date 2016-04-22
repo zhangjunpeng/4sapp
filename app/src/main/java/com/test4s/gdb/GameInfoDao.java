@@ -42,6 +42,9 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         public final static Property Is_test = new Property(16, String.class, "is_test", false, "IS_TEST");
         public final static Property Online = new Property(17, Integer.class, "online", false, "ONLINE");
         public final static Property Enabled = new Property(18, Integer.class, "enabled", false, "ENABLED");
+        public final static Property Sdk = new Property(19, String.class, "sdk", false, "SDK");
+        public final static Property Pack = new Property(20, String.class, "pack", false, "PACK");
+        public final static Property Checked = new Property(21, String.class, "checked", false, "CHECKED");
     };
 
 
@@ -75,7 +78,10 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
                 "'CREATE_TIME' TEXT," + // 15: create_time
                 "'IS_TEST' TEXT," + // 16: is_test
                 "'ONLINE' INTEGER," + // 17: online
-                "'ENABLED' INTEGER);"); // 18: enabled
+                "'ENABLED' INTEGER," + // 18: enabled
+                "'SDK' TEXT," + // 19: sdk
+                "'PACK' TEXT," + // 20: pack
+                "'CHECKED' TEXT);"); // 21: checked
     }
 
     /** Drops the underlying database table. */
@@ -183,6 +189,21 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         if (enabled != null) {
             stmt.bindLong(19, enabled);
         }
+ 
+        String sdk = entity.getSdk();
+        if (sdk != null) {
+            stmt.bindString(20, sdk);
+        }
+ 
+        String pack = entity.getPack();
+        if (pack != null) {
+            stmt.bindString(21, pack);
+        }
+ 
+        String checked = entity.getChecked();
+        if (checked != null) {
+            stmt.bindString(22, checked);
+        }
     }
 
     /** @inheritdoc */
@@ -213,7 +234,10 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // create_time
             cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // is_test
             cursor.isNull(offset + 17) ? null : cursor.getInt(offset + 17), // online
-            cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18) // enabled
+            cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18), // enabled
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // sdk
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // pack
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21) // checked
         );
         return entity;
     }
@@ -240,6 +264,9 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         entity.setIs_test(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setOnline(cursor.isNull(offset + 17) ? null : cursor.getInt(offset + 17));
         entity.setEnabled(cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18));
+        entity.setSdk(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setPack(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
+        entity.setChecked(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
      }
     
     /** @inheritdoc */

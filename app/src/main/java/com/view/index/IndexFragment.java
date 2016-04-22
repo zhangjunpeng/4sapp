@@ -47,6 +47,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.logging.Handler;
 
 /**
@@ -81,7 +82,29 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     IndexJsonParser indexJsonParser;
     int currentItem;
 
+    Thread thread;
+
     float density;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        thread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true){
+                        Thread.sleep(5*1000);
+                        handler.sendEmptyMessage(0);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -286,6 +309,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
         }
 
+
         MyLog.i("initView");
     }
     class ViewHolder{
@@ -369,31 +393,22 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (true){
-                        Thread.sleep(5*1000);
-                        handler.sendEmptyMessage(0);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+
     }
     android.os.Handler handler=new android.os.Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    currentItem=viewPager.getCurrentItem();
-                    currentItem++;
-                    if (currentItem==indexAdvertses.size()){
-                        currentItem=0;
+                    if (viewPager!=null&&indexAdvertses!=null) {
+                        currentItem = viewPager.getCurrentItem();
+                        currentItem++;
+                        if (currentItem == indexAdvertses.size()) {
+                            currentItem = 0;
+                        }
+
+                        viewPager.setCurrentItem(currentItem);
                     }
-                    viewPager.setCurrentItem(currentItem);
                     break;
             }
         }
@@ -440,5 +455,11 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                 break;
 
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        thread.stop();
     }
 }

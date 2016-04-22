@@ -43,6 +43,9 @@ public class ExampleGenerator {
         gameInfo.addStringProperty("is_test");
         gameInfo.addIntProperty("online");
         gameInfo.addIntProperty("enabled");
+        gameInfo.addStringProperty("sdk");
+        gameInfo.addStringProperty("pack");
+        gameInfo.addStringProperty("checked");
 
         //Investment投资公司
         investment.addIdProperty().primaryKey();

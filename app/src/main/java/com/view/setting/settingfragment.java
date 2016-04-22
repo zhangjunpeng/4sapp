@@ -27,9 +27,15 @@ import com.app.tools.MyLog;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.MyAccount;
+import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
+import com.test4s.net.BaseParams;
+import com.view.activity.BaseActivity;
 import com.view.index.MySettingFragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
 import org.xutils.x;
 
 import java.util.concurrent.Executors;
@@ -83,7 +89,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         loginout.setOnClickListener(this);
 
         if (!myaccount.isLogin){
-            loginout.setText("重新登录");
+            loginout.setVisibility(View.INVISIBLE);
         }
 
         return view;
@@ -95,9 +101,6 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
             case R.id.about_us:
                 MyLog.i("点击about_us");
                 activity.toAboutUs();
-//               FragmentManager fragmentManager= getActivity().getSupportFragmentManager();
-//                fragmentManager.beginTransaction().setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
-//                fragmentManager.beginTransaction().replace(R.id.contianer_setting,new aboutusfragment());
                 break;
             case R.id.advice_report:
                 MyLog.i("点击advice_report");
@@ -111,15 +114,14 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                     MyAccount.getInstance().loginOut();
                     getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();
-                    loginout.setText("重新登录");
                 }else {
-                    Intent intent=new Intent(getActivity(), AccountActivity.class);
-                    startActivityForResult(intent,LoginCode);
-                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//                    Intent intent=new Intent(getActivity(), AccountActivity.class);
+//                    startActivityForResult(intent,LoginCode);
+//                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
                 break;
             case R.id.check_update:
-                showUpdateDialog();
+                checkAppUpdate();
                 break;
         }
     }
@@ -194,6 +196,52 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+    public void checkAppUpdate(){
+        BaseParams baseParams=new BaseParams("api/checkappversion");
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("checkAppUpdate back==="+result);
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                    int code=jsonObject.getInt("code");
+                    boolean su=jsonObject.getBoolean("success");
+                    if (su&&code==200){
+                        JSONObject data=jsonObject.getJSONObject("data");
+                        String version=data.getString("version");
+                        float ver=Float.parseFloat(version);
+                        float old_ver=Float.parseFloat(MyApplication.versionName);
+                        if (ver>old_ver){
+                            showUpdateDialog();
+                        }else {
+                            showDialog("您的版本已经是最新！");
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
     public void showUpdateDialog(){
         dialog=new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -219,6 +267,30 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            }
+        });
+    }
+    public void showDialog(String message){
+        dialog=new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_setting,null);
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        dialog.setContentView(view,params);
+        TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
+        TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
+        TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
+        mes.setText(message);
+        clear.setText("我知道了");
+//        clear.setTextColor(Color.rgb(255,157,0));
+        dialog.show();
+        channel.setVisibility(View.GONE);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
     }

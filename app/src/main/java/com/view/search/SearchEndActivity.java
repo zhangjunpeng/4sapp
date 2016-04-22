@@ -2,28 +2,25 @@ package com.view.search;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import com.app.tools.ClearWindows;
+import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.view.activity.BaseActivity;
-import com.view.myattention.AttentionFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +42,7 @@ public class SearchEndActivity extends BaseActivity {
     private HorizontalScrollView horizontalScrollView;
     private String[] titles={"game","cp","ip","inves","issue","outsource"};
 
-    private String keyword;
+    public String keyword;
     private String identity_cat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +70,12 @@ public class SearchEndActivity extends BaseActivity {
         Selection.setSelection(etext, etext.length());
 
         fragmentList=new ArrayList<>();
-        adapter=new MyViewPagerAdapter(getSupportFragmentManager(),fragmentList);
-        viewpager.setAdapter(adapter);
+
 
 
         initListener();
 
-        initData();
+        initData(keyword);
         initView();
     }
 
@@ -87,18 +83,47 @@ public class SearchEndActivity extends BaseActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 keyword=editText.getText().toString();
                 if (!TextUtils.isEmpty(keyword)){
+                    ClearWindows.clearInput(SearchEndActivity.this,editText);
+                    MyLog.i("keyword==="+keyword);
                     fragmentList.clear();
-                    initData();
+                    MyLog.i("size=="+fragmentList.size());
+                    initData(keyword);
                 }
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClearWindows.clearInput(SearchEndActivity.this,editText);
+                finish();
+            }
+        });
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length()>0){
+                    clearInput.setVisibility(View.VISIBLE);
+                }else if (s.length()==0){
+                    clearInput.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
 
-    private void initData() {
-
+    private void initData(String keyword) {
+        MyLog.i("kkeyword==="+keyword);
         for (int i=0;i<titles.length;i++){
             String tag=titles[i];
             switch (tag){
@@ -124,10 +149,13 @@ public class SearchEndActivity extends BaseActivity {
             SearchEndFragment fragment=new SearchEndFragment();
             Bundle bundle=new Bundle();
             bundle.putString("identity_cat",identity_cat);
-            bundle.putString("keyword",keyword);
+            bundle.putString("keyword", keyword);
             fragment.setArguments(bundle);
             fragmentList.add(fragment);
         }
+        adapter=new MyViewPagerAdapter(getSupportFragmentManager(),fragmentList);
+        viewpager.setAdapter(adapter);
+
     }
     private void initView() {
         for (int i=0;i<titles.length;i++){

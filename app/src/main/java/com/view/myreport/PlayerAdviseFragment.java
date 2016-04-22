@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
@@ -38,14 +39,17 @@ public class PlayerAdviseFragment  extends Fragment{
 
     PullToRefreshListView listView;
 
-    List<Map<String,String>> dataList;
+    List<PlayerAdvise> dataList;
     String gameid;
     MyAdapter adapter;
+    int p=1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gameid=getArguments().getString("game_id","");
+        dataList=new ArrayList<>();
+        adapter=new MyAdapter(getActivity(),dataList);
     }
 
     @Nullable
@@ -53,9 +57,17 @@ public class PlayerAdviseFragment  extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_playeradvise,null);
         listView= (PullToRefreshListView) view.findViewById(R.id.listview_playeradvise);
-        dataList=new ArrayList<>();
-        adapter=new MyAdapter(getActivity(),dataList);
+        listView.setVerticalScrollBarEnabled(true);
         listView.setAdapter(adapter);
+
+        listView.setMode(PullToRefreshBase.Mode.PULL_FROM_END);
+        listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
+            @Override
+            public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+                p++;
+                initData(p+"");
+            }
+        });
         initData("1");
         return view;
     }
@@ -89,6 +101,7 @@ public class PlayerAdviseFragment  extends Fragment{
 
             @Override
             public void onFinished() {
+                listView.onRefreshComplete();
                 adapter.notifyDataSetChanged();
             }
         });
@@ -104,32 +117,33 @@ public class PlayerAdviseFragment  extends Fragment{
             JSONArray list=data.getJSONArray("list");
             for (int i=0;i<list.length();i++){
                 JSONObject obj=list.getJSONObject(i);
-                Map<String,String> map=new HashMap<>();
-                map.put("nickname",obj.getString("nickname"));
-                map.put("create_time",obj.getString("create_time"));
-                map.put("test_total_score",obj.getString("test_total_score"));
-                map.put("advise",obj.getString("advise"));
-                dataList.add(map);
+                PlayerAdvise playerAdvise=new PlayerAdvise();
+                playerAdvise.setId(obj.getString("id"));
+                playerAdvise.setNickname(obj.getString("nickname"));
+                playerAdvise.setCreate_time(obj.getString("create_time"));
+                playerAdvise.setTest_total_score(obj.getString("test_total_score"));
+                playerAdvise.setAdvise(obj.getString("advise"));
+                dataList.add(playerAdvise);
             }
         }
     }
 
     class MyAdapter extends BaseAdapter{
-        private List<Map<String,String>> datalist;
+        private List<PlayerAdvise> mylist;
         private Context context;
 
-        public MyAdapter(Context context,List<Map<String,String>> datalist){
+        public MyAdapter(Context context,List<PlayerAdvise> list){
             this.context=context;
-            this.datalist=datalist;
+            this.mylist=list;
         }
         @Override
         public int getCount() {
-            return datalist.size();
+            return mylist.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return datalist.get(position);
+            return mylist.get(position);
         }
 
         @Override
@@ -147,15 +161,26 @@ public class PlayerAdviseFragment  extends Fragment{
                 viewHolder.time= (TextView) convertView.findViewById(R.id.time_item_playeradvise);
                 viewHolder.stars= (LinearLayout) convertView.findViewById(R.id.stars_item_playeradvise);
                 viewHolder.advise= (TextView) convertView.findViewById(R.id.advise_item_playeradvise);
+                convertView.setTag(viewHolder);
             }else {
                 viewHolder= (Viewholder) convertView.getTag();
             }
-            Map<String,String> map=datalist.get(position);
-            viewHolder.names.setText(map.get("nickname"));
-            viewHolder.time.setText(map.get("create_time"));
-            float score=Float.parseFloat(map.get("test_total_score"));
+            PlayerAdvise playerAdvise=mylist.get(position);
+            if (playerAdvise==null){
+                MyLog.i(position +"  map 为空");
+            }
+            try {
+                String name=playerAdvise.getNickname();
+                MyLog.i("name==="+name);
+                viewHolder.names.setText(name);
+            }catch (Exception e){
+                MyLog.i(e.toString());
+            }
+
+            viewHolder.time.setText(playerAdvise.getCreate_time());
+            float score=Float.parseFloat(playerAdvise.getTest_total_score());
             setStars(viewHolder.stars,score);
-            viewHolder.advise.setText(map.get("advise"));
+            viewHolder.advise.setText(playerAdvise.getAdvise());
             return convertView;
         }
         class Viewholder{

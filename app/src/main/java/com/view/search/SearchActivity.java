@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.app.tools.ClearWindows;
 import com.test4s.gdb.History;
 import com.test4s.gdb.HistoryDao;
 import com.test4s.myapp.MyApplication;
@@ -51,12 +52,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         clearInput= (ImageView) findViewById(R.id.clearinput_search);
         search= (ImageView) findViewById(R.id.search_search);
         back= (ImageView) findViewById(R.id.back_search);
-        editText.clearFocus();
+//        editText.clearFocus();
+
 
         fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         fragmentManager.beginTransaction().replace(R.id.contianer_search,new SearchIndex()).commit();
-        
+
+
+//        getFocus(editText);
         initListener();
     }
 
@@ -95,6 +99,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.back_search:
+                ClearWindows.clearInput(this,editText);
                 finish();
                 break;
             case R.id.search_search:

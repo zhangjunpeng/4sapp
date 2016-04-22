@@ -1,6 +1,7 @@
 package com.view.s4server;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -25,9 +26,12 @@ import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.myattention.AttentionChange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +42,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OutSourceActivity extends AppCompatActivity {
+public class OutSourceActivity extends BaseActivity {
 
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
@@ -70,9 +74,11 @@ public class OutSourceActivity extends AppCompatActivity {
     List<String> musiccases;
     private boolean flag_showall=false;
     private float density;
+    private boolean focus=false;
 
-
-
+    private LinearLayout div_game;
+    private LinearLayout div_art;
+    private LinearLayout div_video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +101,7 @@ public class OutSourceActivity extends AppCompatActivity {
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_osdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_osDetail);
-        care= (ImageView) findViewById(R.id.care_osdetatil);
+        care= (ImageView) findViewById(R.id.attention_osdetail);
         name_title= (TextView) findViewById(R.id.title_osdetail);
         care_title= (ImageView) findViewById(R.id.care_osdetatil);
         info= (TextView) findViewById(R.id.info_osdetail);
@@ -106,6 +112,10 @@ public class OutSourceActivity extends AppCompatActivity {
         continar= (LinearLayout) findViewById(R.id.contianer_osdetail);
         artcasecontinar= (LinearLayout) findViewById(R.id.artcasecontianer_osdetail);
         musiccontinar= (LinearLayout) findViewById(R.id.musiccasecontianer_osdetail);
+
+        div_game= (LinearLayout) findViewById(R.id.div_gameanli_osDetail);
+        div_art= (LinearLayout) findViewById(R.id.div_artanli_osDetail);
+        div_video= (LinearLayout) findViewById(R.id.div_video_osDetail);
 
 
         //获取屏幕密度
@@ -128,17 +138,17 @@ public class OutSourceActivity extends AppCompatActivity {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-200*density){
                     name_title.setVisibility(View.INVISIBLE);
-                    care.setVisibility(View.INVISIBLE);
+                    care_title.setVisibility(View.INVISIBLE);
                 }else {
                     name_title.setVisibility(View.VISIBLE);
-                    care.setVisibility(View.VISIBLE);
+                    care_title.setVisibility(View.VISIBLE);
                 }
                 if (scrollRange + verticalOffset == 0) {
 
@@ -149,25 +159,28 @@ public class OutSourceActivity extends AppCompatActivity {
                 }
             }
         });
-        intro.setOnClickListener(new View.OnClickListener() {
+
+        View.OnClickListener myListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag_showall=!flag_showall;
-                if (flag_showall){
-
-                    intro.setEllipsize(null);
-                    intro.setMaxLines(100);
-                    intro.setText(introstring);
-                    all.setText("收起");
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("3",user_id, OutSourceActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("3",user_id,OutSourceActivity.this);
+                    }
+                    changeCare(focus);
                 }else {
-                    String into=introstring.substring(0,73);
-                    intro.setText(into+"...");
-                    intro.setMaxLines(3);
-                    intro.setEllipsize(TextUtils.TruncateAt.END);
-                    all.setText("全部");
+                    //未登录
+                    goLogin(OutSourceActivity.this);
                 }
+
             }
-        });
+        };
+        care_title.setOnClickListener(myListener);
+        care.setOnClickListener(myListener);
         findViewById(R.id.back_osdetail).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,13 +188,24 @@ public class OutSourceActivity extends AppCompatActivity {
             }
         });
     }
-
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care.setImageResource(R.drawable.attention);
+        }
+    }
     private void initData() {
         user_id=getIntent().getStringExtra("user_id");
         identity_cat=getIntent().getStringExtra("identity_cat");
         BaseParams baseParams=new BaseParams("index/detail");
         baseParams.addParams("user_id",user_id);
         baseParams.addParams("identity_cat",identity_cat);
+        if (MyAccount.isLogin){
+            baseParams.addParams("token",MyAccount.getInstance().getToken());
+        }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(60*1000*60);
         x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
@@ -229,6 +253,12 @@ public class OutSourceActivity extends AppCompatActivity {
                 out_stylestring=jinfo.getString("out_style");
                 scalestring=jinfo.getString("company_scale");
                 areastring=jinfo.getString("area");
+                String fo=jinfo.getString("focus");
+                if (fo.equals("false")||fo.equals("0")){
+                    focus=false;
+                }else if(fo.equals("true")||fo.equals("1")){
+                    focus=true;
+                }
                 oscases=new ArrayList<>();
                 JSONArray cases=jinfo.getJSONArray("game_case");
                 for (int i=0;i<cases.length();i++){
@@ -262,14 +292,36 @@ public class OutSourceActivity extends AppCompatActivity {
     private void initView() {
         name_title.setText(namestring);
         name.setText(namestring);
+        if (focus){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_has);
+        }
         Picasso.with(this)
                 .load(Url.prePic+logostring)
                 .into(icon);
-        intro.setText(introstring.substring(0,74)+"...");
+        if (TextUtils.isEmpty(introstring)){
+
+        }else {
+            intro.setText(introstring);
+            all.setVisibility(View.INVISIBLE);
+        }
+
         info.setText("所在区域 ："+areastring+"\n公司规模 ："+scalestring+"\n类型 ："+out_stylestring);
-        addcase(oscases);
-        addImage(artscases);
-        addVideo(musiccases);
+        if (oscases.size()==0){
+            div_game.setVisibility(View.GONE);
+        }else {
+            addcase(oscases);
+        }
+        if (artscases.size()==0){
+            div_art.setVisibility(View.GONE);
+        }else {
+            addImage(artscases);
+        }
+        if (musiccases.size()==0){
+            div_video.setVisibility(View.GONE);
+        }else {
+            addVideo(musiccases);
+        }
     }
 
     private void addVideo(List<String> musiccases) {

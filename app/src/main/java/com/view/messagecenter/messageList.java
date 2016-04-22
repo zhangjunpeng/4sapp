@@ -66,7 +66,7 @@ public class MessageList extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
-
+        back.setOnClickListener(this);
     }
 
     private void initData(String p) {
@@ -140,7 +140,8 @@ public class MessageList extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.back_savebar:
-
+                finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 break;
         }
     }

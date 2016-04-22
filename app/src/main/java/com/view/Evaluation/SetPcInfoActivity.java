@@ -20,6 +20,7 @@ public class SetPcInfoActivity extends AppCompatActivity {
 
     String sex;
     String gameid;
+    String age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,12 @@ public class SetPcInfoActivity extends AppCompatActivity {
         gameid=getIntent().getStringExtra("game_id");
         switch (tag){
             case "age":
-
+                age=getIntent().getStringExtra("age");
+                fragment=new SetAgeFragment();
+                Bundle bundle2=new Bundle();
+                bundle2.putString("game_id",gameid);
+                bundle2.putString("age",age);
+                fragment.setArguments(bundle2);
                 break;
             case "sex":
                 sex=getIntent().getStringExtra(tag);
@@ -42,9 +48,15 @@ public class SetPcInfoActivity extends AppCompatActivity {
                 break;
             case "job":
                 fragment=new SetJobFragment();
+                Bundle bundle3=new Bundle();
+                bundle3.putString("tag","pc");
+                fragment.setArguments(bundle3);
                 break;
             case "area":
                 fragment=new SetAddressFragment();
+                Bundle bundle4=new Bundle();
+                bundle4.putString("tag","pc");
+                fragment.setArguments(bundle4);
                 break;
             case "phonebrand":
                 String phond_id=getIntent().getStringExtra(tag);

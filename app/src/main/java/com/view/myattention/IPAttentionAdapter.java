@@ -91,7 +91,7 @@ public class IPAttentionAdapter extends BaseAdapter {
             public void onClick(View v) {
                 list.remove(position);
                 notifyDataSetChanged();
-                AttentionChange.removeAttention("5", ipSimpleInfo.getId(), new Callback.CommonCallback<String>() {
+                AttentionChange.removeAttention2("5", ipSimpleInfo.getId(), new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         MyLog.i("adapter==="+result);

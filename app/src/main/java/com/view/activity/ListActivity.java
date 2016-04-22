@@ -1,5 +1,6 @@
 package com.view.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.view.s4server.IPListFragment;
 import com.view.s4server.InvesmentListFragment;
 import com.view.s4server.IssueListFragment;
 import com.view.s4server.OutSourceListFragment;
+import com.view.search.SearchActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -123,23 +125,23 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
         Fragment fragment=null;
         switch (tag) {
             case CP_TAG:
-                title.setText("开发者列表");
+                title.setText("开发者");
                 fragment=new CPListFragment();
                 break;
             case IP_TAG:
-                title.setText("IP列表");
+                title.setText("IP");
                 fragment=new IPListFragment();
                 break;
             case Invesment_TAG:
-                title.setText("投资人列表");
+                title.setText("投资人");
                 fragment=new InvesmentListFragment();
                 break;
             case OutSource_TAG:
-                title.setText("外包列表");
+                title.setText("外包");
                 fragment=new OutSourceListFragment();
                 break;
             case Issue_TAG:
-                title.setText("发行列表");
+                title.setText("发行");
                 fragment=new IssueListFragment();
                 break;
         }
@@ -279,6 +281,9 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
                 finish();
                 break;
             case R.id.search_titlebar:
+                Intent intent=new Intent(ListActivity.this, SearchActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 break;
         }
     }

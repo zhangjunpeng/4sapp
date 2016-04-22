@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -64,6 +65,12 @@ public class PCActivity extends AppCompatActivity{
 
     ReportAdviceFragment advicefragment;
 
+    private String name;
+
+    private ImageView back;
+    private TextView title;
+    private TextView save;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,21 @@ public class PCActivity extends AppCompatActivity{
         thu= (TextView) findViewById(R.id.text_pc);
         re_pro= (RelativeLayout) findViewById(R.id.re_pro_pc);
         submit= (Button) findViewById(R.id.submit_pc);
+
+        back= (ImageView) findViewById(R.id.back_savebar);
+        title= (TextView) findViewById(R.id.textView_titlebar_save);
+        save= (TextView) findViewById(R.id.save_savebar);
+
+        name=getIntent().getStringExtra("game_name");
+
+        title.setText(name);
+        save.setVisibility(View.INVISIBLE);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
         lenth= (int) (screenWidth-(56*density));

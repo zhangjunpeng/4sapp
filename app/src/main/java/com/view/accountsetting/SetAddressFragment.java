@@ -1,5 +1,6 @@
 package com.view.accountsetting;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -49,6 +50,17 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
 
     Bundle bundle;
 
+    private String tag="set";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            tag=bundle.getString("tag","set");
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,18 +82,33 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
 
         title.setText("地 址");
 
-        if (userInfo.getProvince_name().equals("")){
-            selectcity.setText("点击选择省份 城市");
-        }else {
-            selectcity.setText(userInfo.getProvince_name()+" "+userInfo.getCity_name()+" "+userInfo.getCounty_name());
-            province_id=userInfo.getProvince();
-            province=userInfo.getProvince_name();
-            city_id=userInfo.getCity();
-            city=userInfo.getCity_name();
-            county_id=userInfo.getCounty();
-            county=userInfo.getCounty_name();
+        switch (tag){
+            case "set":
+                initAddFromInfo();
+                initAddFromSet();
+                break;
+            case "pc":
+//                initAddFromSet();
+
+                boolean setback=false;
+                Bundle bundle=getArguments();
+                if (bundle!=null){
+                    setback=bundle.getBoolean("setback",false);
+                }
+                if (setback){
+                    initAddFromSet();
+                }else {
+                    initAddFromInfo();
+                }
+                break;
         }
 
+
+
+
+        return view;
+    }
+    public void initAddFromSet(){
         bundle=getArguments();
         if (bundle!=null){
             province_id=bundle.getString("province_id","");
@@ -92,9 +119,22 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
             county_id=bundle.getString("county_id","");
             selectcity.setText(province+" "+city+" "+county);
         }
-
-
-        return view;
+    }
+    public void initAddFromInfo(){
+        if (TextUtils.isEmpty(userInfo.getProvince_name())){
+            selectcity.setText("点击选择省份 城市");
+        }else {
+            selectcity.setText(userInfo.getProvince_name()+" "+userInfo.getCity_name()+" "+userInfo.getCounty_name());
+            province_id=userInfo.getProvince();
+            province=userInfo.getProvince_name();
+            city_id=userInfo.getCity();
+            city=userInfo.getCity_name();
+            county_id=userInfo.getCounty();
+            county=userInfo.getCounty_name();
+        }
+        if (!TextUtils.isEmpty(userInfo.getAddr())){
+            addr.setText(userInfo.getAddr());
+        }
     }
 
     private void changeAddress() {
@@ -126,13 +166,26 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
                         userInfo.setCity_name(city);
                         userInfo.setCounty_name(county);
 
-                        MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
-                        FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                        transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+
+
+                        switch (tag){
+                            case "set":
+                                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                                FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
+                                transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
+                                transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                                break;
+                            case "pc":
+                                getActivity().setResult(Activity.RESULT_OK);
+
+                                getActivity().finish();
+                                break;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                }catch (Exception e){
+                    MyLog.i("exception=="+e.toString());
                 }
 
             }
@@ -162,7 +215,18 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
                 SelectCityFragment selectCityFragment=new SelectCityFragment();
                 FragmentTransaction transaction=getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
-                transaction.replace(R.id.contianner_mysetting,selectCityFragment).commit();
+                switch (tag){
+                    case "set":
+                        transaction.replace(R.id.contianner_mysetting,selectCityFragment).commit();
+
+                        break;
+                    case "pc":
+                        Bundle bundle=new Bundle();
+                        bundle.putString("tag","pc");
+                        selectCityFragment.setArguments(bundle);
+                        transaction.replace(R.id.contianer_pcgame,selectCityFragment).commit();
+                        break;
+                }
                 break;
             case R.id.save_savebar:
                 if (TextUtils.isEmpty(province_id)||TextUtils.isEmpty(city_id)||TextUtils.isEmpty(county_id)){
@@ -172,14 +236,28 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
                 if (TextUtils.isEmpty(address)){
                     return;
                 }
+                try {
+                    changeAddress();
 
-                changeAddress();
+                }catch (Exception e){
+
+                }
                 break;
             case R.id.back_savebar:
-                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
-                FragmentTransaction transaction1= getActivity().getSupportFragmentManager().beginTransaction();
-                transaction1.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                transaction1.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                ClearWindows.clearInput(getActivity(),addr);
+
+                switch (tag){
+                    case "set":
+                        MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                        FragmentTransaction transaction1= getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction1.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
+                        transaction1.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                        break;
+                    case "pc":
+                        getActivity().finish();
+                        break;
+                }
+
                 break;
         }
     }

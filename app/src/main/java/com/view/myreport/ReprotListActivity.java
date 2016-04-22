@@ -254,7 +254,11 @@ public class ReprotListActivity extends BaseActivity {
     }
 
     private void initListView() {
-        myadapter.notifyDataSetChanged();
+        if (gameReportInfos.size()==0){
+            listview.setVisibility(View.GONE);
+        }else {
+            myadapter.notifyDataSetChanged();
+        }
     }
     private void deleteTestGame(String gameid){
         BaseParams baseParams=new BaseParams("test/deltestgame");

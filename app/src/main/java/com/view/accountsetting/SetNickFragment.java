@@ -132,6 +132,7 @@ public class SetNickFragment extends BaseFragment implements View.OnClickListene
                 break;
 
             case R.id.back_savebar:
+                ClearWindows.clearInput(getActivity(),nickname);
                 MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                 FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);

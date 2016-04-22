@@ -91,7 +91,7 @@ public class InvestAttentionAdapter extends BaseAdapter {
             public void onClick(View v) {
                 list.remove(position);
                 notifyDataSetChanged();
-                AttentionChange.removeAttention("4", invesmentSimpleInfo.getUser_id(), new Callback.CommonCallback<String>() {
+                AttentionChange.removeAttention2("4", invesmentSimpleInfo.getUser_id(), new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         MyLog.i("adapter==="+result);

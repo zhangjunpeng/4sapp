@@ -20,11 +20,13 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.view.HorizontalListView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
+import com.test4s.account.MyAccount;
 import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
@@ -33,6 +35,10 @@ import com.test4s.net.GameDetailParams;
 import com.test4s.net.GameDetialParser;
 import com.test4s.jsonparser.GameJsonParser;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.myattention.AttentionChange;
+import com.view.s4server.CPDetailActivity;
+import com.view.search.Search;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,12 +51,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class GameDetailActivity extends AppCompatActivity {
+public class GameDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageView icon;
     TextView game_name;
     LinearLayout find;
-    String[] find_msg;
     private TextView companyname;
     private TextView canyu;
     private TextView baseinfo;
@@ -64,11 +69,13 @@ public class GameDetailActivity extends AppCompatActivity {
     private ImageView download;
 
     private HorizontalListView other_game;
-    private TextView game_intro_more;
-    private TextView game_update_more;
-    private TextView other_geme_more;
     private TextView conmentnum;
     private LinearLayout continer_advice;
+
+    private TextView find_tz;
+    private TextView find_fx;
+    private TextView find_ip;
+    private TextView find_wb;
 
 
     int[] star_id={R.id.star1_gamedetail,R.id.star2_gamedetail,R.id.star3_gamedetail,R.id.star4_gamedetail,R.id.star5_gamedetail};
@@ -85,10 +92,9 @@ public class GameDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private String game_id;
-
     private float density;
 
-
+    private String cp_id;
 
     private GameInfo gameInfo;
 
@@ -103,24 +109,23 @@ public class GameDetailActivity extends AppCompatActivity {
     List<GameInfo> game_list;
     List<Advise> adviseList;
     private String companynamestring;
-    private String game_imgstring;
-    private String game_namestring;
-    private String game_platformstring;
-    private String game_typestring;
-    private String game_stagestring;
-    private String game_sizestring;
-    private String game_download_url;
 
     private String pic_dir;
     private List<String> game_shots;
     private String game_introstring;
-    private String game_updatestring;
     private String game_download_unit;
     private String game_download_nums;
     private String requirement;
     private boolean flag_showall_inro=false;
     private boolean flag_showall_update=false;
 
+    private LinearLayout div_gameshot;
+    private LinearLayout div_updateInfo;
+    private LinearLayout div_othergame;
+    private LinearLayout div_advise;
+    private String game_typestring;
+
+    private ImageView back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,16 +146,16 @@ public class GameDetailActivity extends AppCompatActivity {
         // set a custom tint color for all system bars
 
         tintManager.setTintColor(Color.parseColor("#252525"));
-        toolbar= (Toolbar) findViewById(R.id.toolbar_gameDetail);
-        setSupportActionBar(toolbar);
+//        toolbar= (Toolbar) findViewById(R.id.toolbar_gameDetail);
+//        setSupportActionBar(toolbar);
 
-
+        back= (ImageView) findViewById(R.id.back_gamedetail);
 
         game_id=getIntent().getStringExtra("game_id");
 
         icon= (ImageView) findViewById(R.id.image_game_detail);
         game_name= (TextView) findViewById(R.id.gamename_game);
-        find= (LinearLayout) findViewById(R.id.linear2_gamedetail);
+        find= (LinearLayout) findViewById(R.id.linear_requir_gamedetail);
         for (int i=0;i<stars.length;i++){
             stars[i]= (ImageView) findViewById(star_id[i]);
         }
@@ -166,25 +171,37 @@ public class GameDetailActivity extends AppCompatActivity {
         care_title= (ImageView) findViewById(R.id.care_title_gamedetail);
         care= (ImageView) findViewById(R.id.attention_gametail);
         download= (ImageView) findViewById(R.id.download_gamedetail);
-        game_intro_more= (TextView) findViewById(R.id.more_introduction_game);
-        game_update_more= (TextView) findViewById(R.id.more_update_game);
 
         gameShot= (LinearLayout) findViewById(R.id.gameshot_game_detail);
         conmentnum= (TextView) findViewById(R.id.conment_num);
         companyname= (TextView) findViewById(R.id.name_company_game);
         continer_advice= (LinearLayout) findViewById(R.id.continer_comment_gamedetail);
 
+        div_gameshot= (LinearLayout) findViewById(R.id.div_gameshot_gamedetail);
+        div_updateInfo= (LinearLayout) findViewById(R.id.div_updateinfo_gameDetail);
+        div_othergame= (LinearLayout) findViewById(R.id.div_othergame_gamedetail);
+        div_advise= (LinearLayout) findViewById(R.id.div_advise_gamedetail);
+
+        find_fx= (TextView) findViewById(R.id.find_fx);
+        find_ip= (TextView) findViewById(R.id.find_ip);
+        find_tz= (TextView) findViewById(R.id.find_tz);
+        find_wb= (TextView) findViewById(R.id.find_wb);
 
         //获取屏幕密度
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
+
         initData();
         initListener();
 
     }
 
     private void initListener() {
+        download.setOnClickListener(this);
+        down_title.setOnClickListener(this);
+        companyname.setOnClickListener(this);
+        back.setOnClickListener(this);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -195,16 +212,19 @@ public class GameDetailActivity extends AppCompatActivity {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (verticalOffset<-100*density){
-                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
-                }else {
-                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
-                }
+//                if (verticalOffset<-100*density){
+//                    toolbar.setBackgroundColor(Color.argb(15,255,255,255));
+//                }else {
+//                    toolbar.setBackgroundColor(Color.argb( 0,37,37,37));
+//                }
                 if (verticalOffset>-250*density){
                     down_title.setVisibility(View.INVISIBLE);
                     care_title.setVisibility(View.INVISIBLE);
                 }else {
-                    down_title.setVisibility(View.VISIBLE);
+                    if (gameInfo.getPack().equals("1")&&gameInfo.getChecked().equals("1")){
+                        down_title.setVisibility(View.VISIBLE);
+
+                    }
                     care_title.setVisibility(View.VISIBLE);
                 }
                 if (scrollRange + verticalOffset == 0) {
@@ -216,49 +236,28 @@ public class GameDetailActivity extends AppCompatActivity {
                 }
             }
         });
-        game_intro.setOnClickListener(new View.OnClickListener() {
+
+        View.OnClickListener myListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag_showall_inro=!flag_showall_inro;
-                if (flag_showall_inro){
-                    MyLog.i("game_intro=="+game_introstring);
-                    game_intro.setEllipsize(null);
-                    game_intro.setMaxLines(100);
-                    game_intro.setText(game_introstring);
-                    game_intro_more.setText("收起");
+                if (MyAccount.isLogin){
+                    if (focus){
+                        focus=false;
+                        AttentionChange.removeAttention("1",game_id,GameDetailActivity.this);
+                    }else {
+                        focus=true;
+                        AttentionChange.addAttention("1",game_id,GameDetailActivity.this);
+                    }
+                    changeCare(focus);
                 }else {
-
-                    String into=game_introstring.substring(0,78);
-                    game_intro.setText(into+"...");
-                    game_intro.setMaxLines(3);
-                    game_intro.setEllipsize(TextUtils.TruncateAt.END);
-                    game_intro_more.setText("更多");
+                    //未登录
+                    goLogin(GameDetailActivity.this);
                 }
+
             }
-        });
-        up_info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (game_updatestring.length()<78){
-                    return;
-                }
-                flag_showall_update=!flag_showall_update;
-                if (flag_showall_update){
-
-                    up_info.setEllipsize(null);
-                    up_info.setMaxLines(100);
-                    up_info.setText(game_update_introstring);
-                    game_update_more.setText("收起");
-                }else {
-
-                    String into=game_update_introstring.substring(0,74);
-                    up_info.setText(into+"...");
-                    up_info.setMaxLines(3);
-                    up_info.setEllipsize(TextUtils.TruncateAt.END);
-                    game_update_more.setText("更多");
-                }
-            }
-        });
+        };
+        care_title.setOnClickListener(myListener);
+        care.setOnClickListener(myListener);
     }
 
     private void initData() {
@@ -270,6 +269,9 @@ public class GameDetailActivity extends AppCompatActivity {
         }
         BaseParams gamedetail=new BaseParams("game/gamedetail");
         gamedetail.addParams("game_id",game_id);
+        if (MyAccount.isLogin){
+            gamedetail.addParams("token",MyAccount.getInstance().getToken());
+        }
         gamedetail.addSign();
         gamedetail.getRequestParams().setCacheMaxAge(1000*60*30);
 
@@ -322,7 +324,7 @@ public class GameDetailActivity extends AppCompatActivity {
                 gameInfo=new GameInfo();
                 gameInfo.setGame_name(info.getString("game_name"));
                 gameInfo.setGame_size(info.getString("game_size"));
-
+                cp_id=info.getString("cp_id");
                 gameInfo.setGame_download_nums(info.getString("game_download_nums"));
                 gameInfo.setGame_stage(info.getString("game_stage"));
                 gameInfo.setGame_download_url(info.getString("game_download_url"));
@@ -333,6 +335,15 @@ public class GameDetailActivity extends AppCompatActivity {
                 create_timestring=info.getString("create_time");
                 game_test_numsstring=info.getString("game_test_nums");
                 requirement=info.getString("requirement");
+
+                gameInfo.setPack(info.getString("pack"));
+                gameInfo.setChecked(info.getString("checked"));
+                String fo=info.getString("focus");
+                if (fo.equals("false")||fo.equals("0")){
+                    focus=false;
+                }else if(fo.equals("true")||fo.equals("1")){
+                    focus=true;
+                }
 
                 JSONObject game_shot=info.getJSONObject("game_shot");
 
@@ -352,7 +363,6 @@ public class GameDetailActivity extends AppCompatActivity {
                 game_introstring=info.getString("game_intro");
                 game_update_introstring=info.getString("game_update_intro");
                 companynamestring=info.getString("company_name");
-                focus=info.getBoolean("focus");
                 score=info.getString("playScore");
                 game_download_unit=info.getString("game_download_unit");
                 game_download_nums=info.getString("game_download_nums");
@@ -401,35 +411,46 @@ public class GameDetailActivity extends AppCompatActivity {
                 .into(icon);
 
 
-        MyLog.i("game_namestring==="+game_namestring);
+        MyLog.i("game_namestring==="+gameInfo.getGame_name());
         game_name.setText(gameInfo.getGame_name());
         companyname.setText(companynamestring);
-
-//        find_msg= requirement.split(",");
-//        if (find_msg.length>0){
-//            for (int i=0;i<find_msg.length;i++){
-//                switch (find_msg[i]){
-//                    case "找投资":
-//                        find.getChildAt(0).setVisibility(View.GONE);
-//                        break;
-//                    case "找发行":
-//                        find.getChildAt(1).setVisibility(View.GONE);
-//                        break;
-//                    case "找外包":
-//                        find.getChildAt(2).setVisibility(View.GONE);
-//                        break;
-//                    case "找IP":
-//                        find.getChildAt(3).setVisibility(View.GONE);
-//                        break;
-//                }
-//            }
-//        }
+        if (TextUtils.isEmpty(requirement)){
+            find.setVisibility(View.INVISIBLE);
+        }else {
+            if (requirement.contains("找发行")) {
+                find_fx.setVisibility(View.VISIBLE);
+            }
+            if (requirement.contains("找投资")) {
+                find_tz.setVisibility(View.VISIBLE);
+            }
+            if (requirement.contains("找IP")) {
+                find_ip.setVisibility(View.VISIBLE);
+            }
+            if (requirement.contains("找外包")) {
+                find_wb.setVisibility(View.VISIBLE);
+            }
+        }
 
         if (focus){
             //已关注
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_gamedetail_has);
         }else {
 
         }
+        MyLog.i("game_download_url=="+gameInfo.getGame_download_url());
+        String info="";
+        if (!gameInfo.getPack().equals("1")||!gameInfo.getChecked().equals("1")){
+            down_title.setVisibility(View.GONE);
+            download.setVisibility(View.GONE);
+            down_title.setClickable(false);
+            info="上传时间："+create_timestring+"\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
+
+        }else {
+            info="上传时间："+create_timestring+"\n其他："+game_download_nums+game_download_unit+"下载"+" · "+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
+
+        }
+
         MyLog.i("score=="+score);
         if (score.equals("null")){
 
@@ -439,63 +460,78 @@ public class GameDetailActivity extends AppCompatActivity {
 
         MyLog.i("game_test_numsstring=="+game_test_numsstring);
         canyu.setText("("+game_test_numsstring+"人参与)");
-        baseinfo.setText("上传时间："+create_timestring+"\n其他："+game_download_nums+game_download_unit+"下载"+" · "+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform());
+        baseinfo.setText(info);
 
-        try {
-            String into=game_update_introstring.substring(0,74);
-            up_info.setText(into+"...");
-        }catch (Exception e){
-            MyLog.i("报错1");
+//        try {
+//            String into=game_update_introstring.substring(0,74);
+//            up_info.setText(into+"...");
+//        }catch (Exception e){
+//            MyLog.i("报错1");
+//            up_info.setText(game_update_introstring);
+//        }
+        if (TextUtils.isEmpty(game_update_introstring)){
+            div_updateInfo.setVisibility(View.GONE);
+        }else {
             up_info.setText(game_update_introstring);
         }
-        try {
-            String into=game_introstring.substring(0,78);
-            game_intro.setText(into+"...");
-        }catch (Exception e){
-            MyLog.i("报错2");
-            game_intro.setText(game_introstring);
-        }
+        game_intro.setText(game_introstring);
+//        try {
+//            String into=game_introstring.substring(0,78);
+//            game_intro.setText(into+"...");
+//        }catch (Exception e){
+//            MyLog.i("报错2");
+//            game_intro.setText(game_introstring);
+//        }
 
 
         MyLog.i("game_update_introstring=="+game_update_introstring);
 
+        if (game_shots.size()==0){
+            div_gameshot.setVisibility(View.GONE);
+        }else {
+            addshots(game_shots);
+        }
+        if (game_list.size()==0){
+            div_othergame.setVisibility(View.GONE);
+        }else {
+            other_game.setAdapter(new Game_HL_Adapter(this,game_list));
+            other_game.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    GameInfo gameInfo=game_list.get(position);
+                    Intent intent= new Intent(GameDetailActivity.this,GameDetailActivity.class);
+                    intent.putExtra("game_id",gameInfo.getGame_id());
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }
+            });
+        }
 
-        addshots(game_shots);
-        other_game.setAdapter(new Game_HL_Adapter(this,game_list));
-        other_game.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GameInfo gameInfo=game_list.get(position);
-                Intent intent= new Intent(GameDetailActivity.this,GameDetailActivity.class);
-                intent.putExtra("game_id",gameInfo.getGame_id());
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-            }
-        });
-        
-        conmentnum.setText("("+advise_num+")");
-
-        addAdvices(adviseList);
-
+        if (adviseList.size()==0){
+            div_advise.setVisibility(View.GONE);
+        }else {
+            conmentnum.setText("(" + advise_num + ")");
+            addAdvices(adviseList);
+        }
     }
 
     private void addAdvices(List<Advise> adviseList) {
-        MyLog.i("添加评论1,adviseList size=="+adviseList.size());
+//        MyLog.i("添加评论1,adviseList size=="+adviseList.size());
 //        LinearLayoutCompat.LayoutParams params=new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i=0;i<adviseList.size();i++){
             Advise ad=adviseList.get(i);
-            MyLog.i("添加评论2");
+//            MyLog.i("添加评论2");
             View view= LayoutInflater.from(this).inflate(R.layout.item_advicelist,null);
             TextView name= (TextView) view.findViewById(R.id.showname_item_advice);
             TextView time= (TextView) view.findViewById(R.id.time_item_advice);
             final TextView advice= (TextView) view.findViewById(R.id.advice_item_advice);
-            MyLog.i("添加评论3");
+//            MyLog.i("添加评论3");
             name.setText(ad.getShowname());
             time.setText(ad.getDate_time()+"  "+ad.getHour_time());
             advice.setText(ad.getAdvise());
-            MyLog.i("添加评论4");
+//            MyLog.i("添加评论4");
             continer_advice.addView(view);
-            MyLog.i("添加评论5");
+//            MyLog.i("添加评论5");
             advice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -512,6 +548,15 @@ public class GameDetailActivity extends AppCompatActivity {
         }
 
     }
+    private void changeCare(boolean iscare){
+        if (iscare){
+            care_title.setImageResource(R.drawable.cared);
+            care.setImageResource(R.drawable.attention_gamedetail_has);
+        }else {
+            care_title.setImageResource(R.drawable.care);
+            care.setImageResource(R.drawable.attention_gamedetail);
+        }
+    }
 
     private void addshots(List<String> game_shots) {
         LinearLayoutCompat.LayoutParams params;
@@ -525,12 +570,14 @@ public class GameDetailActivity extends AppCompatActivity {
 
             params.rightMargin = (int) (3 * density);
             params.bottomMargin = (int) (18 * density);
-            params.leftMargin= (int) (3*density);
+//            MyLog.i("leftmargin=="+(3*density));
+            params.leftMargin=(int) (3*density);
             imageView.setId(i);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setLayoutParams(params);
 
             gameShot.addView(imageView, params);
-            MyLog.i("添加ImageView==="+Url.prePic + game_shots.get(i));
+//            MyLog.i("添加ImageView==="+Url.prePic + game_shots.get(i));
             Picasso.with(this)
                     .load(Url.prePic + game_shots.get(i))
                     .placeholder(R.drawable.default_icon)
@@ -556,4 +603,55 @@ public class GameDetailActivity extends AppCompatActivity {
         startActivity(downloadIntent);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.name_company_game:
+                Intent intent=new Intent(this, CPDetailActivity.class);
+                intent.putExtra("user_id",cp_id);
+                intent.putExtra("identity_cat","2");
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                break;
+            case R.id.download_gamedetail:
+            case R.id.download_title_gamedetail:
+                downLoadGame(webpre+gameInfo.getGame_download_url());
+                if (MyAccount.isLogin){
+                    addMyEvaluation();
+                }
+                break;
+            case R.id.back_gamedetail:
+                finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+                break;
+        }
+
+    }
+    private void addMyEvaluation(){
+        BaseParams baseParams=new BaseParams("test/downloadgame");
+        baseParams.addParams("game_id",game_id);
+        baseParams.addParams("token",MyAccount.getInstance().getToken());
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("add game to eva back=="+result);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
 }

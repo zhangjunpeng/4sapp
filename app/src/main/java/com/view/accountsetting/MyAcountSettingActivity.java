@@ -35,6 +35,7 @@ public class MyAcountSettingActivity extends FragmentActivity {
     public void onBackPressed() {
         setResult(Activity.RESULT_OK);
         if (BaseFragment.selectedFragment instanceof MyAcountSettingFragment){
+            setResult(Activity.RESULT_OK);
             super.onBackPressed();
         }else {
             MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();

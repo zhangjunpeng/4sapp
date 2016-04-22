@@ -25,6 +25,9 @@ public class GameInfo {
     private String is_test;
     private Integer online;
     private Integer enabled;
+    private String sdk;
+    private String pack;
+    private String checked;
 
     public GameInfo() {
     }
@@ -33,7 +36,7 @@ public class GameInfo {
         this.id = id;
     }
 
-    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type, String game_dev, String create_time, String is_test, Integer online, Integer enabled) {
+    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type, String game_dev, String create_time, String is_test, Integer online, Integer enabled, String sdk, String pack, String checked) {
         this.id = id;
         this.sort = sort;
         this.game_id = game_id;
@@ -53,6 +56,9 @@ public class GameInfo {
         this.is_test = is_test;
         this.online = online;
         this.enabled = enabled;
+        this.sdk = sdk;
+        this.pack = pack;
+        this.checked = checked;
     }
 
     public Long getId() {
@@ -205,6 +211,30 @@ public class GameInfo {
 
     public void setEnabled(Integer enabled) {
         this.enabled = enabled;
+    }
+
+    public String getSdk() {
+        return sdk;
+    }
+
+    public void setSdk(String sdk) {
+        this.sdk = sdk;
+    }
+
+    public String getPack() {
+        return pack;
+    }
+
+    public void setPack(String pack) {
+        this.pack = pack;
+    }
+
+    public String getChecked() {
+        return checked;
+    }
+
+    public void setChecked(String checked) {
+        this.checked = checked;
     }
 
 }

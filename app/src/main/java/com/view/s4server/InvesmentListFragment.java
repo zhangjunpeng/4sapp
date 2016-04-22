@@ -53,7 +53,8 @@ public class InvesmentListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         invesmentSimpleInfos=new ArrayList<>();
-        initData("1");
+        myAdapter=new MyIssueAdapter(getActivity(),invesmentSimpleInfos);
+
         super.onCreate(savedInstanceState);
     }
 
@@ -62,8 +63,9 @@ public class InvesmentListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_list,null);
         listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
-        myAdapter=new MyIssueAdapter(getActivity(),invesmentSimpleInfos);
+        listView.setAdapter(myAdapter);
         initLisener();
+        initData("1");
 
         return view;
     }
@@ -73,18 +75,16 @@ public class InvesmentListFragment extends Fragment{
         listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                invesmentSimpleInfos=new ArrayList<InvesmentSimpleInfo>();
+                invesmentSimpleInfos.clear();
                 initData("1");
-                myAdapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
+
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 p++;
                 initData(p+"");
-                myAdapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
+
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -92,7 +92,8 @@ public class InvesmentListFragment extends Fragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent=new Intent(getActivity(),InvesmentDetialActivity.class);
                 InvesmentSimpleInfo info=invesmentSimpleInfos.get((int) id);
-                intent.putExtra("id",info.getUser_id());
+                intent.putExtra("user_id",info.getUser_id());
+                intent.putExtra("identity_cat",info.getIdentity_cat());
                 startActivity(intent);
             }
         });
@@ -125,8 +126,8 @@ public class InvesmentListFragment extends Fragment{
             @Override
             public void onFinished() {
                 jsonParser(res);
-                initView();
-
+                myAdapter.notifyDataSetChanged();
+                listView.onRefreshComplete();
             }
 
             @Override
@@ -155,6 +156,9 @@ public class InvesmentListFragment extends Fragment{
                     invesmentSimpleInfo.setIdentity_cat(jsonObject2.getString("identity_cat"));
                     invesmentSimpleInfo.setCompany_name(jsonObject2.getString("company_name"));
                     invesmentSimpleInfo.setCompany_intro(jsonObject2.getString("company_intro"));
+                    invesmentSimpleInfo.setArea_name(jsonObject2.getString("area_name"));
+                    invesmentSimpleInfo.setInvest_cat_name(jsonObject2.getString("invest_cat_name"));
+                    invesmentSimpleInfo.setInvest_stage_name(jsonObject2.getString("invest_stage_name"));
                     invesmentSimpleInfos.add(invesmentSimpleInfo);
                 }
             }
@@ -164,9 +168,6 @@ public class InvesmentListFragment extends Fragment{
         }
     }
 
-    private void initView() {
-        listView.setAdapter(myAdapter);
-    }
 
     class MyIssueAdapter extends BaseAdapter {
         List<InvesmentSimpleInfo> list;
@@ -196,11 +197,11 @@ public class InvesmentListFragment extends Fragment{
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
             if (convertView==null){
-                convertView=LayoutInflater.from(context).inflate(R.layout.item_cplistfragment,null);
+                convertView= LayoutInflater.from(context).inflate(R.layout.item_iplistfragment,null);
                 viewHolder=new ViewHolder();
-                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_cplist_listac);
-                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_cp_listac);
-                viewHolder.intro= (TextView) convertView.findViewById(R.id.introuduction_item_cp_listac);
+                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_iplist);
+                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_iplist);
+                viewHolder.intro= (TextView) convertView.findViewById(R.id.introuduction_item_iplist);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder= (ViewHolder) convertView.getTag();
@@ -211,7 +212,8 @@ public class InvesmentListFragment extends Fragment{
                     .placeholder(R.drawable.default_icon)
                     .into(viewHolder.icon);
             viewHolder.name.setText(invesmentSimpleInfo.getCompany_name());
-            viewHolder.intro.setText(invesmentSimpleInfo.getCompany_intro());
+            String mess="所在区域: "+invesmentSimpleInfo.getArea_name()+"\n机构类型: "+invesmentSimpleInfo.getInvest_cat_name()+"\n投资阶段： "+invesmentSimpleInfo.getInvest_stage_name();
+            viewHolder.intro.setText(mess);
             return convertView;
         }
         class ViewHolder{

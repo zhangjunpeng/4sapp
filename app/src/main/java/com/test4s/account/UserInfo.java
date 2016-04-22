@@ -23,6 +23,51 @@ public class UserInfo {
     private String county_name;
     private String edu_name;
     private String job_name;
+    private String weixin_sign;
+    private String sina_sign;
+    private String qq_sign;
+    private String age;
+    private String sex;
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getWeixin_sign() {
+        return weixin_sign;
+    }
+
+    public void setWeixin_sign(String weixin_sign) {
+        this.weixin_sign = weixin_sign;
+    }
+
+    public String getSina_sign() {
+        return sina_sign;
+    }
+
+    public void setSina_sign(String sina_sign) {
+        this.sina_sign = sina_sign;
+    }
+
+    public String getQq_sign() {
+        return qq_sign;
+    }
+
+    public void setQq_sign(String qq_sign) {
+        this.qq_sign = qq_sign;
+    }
 
     public String getId() {
         return id;

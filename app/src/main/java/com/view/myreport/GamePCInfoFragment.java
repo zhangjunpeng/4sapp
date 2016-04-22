@@ -183,12 +183,10 @@ public class GamePCInfoFragment extends Fragment{
                 String na=object.getString("name");
                 gamePCInfo.setName(na);
                 gamePCInfo.setScore(object.getString("score"));
-                JSONObject numobject=object.getJSONObject("num");
+                JSONArray numarray=object.getJSONArray("num");
                 List<Map<String,String>> numlist=new ArrayList<>();
-                Iterator<String> iterator=numobject.keys();
-                while (iterator.hasNext()){
-                    String key=iterator.next();
-                    JSONObject start=numobject.getJSONObject(key);
+                for (int j=0;j<numarray.length();j++){
+                    JSONObject start=numarray.getJSONObject(j);
                     Map<String,String> map=new HashMap<>();
                     map.put("name",start.getString("name"));
                     map.put("num",start.getString("num"));

@@ -56,6 +56,7 @@ public class MyPieChart {
 
         pieChart.setRotationAngle(90); // 初始旋转角度
 
+        pieChart.setDrawSliceText(true);
         // draws the corresponding description value into the slice
         // mChart.setDrawXValues(true);
 
@@ -141,7 +142,8 @@ public class MyPieChart {
         //  饼图数据
         for (int i = 0; i < list.size(); i++) {
             Map<String,String> map=list.get(i);
-            xValues.add(map.get("name"));  //饼块上显示成Quarterly1, Quarterly2, Quarterly3, Quarterly4
+//            xValues.add(map.get("name"));  //饼块上显示成Quarterly1, Quarterly2, Quarterly3, Quarterly4
+            xValues.add("");
             float val=Float.parseFloat(map.get("num"));
             yValues.add(new Entry(val,i));
         }
@@ -157,10 +159,29 @@ public class MyPieChart {
 
         pieDataSet.setSliceSpace(0f); //设置个饼状图之间的距离
         piecolor.add(Color.rgb(167, 219, 215));
-        piecolor.add(Color.rgb(250, 105, 0));
-        piecolor.add(Color.rgb(244, 134, 49));
-        piecolor.add(Color.rgb(224, 228, 205));
         piecolor.add(Color.rgb(105, 210, 231));
+        piecolor.add(Color.rgb(224, 228, 205));
+        piecolor.add(Color.rgb(244, 134, 49));
+        piecolor.add(Color.rgb(250, 105, 0));
+
+
+        piecolor.add(Color.rgb(58, 62, 108));
+        piecolor.add(Color.rgb(138, 112, 94));
+        piecolor.add(Color.rgb(209, 167, 134));
+        piecolor.add(Color.rgb(78,36,158));
+        piecolor.add(Color.rgb(34, 135, 200));
+        piecolor.add(Color.rgb(74, 100, 14));
+        piecolor.add(Color.rgb(100, 16, 125));
+        piecolor.add(Color.rgb(148, 168, 14));
+        piecolor.add(Color.rgb(89, 160, 78));
+        piecolor.add(Color.rgb(202, 16, 168));
+        piecolor.add(Color.rgb(20, 47, 189));
+        piecolor.add(Color.rgb(62, 89, 14));
+        piecolor.add(Color.rgb(147, 189, 128));
+        piecolor.add(Color.rgb(200, 156, 185));
+        piecolor.add(Color.rgb(124, 106, 140));
+        piecolor.add(Color.rgb(200, 16, 14));
+
 
 //        MyLog.i("饼图颜色==="+piecolor.toString());
         pieDataSet.setColors(piecolor);

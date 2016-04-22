@@ -54,6 +54,8 @@ public class EvaluationListFragment extends Fragment {
 
     private Button want_down;
 
+    private String sdk;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         gamelist=new ArrayList<>();
@@ -151,6 +153,7 @@ public class EvaluationListFragment extends Fragment {
                     gameInfo.setGame_type(info.getString("game_type"));
                     gameInfo.setOnline(info.getInt("online"));
                     gameInfo.setEnabled(info.getInt("enabled"));
+                    gameInfo.setSdk(info.getString("sdk"));
                     gamelist.add(gameInfo);
                 }
             }
@@ -237,14 +240,24 @@ public class EvaluationListFragment extends Fragment {
                 viewHolder.pc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        if (gameInfo.getEnabled()==0){
-//                            showWarningDialog(gameInfo.getOnline()/60);
-//                        }else {
-                            Intent intent=new Intent(getActivity(),StartPCActivity.class);
-                            intent.putExtra("game_id",gameInfo.getGame_id());
-                            startActivity(intent);
-                            getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//                        if (gameInfo.getSdk().equals("0")){
+//                            warningDialog("该游戏未集成SDK，无法评测");
+//                        }else if (gameInfo.getSdk().equals("1")){
+//                            if (gameInfo.getEnabled()==0){
+//                                showWarningDialog(gameInfo.getOnline()/60);
+//                            }else {
+//                                Intent intent=new Intent(getActivity(),StartPCActivity.class);
+//                                intent.putExtra("game_id",gameInfo.getGame_id());
+//                                startActivity(intent);
+//                                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//                            }
+//
 //                        }
+                        Intent intent=new Intent(getActivity(),StartPCActivity.class);
+                        intent.putExtra("game_id",gameInfo.getGame_id());
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+
                     }
                 });
 
@@ -336,6 +349,29 @@ public class EvaluationListFragment extends Fragment {
         TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
         TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
         mes.setText("游戏时长60分钟以上开启评测\n您当前游戏时长为"+min+"分钟");
+        clear.setText("我知道了");
+        channel.setVisibility(View.GONE);
+        dialog.show();
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+    public void warningDialog(String mess){
+        dialog=new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_setting,null);
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        dialog.setContentView(view,params);
+        TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
+        TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
+        TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
+        mes.setText(mess);
         clear.setText("我知道了");
         channel.setVisibility(View.GONE);
         dialog.show();

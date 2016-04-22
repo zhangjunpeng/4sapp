@@ -117,7 +117,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
     }
 
     private void changeButton() {
-        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>6){
+        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>=6){
             sub.setClickable(true);
             sub.setBackgroundResource(R.drawable.border_button_orange);
         }else {
@@ -135,6 +135,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
                     return;
                 }
                 getCode();
+                codeChange();
                 break;
             case R.id.button_sub_fpw:
                 reg();
@@ -223,7 +224,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
                     if (success&&code==200){
                         JSONObject jsonObject1=jsonObject.getJSONObject("data");
                         pa=jsonObject1.getString("pa");
-                        codeChange();
+//                        codeChange();
                     }
 
                 } catch (JSONException e) {

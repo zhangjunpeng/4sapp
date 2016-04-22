@@ -99,6 +99,7 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
         switch (v.getId()){
             case R.id.back_savebar:
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 break;
         }
     }

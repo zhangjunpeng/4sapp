@@ -94,7 +94,7 @@ public class GameAttentionAdapter extends BaseAdapter {
             public void onClick(View v) {
                 gameInfos.remove(position);
                 notifyDataSetChanged();
-                AttentionChange.removeAttention("1", gameInfo.getGame_id(), new Callback.CommonCallback<String>() {
+                AttentionChange.removeAttention2("1", gameInfo.getGame_id(), new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         MyLog.i("adapter==="+result);

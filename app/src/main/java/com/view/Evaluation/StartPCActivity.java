@@ -9,10 +9,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
@@ -61,7 +64,8 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
     private TextView gameDevText;
     private TextView gameTypeText;
     private TextView gameStageText;
-
+    private ImageView back;
+    private Button start;
 
 
     private UserInfo userInfo;
@@ -102,7 +106,8 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
         gameDevText= (TextView) findViewById(R.id.dev_pcgame);
         gameTypeText= (TextView) findViewById(R.id.type_pcgame);
         gameStageText= (TextView) findViewById(R.id.stage_pcgame);
-
+        back= (ImageView) findViewById(R.id.back_pcgame);
+        start= (Button) findViewById(R.id.startpc_pcgame);
         initListener();
 
         initData();
@@ -114,16 +119,37 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.re_job_pcgame).setOnClickListener(this);
         findViewById(R.id.re_area_pcgame).setOnClickListener(this);
         findViewById(R.id.re_phonebrand_pcgame).setOnClickListener(this);
-        findViewById(R.id.startpc_pcgame).setOnClickListener(new View.OnClickListener() {
+        start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent=new Intent(StartPCActivity.this,PCActivity.class);
                 intent.putExtra("game_id",game_id);
+                intent.putExtra("game_name",game_name);
                 startActivity(intent);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 finish();
+
             }
         });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void checkInfo() {
+        if (!age.equals("0")&&!"0".equals(sex)
+                &&!"".equals(userInfo.getJob_name())
+                &&!userInfo.getProvince_name().equals("")
+                &&!phonebrandid.equals("0")){
+            start.setBackgroundResource(R.drawable.border_button_orange);
+        }else {
+            start.setBackgroundResource(R.drawable.border_button_gray);
+        }
+
     }
 
     private void initData() {
@@ -152,6 +178,8 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
                         game_grade=info.getString("game_grade");
                         age=info.getString("age");
                         sex=info.getString("sex");
+                        userInfo.setAge(age);
+                        userInfo.setSex(sex);
                         phonebrandid=info.getString("phone_brand_id");
                         phonebrandname=info.getString("brand_name");
                     }
@@ -179,12 +207,12 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
 
     private void initView() {
         MyLog.i("PC InitView");
-        if (!"0".equals(age)){
+        if (!"0".equals(userInfo.getAge())){
             ageText.setText(age);
         }
-        if (sex.equals("1")){
+        if ("1".equals(userInfo.getSex())){
             sexText.setText("男");
-        }else if (sex.equals("2")){
+        }else if ("2".equals(userInfo.getSex())){
             sexText.setText("女");
         }
         if (!userInfo.getJob_name().equals("")){
@@ -199,10 +227,23 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
             phoneBrandText.setText(phonebrandname);
         }
         createtimeText.setText(create_time);
-        platfromText.setText(game_platform);
-        gameDevText.setText(game_dev);
-        gameTypeText.setText(game_type);
-        gameStageText.setText(game_stage);
+
+        if (TextUtils.isEmpty(game_platform)){
+            platfromText.setVisibility(View.GONE);
+        }
+        if (TextUtils.isEmpty(game_dev)){
+            gameDevText.setVisibility(View.GONE);
+        }
+        if (TextUtils.isEmpty(game_type)){
+            gameTypeText.setVisibility(View.GONE);
+        }
+        if (TextUtils.isEmpty(game_stage)){
+            gameStageText.setVisibility(View.GONE);
+        }
+        platfromText.setText(" "+game_platform+" ");
+        gameDevText.setText(" "+game_dev+" ");
+        gameTypeText.setText(" "+game_type+" ");
+        gameStageText.setText(" "+game_stage+" ");
         nameText.setText(game_name);
         Picasso.with(this)
                 .load(Url.prePic+game_img)
@@ -210,6 +251,9 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
         Picasso.with(this)
                 .load(Url.prePic+game_grade)
                 .into(gamegrade);
+
+        checkInfo();
+
     }
 
     @Override

@@ -51,9 +51,17 @@ public class SelectCityFragment extends BaseFragment {
     private TextView title;
     private TextView save;
 
+    //根据tag判断fragment的调用activity
+    private String tag="set";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            tag=bundle.getString("tag","pc");
+        }
 
         userInfo= MyAccount.getInstance().getUserInfo();
         upid="0";
@@ -111,7 +119,17 @@ public class SelectCityFragment extends BaseFragment {
                         setAddressFragment.setArguments(bundle);
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
-                        transaction.replace(R.id.contianner_mysetting,setAddressFragment).commit();
+                        switch (tag){
+                            case "set":
+                                transaction.replace(R.id.contianner_mysetting,setAddressFragment).commit();
+                                break;
+                            case "pc":
+                                bundle.putString("tag","pc");
+                                bundle.putBoolean("setback",true);
+                                setAddressFragment.setArguments(bundle);
+                                transaction.replace(R.id.contianer_pcgame,setAddressFragment).commit();
+                                break;
+                        }
 
 
                         break;

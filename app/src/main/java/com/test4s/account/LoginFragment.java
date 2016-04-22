@@ -1,6 +1,7 @@
 package com.test4s.account;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -19,8 +20,13 @@ import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.test4s.myapp.R;
+import com.test4s.net.BaseParams;
 import com.test4s.net.LoginParams;
+import com.view.Evaluation.EvaluationActivity;
 import com.view.accountsetting.BaseFragment;
+import com.view.messagecenter.MessageList;
+import com.view.myattention.AttentionActivity;
+import com.view.myreport.ReprotListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +54,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     private LinearLayout warning;
     private TextView warningtext;
 
+    String tag="login";
+
+    MyAccount myAccount;
+    SinaWeiboLogin sinaWeiboLogin;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +82,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
         login.setClickable(false);
 
+        myAccount=MyAccount.getInstance();
 
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            tag=getArguments().getString("tag","login");
+        }
 
 
         setImmerseLayout(view.findViewById(R.id.titlebar_login));
@@ -86,6 +102,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         login.setOnClickListener(this);
         reg.setOnClickListener(this);
         findpwd.setOnClickListener(this);
+
+        view.findViewById(R.id.weichat_login).setOnClickListener(this);
+        view.findViewById(R.id.weibo_login).setOnClickListener(this);
+        view.findViewById(R.id.qq_login).setOnClickListener(this);
+
         editText_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -134,6 +155,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        MyLog.i("fragment回调");
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
@@ -158,6 +185,25 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
             case R.id.back_savebar:
                 getActivity().finish();
                 break;
+            case R.id.weichat_login:
+                Intent intent1=new Intent(getActivity(),ThirdLoginActivity.class);
+                intent1.putExtra("third","weixin");
+                getActivity().startActivity(intent1);
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+                break;
+            case R.id.weibo_login:
+                Intent intent2=new Intent(getActivity(),ThirdLoginActivity.class);
+                intent2.putExtra("third","sina");
+                getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+                break;
+            case R.id.qq_login:
+                Intent intent3=new Intent(getActivity(),ThirdLoginActivity.class);
+                intent3.putExtra("third","qq");
+                getActivity().startActivityForResult(intent3,AccountActivity.THIRD_LOGIN);
+                break;
         }
     }
     private void login() {
@@ -166,8 +212,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         if (TextUtils.isEmpty(name)||TextUtils.isEmpty(pwd)){
             return;
         }
-        LoginParams loginParams=new LoginParams(name,pwd);
-        x.http().post(loginParams, new Callback.CommonCallback<String>() {
+        BaseParams loginParams=new BaseParams("user/login");
+        loginParams.addParams("username",name);
+        loginParams.addParams("password",pwd);
+        loginParams.addSign();
+        x.http().post(loginParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 MyLog.i("login_back:::"+result);
@@ -176,17 +225,15 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
                     boolean login=jsonObject.getBoolean("success");
                     if (login){
                         JSONObject jsonObject1=jsonObject.getJSONObject("data");
-                        MyAccount myAccount=MyAccount.getInstance();
+
                         myAccount.setNickname(jsonObject1.getString("nickname"));
                         myAccount.setUsername(jsonObject1.getString("username"));
                         myAccount.setToken(jsonObject1.getString("token"));
                         myAccount.setAvatar(jsonObject1.getString("avatar"));
                         Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
-                        myAccount.isLogin=true;
                         myAccount.saveUserInfo();
-                        MyLog.i("登录成功：："+myAccount.toString());
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+                        loginSuccess();
+
                     }else {
                         String mes=jsonObject.getString("msg");
                         showwarning(mes);
@@ -216,6 +263,40 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
             }
         });
 
+    }
+
+    private void loginSuccess() {
+        myAccount.isLogin=true;
+        Intent intent=null;
+        switch (tag){
+            case "login":
+
+                break;
+            case "messagecenter":
+                intent= new Intent(getActivity(), MessageList.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                break;
+            case "pc":
+                intent= new Intent(getActivity(), EvaluationActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                break;
+            case "attention":
+                intent= new Intent(getActivity(), AttentionActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                break;
+            case "report":
+                intent= new Intent(getActivity(), ReprotListActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                break;
+        }
+
+        MyLog.i("登录成功：："+myAccount.toString());
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
     }
 
     public void showwarning(String mes){

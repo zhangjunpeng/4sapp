@@ -19,13 +19,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.UploadUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.UserInfo;
 import com.test4s.net.BaseParams;
+import com.test4s.net.Url;
 import com.view.Evaluation.EvaluationActivity;
 import com.view.messagecenter.MessageList;
 import com.view.accountsetting.MyAcountSettingActivity;
@@ -48,28 +51,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Administrator on 2015/12/7.
  */
-public class MySettingFragment extends Fragment implements View.OnClickListener, UploadUtil.OnUploadProcessListener{
-
-    /**
-     * 去上传文件
-     */
-    protected static final int TO_UPLOAD_FILE = 1;
-    /**
-     * 上传文件响应
-     */
-    protected static final int UPLOAD_FILE_DONE = 2;  //
-    /**
-     * 选择文件
-     */
-    public static final int TO_SELECT_PHOTO = 3;
-    /**
-     * 上传初始化
-     */
-    private static final int UPLOAD_INIT_PROCESS = 4;
-    /**
-     * 上传中
-     */
-    private static final int UPLOAD_IN_PROCESS = 5;
+public class MySettingFragment extends Fragment implements View.OnClickListener{
 
     private CircleImageView roundedIcon;
     private TextView textView;
@@ -87,6 +69,10 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
     public MyAccount myAccount;
 
     public boolean network=true;
+
+    private ImageLoader imageLoader=ImageLoader.getInstance();
+
+    public static boolean changeIcon=false;
 
 
     @Nullable
@@ -131,7 +117,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
     private void initView() {
         //设置界面
         if (MyAccount.isLogin){
-            initData();
+//            initData();
             initUserInfo();
 
             name2.setVisibility(View.GONE);
@@ -143,24 +129,15 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
     }
 
     private void initData() {
-
-        if (!TextUtils.isEmpty(myAccount.getAvatar())){
-
-
-            Picasso.with(getActivity().getApplication()).load(myAccount.getAvatar())
-                    .placeholder(R.drawable.default_icon)
-                    .error(R.drawable.default_icon)
-                    .into(roundedIcon);
-        }
-
-        if (TextUtils.isEmpty(myAccount.getNickname())){
-            String nickname=myAccount.getUsername();
+        UserInfo userInfo=myAccount.getUserInfo();
+        if (TextUtils.isEmpty(userInfo.getNickname())){
+            String nickname=userInfo.getUsername();
             String subs=nickname.substring(3,7);
             MyLog.i("subs==="+subs);
             nickname=nickname.replace(subs,"*****");
             textView.setText(nickname);
         }else {
-            textView.setText(myAccount.getNickname());
+            textView.setText(userInfo.getNickname());
         }
 
 
@@ -195,9 +172,6 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
 
                 break;
             case R.id.seting_mysetting:
-//                Toast.makeText(getActivity(),"退出登录",Toast.LENGTH_SHORT).show();
-//                myAccount.loginOut();
-//                initView();
                 Intent intent3 = new Intent(getActivity(), SettingActivity.class);
                 startActivityForResult(intent3,RequestCode_setting);
                 getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
@@ -209,7 +183,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
                     getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }else {
                     //未登录
-                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+                    gologin("messagecenter");
                 }
                 break;
             case R.id.pc_my:
@@ -219,7 +193,8 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
                     getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }else {
                     //未登录
-                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+                    gologin("pc");
+
                 }
                 break;
             case R.id.myattention_mysetting:
@@ -229,7 +204,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
                     getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }else {
                     //未登录
-                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+                    gologin("attention");
                 }
                 break;
             case R.id.myreport_my:
@@ -239,100 +214,76 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
                     getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
                 }else {
                     //未登录
-                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+                    gologin("report");
                 }
                 break;
         }
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        MyLog.i("onActivityResult");
-        if(resultCode==Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO)
-        {
-            picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
-            MyLog.i( "最终选择的图片="+picPath);
-            Bitmap bm = BitmapFactory.decodeFile(picPath);
-            roundedIcon.setImageBitmap(bm);
-            if(picPath!=null)
-            {
-                handler.sendEmptyMessage(TO_UPLOAD_FILE);
-            }else{
-                Toast.makeText(getActivity(), "上传的文件路径出错", Toast.LENGTH_LONG).show();
-            }
-        }
+        MyLog.i("index My onActivityResult");
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_login){
             //登录成功返回
-            MyLog.i("登录成功~~~~~onActivityResult");
+            MyLog.i("mysetting~~~~~onActivityResult");
             Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
-            initView();
+            name2.setVisibility(View.GONE);
+            initUserInfo();
         }
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_setting){
-            initView();
+            if (MyAccount.isLogin) {
+             if (changeIcon) {
+                 updataInfo();
+             }
+            }else {
+                updataInfo();
+            }
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    private void toUploadFile()
-    {
 
-
-        String fileKey = "pic";
-
-//        UploadUtil uploadUtil = UploadUtil.getInstance();;
-//        uploadUtil.setOnUploadProcessListener(this);  //设置监听器监听上传状态
-//
-//
-//
-//        uploadUtil.uploadFile( picPath,fileKey, requestURL,params);
-
-        RequestParams requestParams=new RequestParams(requestURL);
-
-        requestParams.setMultipart(true);
-        requestParams.addBodyParameter("filedata",new File(picPath),null);
-        x.http().post(requestParams, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MyLog.i("updataImage==="+result);
+    private void updataInfo() {
+        myAccount=MyAccount.getInstance();
+        if (MyAccount.isLogin){
+            name2.setVisibility(View.GONE);
+            MyLog.i("myaccount=="+myAccount.toString());
+            if (TextUtils.isEmpty(myAccount.getNickname())){
+                String nickname=myAccount.getUsername();
+                String subs=nickname.substring(3,7);
+                MyLog.i("subs==="+subs);
+                nickname=nickname.replace(subs,"*****");
+                textView.setText(nickname);
+            }else {
+                textView.setText(myAccount.getNickname());
             }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-
+            updataAva();
+            initUserInfo();
+        }else{
+            roundedIcon.setImageResource(R.drawable.default_icon);
+            textView.setText("未登录");
+            name2.setVisibility(View.VISIBLE);
+        }
 
     }
 
-    @Override
-    public void onUploadDone(int responseCode, String message) {
-
+    private void updataAva() {
+        UserInfo userInfo=myAccount.getUserInfo();
+        if (userInfo==null){
+            if (myAccount.getAvatar().contains("http")) {
+                imageLoader.displayImage( myAccount.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
+            }else {
+                imageLoader.displayImage( Url.prePic+myAccount.getAvatar(), roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
+            }
+        }
+        if (!TextUtils.isEmpty(userInfo.getAvatar())){
+            if (userInfo.getAvatar().contains("http")) {
+                imageLoader.displayImage( userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
+            }else {
+                imageLoader.displayImage( Url.prePic+userInfo.getAvatar(), roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
+            }
+        }
     }
 
-    @Override
-    public void onUploadProcess(int uploadSize) {
-        Message msg = Message.obtain();
-        msg.what = UPLOAD_IN_PROCESS;
-        msg.arg1 = uploadSize;
-        handler.sendMessage(msg );
-    }
-
-    @Override
-    public void initUpload(int fileSize) {
-        Message msg = Message.obtain();
-        msg.what = UPLOAD_INIT_PROCESS;
-        msg.arg1 = fileSize;
-        handler.sendMessage(msg );
-    }
 
     private void initUserInfo() {
         BaseParams baseParams=new BaseParams("user/index");
@@ -369,6 +320,9 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
                         userInfo.setCounty_name(jsonObject3.getString("county_name"));
                         userInfo.setEdu_name(jsonObject3.getString("edu_name"));
                         userInfo.setJob_name(jsonObject3.getString("job_name"));
+                        userInfo.setQq_sign(jsonObject3.getString("qq_sign"));
+                        userInfo.setWeixin_sign(jsonObject3.getString("weixin_sign"));
+                        userInfo.setSina_sign(jsonObject3.getString("sina_sign"));
 
                         MyAccount.getInstance().setUserInfo(userInfo);
                         network=true;
@@ -393,34 +347,17 @@ public class MySettingFragment extends Fragment implements View.OnClickListener,
 
             @Override
             public void onFinished() {
-
+                initData();
+                updataAva();
             }
         });
     }
 
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case TO_UPLOAD_FILE:
-                    toUploadFile();
-                    break;
+    public void gologin(String tag){
+        Intent intent=new Intent(getActivity(), AccountActivity.class);
+        intent.putExtra("tag",tag);
+        startActivityForResult(intent,RequestCode_login);
+        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+    }
 
-                case UPLOAD_INIT_PROCESS:
-
-                    break;
-                case UPLOAD_IN_PROCESS:
-
-                    break;
-                case UPLOAD_FILE_DONE:
-                    String result = "响应码："+msg.arg1+"\n响应信息："+msg.obj+"\n耗时："+UploadUtil.getRequestTime()+"秒";
-                    Toast.makeText(getActivity(),result,Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-
-    };
 }

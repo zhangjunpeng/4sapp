@@ -99,6 +99,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="31dp"
             android:layout_marginRight="14dp"
+            android:visibility="invisible"
             />
 
     </RelativeLayout>
