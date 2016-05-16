@@ -1,24 +1,27 @@
 package com.view.s4server;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
+import com.app.view.PullListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
-import com.test4s.jsonparser.IPJsonParser;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -35,10 +38,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/2/18.
  */
-public class OutSourceListFragment extends Fragment{
+public class OutSourceListFragment extends BaseFragment{
     View view;
 
-    PullToRefreshListView listView;
+    PullListView listView;
 
     int p=1;
 
@@ -46,8 +49,13 @@ public class OutSourceListFragment extends Fragment{
 
     MyOutSourceListAdapter myAdapter;
 
+    private Dialog dialog;
+    private Button refreash;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        dialog=showLoadingDialog(getActivity());
+
         osSimpleInfos=new ArrayList<>();
         myAdapter=new MyOutSourceListAdapter(getActivity(),osSimpleInfos);
 
@@ -57,9 +65,18 @@ public class OutSourceListFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.fragment_list,null);
-        listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
 
+        view=inflater.inflate(R.layout.fragment_list,null);
+        listView= (PullListView) view.findViewById(R.id.pullToRefresh_fglist);
+        refreash= (Button) view.findViewById(R.id.refeash_list);
+        refreash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.setVisibility(View.VISIBLE);
+                dialog.show();
+                initData("1");
+            }
+        });
         listView.setAdapter(myAdapter);
         initData(1+"");
         initListView();
@@ -80,7 +97,10 @@ public class OutSourceListFragment extends Fragment{
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                if (dialog.isShowing()){
+                    dialog.dismiss();
+                }
+                listView.setVisibility(View.GONE);
             }
 
             @Override
@@ -92,7 +112,9 @@ public class OutSourceListFragment extends Fragment{
             public void onFinished() {
                 listView.onRefreshComplete();
                 myAdapter.notifyDataSetChanged();
-
+                if (dialog.isShowing()){
+                    dialog.dismiss();
+                }
             }
         });
 
@@ -107,6 +129,9 @@ public class OutSourceListFragment extends Fragment{
                 JSONObject jsonObject1=jsonObject.getJSONObject("data");
                 Url.prePic=jsonObject1.getString("prefixPic");
                 JSONArray jsonArray=jsonObject1.getJSONArray("outsourceList");
+                if (jsonArray.length()==0){
+                    CusToast.showToast(getActivity(),"没有更多外包信息", Toast.LENGTH_SHORT);
+                }
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject2=jsonArray.getJSONObject(i);
                     OutSourceSimpleInfo outsource=new OutSourceSimpleInfo();

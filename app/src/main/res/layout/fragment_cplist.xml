@@ -4,11 +4,11 @@
     android:layout_height="match_parent">
 
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.app.view.PullListView
         android:id="@+id/listview_cplist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        ></com.handmark.pulltorefresh.library.PullToRefreshListView>
+        ></com.app.view.PullListView>
 
 </LinearLayout>

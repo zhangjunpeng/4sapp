@@ -27,7 +27,7 @@ import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
 import com.view.game.GameDetailActivity;
 import com.view.game.GameListActivity;
-import com.view.messagecenter.DeleListView;
+import com.app.delslidelistview.DeleListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -240,23 +240,23 @@ public class EvaluationListFragment extends Fragment {
                 viewHolder.pc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        if (gameInfo.getSdk().equals("0")){
-//                            warningDialog("该游戏未集成SDK，无法评测");
-//                        }else if (gameInfo.getSdk().equals("1")){
-//                            if (gameInfo.getEnabled()==0){
-//                                showWarningDialog(gameInfo.getOnline()/60);
-//                            }else {
-//                                Intent intent=new Intent(getActivity(),StartPCActivity.class);
-//                                intent.putExtra("game_id",gameInfo.getGame_id());
-//                                startActivity(intent);
-//                                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-//                            }
-//
-//                        }
-                        Intent intent=new Intent(getActivity(),StartPCActivity.class);
-                        intent.putExtra("game_id",gameInfo.getGame_id());
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                        if (gameInfo.getSdk().equals("0")){
+                            warningDialog("该游戏未集成SDK，无法评测");
+                        }else if (gameInfo.getSdk().equals("1")){
+                            if (gameInfo.getEnabled()==0){
+                                showWarningDialog(gameInfo.getOnline()/60);
+                            }else {
+                                Intent intent=new Intent(getActivity(),StartPCActivity.class);
+                                intent.putExtra("game_id",gameInfo.getGame_id());
+                                startActivity(intent);
+                                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                            }
+
+                        }
+//                        Intent intent=new Intent(getActivity(),StartPCActivity.class);
+//                        intent.putExtra("game_id",gameInfo.getGame_id());
+//                        startActivity(intent);
+//                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
 
                     }
                 });

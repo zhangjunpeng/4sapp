@@ -8,14 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
-import com.test4s.gdb.CP;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
-
-import org.xutils.x;
 
 import java.util.List;
 
@@ -26,6 +25,11 @@ public class Game_HL_Adapter  extends BaseAdapter{
     List<GameInfo> list;
     Context mcontext;
     public static String prefixPic;
+
+    private ImageLoader imageloder=ImageLoader.getInstance();
+
+
+
     public Game_HL_Adapter(Context context,List<GameInfo> gameList){
         list=gameList;
         mcontext=context;
@@ -33,7 +37,6 @@ public class Game_HL_Adapter  extends BaseAdapter{
 
     @Override
     public int getCount() {
-
         return list.size();
     }
 
@@ -62,9 +65,8 @@ public class Game_HL_Adapter  extends BaseAdapter{
         GameInfo gameInfo=list.get(position);
         String imageUrl= Url.prePic+gameInfo.getGame_img();
         String name=gameInfo.getGame_name();
-        Picasso.with(mcontext)
-                .load(imageUrl)
-                .into(viewHolder.imageView);
+        imageloder.displayImage(imageUrl,viewHolder.imageView, MyDisplayImageOptions.getdefaultImageOptions());
+
         MyLog.i("imageUrl=="+imageUrl);
         viewHolder.textView.setText(name);
         return convertView;

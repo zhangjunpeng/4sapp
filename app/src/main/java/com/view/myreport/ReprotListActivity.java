@@ -2,33 +2,24 @@ package com.view.myreport;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
-import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
-import com.view.Evaluation.PcDetailActivity;
-import com.view.Evaluation.StartPCActivity;
 import com.view.activity.BaseActivity;
 import com.view.game.GameDetailActivity;
-import com.view.messagecenter.DeleListView;
+import com.app.delslidelistview.DeleListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;

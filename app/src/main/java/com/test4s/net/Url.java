@@ -1,9 +1,12 @@
 package com.test4s.net;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.app.tools.MD5Test;
 import com.app.tools.MyLog;
+import com.test4s.myapp.MyApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +28,13 @@ public class Url {
 
 
     //参数
-    public static String key="52game.com!2015168";
+    public static String key="";
 
     //图片前缀
-    public static String prePic="";
+    public static String prePic="http://s.52game.com/";
+    final static String SP_NAME="4stest";
+    private static SharedPreferences sharedPreferences;
+
 
     public static String getSign(Set<Map.Entry<String, String>> set) {
         if (TextUtils.isEmpty(key)) {
@@ -52,6 +58,13 @@ public class Url {
         MyLog.i("unsign===" + params);
 
         return MD5Test.getMD5(params.toString());
+
+    }
+    public static void saveUrl(String url){
+        sharedPreferences= MyApplication.mcontext.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("picpre",url);
+        editor.commit();
 
     }
 }

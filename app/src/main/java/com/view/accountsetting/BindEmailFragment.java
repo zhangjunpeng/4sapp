@@ -19,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -46,6 +48,7 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
     TextView tips;
     TextView warning;
     RelativeLayout layout;
+
 
     String email;
     String code;
@@ -83,6 +86,8 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
         save.setVisibility(View.INVISIBLE);
 
         title.setText("绑定邮箱");
+
+
 
         back.setOnClickListener(this);
 
@@ -148,11 +153,11 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
     private void getEmailCode(){
         email=email_editText.getText().toString();
         if (TextUtils.isEmpty(email)||!email.contains("@")){
-            Toast.makeText(getActivity(),"Email格式错误",Toast.LENGTH_SHORT).show();
+            showWarning("Email格式错误");
         }
 
         ClearWindows.clearInput(getActivity(),email_editText);
-        BaseParams baseParams=new BaseParams("api/sendemail");
+        final BaseParams baseParams=new BaseParams("api/sendemail");
         baseParams.addParams("email",email);
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
@@ -167,7 +172,11 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                         JSONObject js1=js.getJSONObject("data");
                         pa=js1.getString("pa");
                         codeChange();
-                        Toast.makeText(getActivity(),"发送邮件成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"发送邮件成功",Toast.LENGTH_SHORT);
+                    }else {
+                        String mes=js.getString("msg");
+                        showWarning(mes);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,10 +201,15 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
         });
     }
 
+    private void showWarning(String mes) {
+        layout.setVisibility(View.VISIBLE);
+        warning.setText(mes);
+    }
+
     private void bindEamil(){
         code=code_editText.getText().toString();
         if (TextUtils.isEmpty(code)||TextUtils.isEmpty(pa)){
-            Toast.makeText(getActivity(),"验证码错误",Toast.LENGTH_SHORT).show();
+            showWarning("验证码错误");
         }
         BaseParams baseParams=new BaseParams("user/chgemail");
         baseParams.addParams("token", MyAccount.getInstance().getToken());
@@ -212,7 +226,7 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                     boolean su=js.getBoolean("success");
                     int code=js.getInt("code");
                     if (su&&code==200){
-                        Toast.makeText(getActivity(),"邮箱绑定成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"邮箱绑定成功",Toast.LENGTH_SHORT);
                         userInfo.setEmail(email);
                         MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                         Bundle bundle=new Bundle();
@@ -221,6 +235,9 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                    }else {
+                        String mes=js.getString("msg");
+
                     }
                     
                 } catch (JSONException e) {
@@ -257,6 +274,8 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                     getCode.setBackgroundResource(R.drawable.border_getcode_orange);
                     getCode.setText("验证码");
                     getCode.setClickable(true);
+                    time=59;
+
                     break;
             }
             super.handleMessage(msg);

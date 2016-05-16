@@ -1,6 +1,7 @@
 package com.test4s.account;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,16 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.test4s.net.GetCodeParams;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.x;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016/1/27.
@@ -48,6 +51,8 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
     private LinearLayout warning;
     private TextView warntext;
 
+    private Dialog dialog;
+
 
     private String pa;
     private int time=60;
@@ -62,6 +67,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                     getCode.setBackgroundResource(R.drawable.border_getcode_orange);
                     getCode.setText("重新获取");
                     getCode.setClickable(true);
+                    time=60;
                     break;
             }
         }
@@ -87,10 +93,11 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
         save.setVisibility(View.INVISIBLE);
         title.setText("注 册");
-        reg.setClickable(false);
         setImmerseLayout(view.findViewById(R.id.titlebar_reg));
 
         initListener();
+        reg.setClickable(false);
+
         return view;
     }
 
@@ -120,7 +127,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void changeButton() {
-        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>6){
+        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>=6){
             reg.setClickable(true);
             reg.setBackgroundResource(R.drawable.border_button_orange);
         }else {
@@ -142,6 +149,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
                 break;
             case R.id.button_reg_reg:
+                dialog=showLoadingDialog(getActivity());
                 reg();
                 break;
             case R.id.back_savebar:
@@ -167,58 +175,72 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
         String password=pwd.getText().toString();
         String code_s=code.getText().toString();
 
+//        String regEx="[\\da-zA-Z]+";
+
+        if (passwordMatch(password)){
 //        RegisterParms regParams=new RegisterParms(phone,password,code_s,pa);
-        BaseParams baseParams=new BaseParams("user/reg");
-        baseParams.addParams("username",phone);
-        baseParams.addParams("password",password);
-        baseParams.addParams("code",code_s);
-        baseParams.addParams("pa",pa);
-        baseParams.addSign();
-        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MyLog.i("register返回::::"+result);
-                try {
-                    JSONObject jsonObject=new JSONObject(result);
-                    boolean su=jsonObject.getBoolean("success");
-                    int code=jsonObject.getInt("code");
-                    if (su&&code==200){
-                        JSONObject jsonObject1=jsonObject.getJSONObject("data");
-                        MyAccount myAccount=MyAccount.getInstance();
-                        myAccount.setNickname(jsonObject1.getString("nickname"));
-                        myAccount.setUsername(jsonObject1.getString("username"));
-                        myAccount.setToken(jsonObject1.getString("token"));
-                        myAccount.setAvatar(jsonObject1.getString("avatar"));
-                        Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
-                        myAccount.isLogin=true;
-                        myAccount.saveUserInfo();
-                        MyLog.i("登录成功：："+myAccount.toString());
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
-                    }else {
-                        showwarn(jsonObject.getString("msg"));
+            BaseParams baseParams=new BaseParams("user/reg");
+            baseParams.addParams("username",phone);
+            baseParams.addParams("password",password);
+            baseParams.addParams("code",code_s);
+            baseParams.addParams("pa",pa);
+            baseParams.addSign();
+            x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    MyLog.i("register返回::::"+result);
+                    try {
+                        JSONObject jsonObject=new JSONObject(result);
+                        boolean su=jsonObject.getBoolean("success");
+                        int code=jsonObject.getInt("code");
+                        if (su&&code==200){
+                            JSONObject jsonObject1=jsonObject.getJSONObject("data");
+                            MyAccount myAccount=MyAccount.getInstance();
+                            myAccount.setNickname(jsonObject1.getString("nickname"));
+                            myAccount.setUsername(jsonObject1.getString("username"));
+                            myAccount.setToken(jsonObject1.getString("token"));
+                            myAccount.setAvatar(jsonObject1.getString("avatar"));
+
+                            CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
+
+                            myAccount.isLogin=true;
+                            myAccount.saveUserInfo();
+                            MyLog.i("登录成功：："+myAccount.toString());
+                            getActivity().setResult(Activity.RESULT_OK);
+                            getActivity().finish();
+                        }else {
+                            showwarn(jsonObject.getString("msg"));
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
 
-            }
+                }
 
-            @Override
-            public void onCancelled(CancelledException cex) {
+                @Override
+                public void onCancelled(CancelledException cex) {
 
-            }
+                }
 
-            @Override
-            public void onFinished() {
+                @Override
+                public void onFinished() {
+                    dialog.dismiss();
+                }
+            });
+        }else {
+            showwarn("密码必须由字母和数字组成");
+            return;
+        }
 
-            }
-        });
+
+
+
+
     }
 
     private void getCode() {
@@ -271,6 +293,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
     private void codeChange() {
         ClearWindows.clearInput(getActivity(),phoneNum);
+        MyLog.i("getcode倒计时");
 
         getCode.setBackgroundResource(R.drawable.border_getcode_gray);
         new Thread(new Runnable() {
@@ -291,6 +314,19 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
             }
         }).start();
 
+    }
+
+    public boolean passwordMatch(String password){
+        String regEx_1="[^a-zA-Z0-9]";
+
+        String regEx_abc="[^a-zA-Z]";
+        String regEx_num="[^0-9]";
+
+
+        boolean result= Pattern.compile(regEx_1).matcher(password).find();
+        boolean result_num= Pattern.compile(regEx_abc).matcher(password).find();
+        boolean result_abc= Pattern.compile(regEx_num).matcher(password).find();
+        return (!result)&&result_abc&&result_num;
     }
 
 

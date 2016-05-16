@@ -1,23 +1,27 @@
 package com.view.s4server;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
+import com.app.tools.MyLog;
+import com.app.view.PullListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
-import com.test4s.jsonparser.IssueJsonParser;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -29,18 +33,16 @@ import org.xutils.common.Callback;
 import org.xutils.x;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2016/2/18.
  */
-public class IssueListFragment extends Fragment{
+public class IssueListFragment extends BaseFragment{
     View view;
 
     List<IssueSimpleInfo> issueSimpleInfos;
-    PullToRefreshListView listView;
+    PullListView listView;
     MyIssueAdapter myAdapter;
 
 
@@ -49,9 +51,13 @@ public class IssueListFragment extends Fragment{
     private ImageView back;
 
     int p=1;
+    private Dialog dialog;
+    private Button refreash;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        dialog=showLoadingDialog(getActivity());
+
         issueSimpleInfos=new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
@@ -59,11 +65,21 @@ public class IssueListFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         view=inflater.inflate(R.layout.fragment_list,null);
-        listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
+        listView= (PullListView) view.findViewById(R.id.pullToRefresh_fglist);
         myAdapter=new MyIssueAdapter(getActivity(),issueSimpleInfos);
         listView.setAdapter(myAdapter);
+        refreash= (Button) view.findViewById(R.id.refeash_list);
+        refreash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.setVisibility(View.VISIBLE);
 
+                dialog.show();
+                initData("1");
+            }
+        });
         initLisener();
         initData("1");
         return view;
@@ -113,6 +129,10 @@ public class IssueListFragment extends Fragment{
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                if (dialog.isShowing()){
+                    dialog.dismiss();
+                }
+                listView.setVisibility(View.GONE);
 
             }
 
@@ -126,6 +146,9 @@ public class IssueListFragment extends Fragment{
                 jsonParser(res);
                 myAdapter.notifyDataSetChanged();
                 listView.onRefreshComplete();
+                if (dialog.isShowing()){
+                    dialog.dismiss();
+                }
 
             }
 
@@ -142,6 +165,11 @@ public class IssueListFragment extends Fragment{
                 Url.prePic=jsonObject1.getString("prefixPic");
 
                 JSONArray issues=jsonObject1.getJSONArray("issueList");
+                MyLog.i("issues size=="+issues.length());
+
+                if (issues.length()==0){
+                    CusToast.showToast(getActivity(),"没有更多发行信息", Toast.LENGTH_SHORT);
+                }
                 for (int i=0;i<issues.length();i++){
                     JSONObject jsonObject2=issues.getJSONObject(i);
                     IssueSimpleInfo issueSimpleInfo=new IssueSimpleInfo();

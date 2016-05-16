@@ -98,7 +98,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-
         android:id="@+id/re_warning_bindemail"
         android:layout_width="match_parent"
         android:visibility="invisible"

@@ -38,10 +38,17 @@ public class WeiXinLogin {
     public void login(){
         SendAuth.Req req=new SendAuth.Req();
         req.scope = "snsapi_userinfo";
-        req.state = "52game";
+        req.state = "52game_login";
         MyLog.i("weixin login=="+ api.sendReq(req));
 
     }
+    public void bind(){
+        SendAuth.Req req=new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = "52game_bind";
+        MyLog.i("weixin login=="+ api.sendReq(req));
+    }
+
     public void refreshToken(String token, Callback.CommonCallback<String> callback){
         RequestParams params=new RequestParams("https://api.weixin.qq.com/sns/oauth2/refresh_token");
         params.addBodyParameter("appid",APP_ID);

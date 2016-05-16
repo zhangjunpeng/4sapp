@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,15 +16,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.view.accountsetting.BaseFragment;
-import com.view.accountsetting.JobInfo;
+import com.test4s.myapp.BaseFragment;
 import com.view.accountsetting.MyAcountSettingFragment;
-import com.view.accountsetting.SetAddressFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,7 +106,8 @@ public class SetPhoneBrandFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(phone_id)||TextUtils.isEmpty(phone_name)){
-                    Toast.makeText(getActivity(),"请选择职业",Toast.LENGTH_SHORT).show();
+                    CusToast.showToast(getActivity(),"请选择职业",Toast.LENGTH_SHORT);
+
                     return;
                 }
                 changePhoneBrand();
@@ -134,7 +133,8 @@ public class SetPhoneBrandFragment extends BaseFragment {
                     boolean su=json.getBoolean("success");
                     int code=json.getInt("code");
                     if (su&&code==200){
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
                     }

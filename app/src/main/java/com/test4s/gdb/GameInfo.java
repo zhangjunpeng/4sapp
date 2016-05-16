@@ -28,6 +28,7 @@ public class GameInfo {
     private String sdk;
     private String pack;
     private String checked;
+    private String title;
 
     public GameInfo() {
     }
@@ -36,7 +37,7 @@ public class GameInfo {
         this.id = id;
     }
 
-    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type, String game_dev, String create_time, String is_test, Integer online, Integer enabled, String sdk, String pack, String checked) {
+    public GameInfo(Long id, String sort, String game_id, String require, String game_img, String game_download_nums, String game_platform, String game_stage, String game_name, String game_download_url, String game_size, String norms, String game_grade, String game_type, String game_dev, String create_time, String is_test, Integer online, Integer enabled, String sdk, String pack, String checked, String title) {
         this.id = id;
         this.sort = sort;
         this.game_id = game_id;
@@ -59,6 +60,7 @@ public class GameInfo {
         this.sdk = sdk;
         this.pack = pack;
         this.checked = checked;
+        this.title = title;
     }
 
     public Long getId() {
@@ -235,6 +237,14 @@ public class GameInfo {
 
     public void setChecked(String checked) {
         this.checked = checked;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
 }

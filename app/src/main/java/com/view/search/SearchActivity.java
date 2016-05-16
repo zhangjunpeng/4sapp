@@ -1,16 +1,15 @@
 package com.view.search;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -19,16 +18,7 @@ import com.test4s.gdb.History;
 import com.test4s.gdb.HistoryDao;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
-import com.test4s.net.BaseParams;
 import com.view.activity.BaseActivity;
-import com.view.setting.Settingfragment;
-
-import org.xutils.common.Callback;
-import org.xutils.x;
-
-import java.util.List;
-
-import de.greenrobot.dao.query.Query;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
@@ -61,7 +51,21 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
 
 //        getFocus(editText);
+
         initListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //延时启动输入法。否则瞬间弹出又消失
+        (new Handler()).postDelayed(new Runnable() {
+            public void run() {
+//                log.info("postDelayed");
+                InputMethodManager inManager = (InputMethodManager)editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        },500);
     }
 
     private void initListener() {

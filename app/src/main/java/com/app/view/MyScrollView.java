@@ -8,6 +8,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
 
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+
 /**
  * 重写ScrollView,以解决ScrollView与水平listView滑动时冲突
  */
@@ -21,6 +23,8 @@ public class MyScrollView extends ScrollView
     super(context, attrs);
     mGestureDetector = new GestureDetector(new YScrollDetector());
     setFadingEdgeLength(0);
+    OverScrollDecoratorHelper.setUpOverScroll(this);
+
   }
 
   @Override

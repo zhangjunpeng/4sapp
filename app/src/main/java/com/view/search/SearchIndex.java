@@ -3,7 +3,6 @@ package com.view.search;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import com.test4s.gdb.HistoryDao;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;

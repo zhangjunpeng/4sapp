@@ -136,9 +136,20 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     public static final class drawable {
         public static int default_ptr_flip=0x7f020000;
         public static int default_ptr_rotate=0x7f020001;
-        public static int indicator_arrow=0x7f020002;
-        public static int indicator_bg_bottom=0x7f020003;
-        public static int indicator_bg_top=0x7f020004;
+        public static int handerloading=0x7f020002;
+        public static int hd1=0x7f020003;
+        public static int hd10=0x7f020004;
+        public static int hd2=0x7f020005;
+        public static int hd3=0x7f020006;
+        public static int hd4=0x7f020007;
+        public static int hd5=0x7f020008;
+        public static int hd6=0x7f020009;
+        public static int hd7=0x7f02000a;
+        public static int hd8=0x7f02000b;
+        public static int hd9=0x7f02000c;
+        public static int indicator_arrow=0x7f02000d;
+        public static int indicator_bg_bottom=0x7f02000e;
+        public static int indicator_bg_top=0x7f02000f;
     }
     public static final class id {
         public static int both=0x7f060003;

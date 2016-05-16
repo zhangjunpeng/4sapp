@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -152,8 +152,7 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
                 reg();
                 break;
             case R.id.back_savebar:
-                AccountActivity ac= (AccountActivity) getActivity();
-                ac.backlogin();
+                getActivity().finish();
                 break;
 
         }
@@ -199,7 +198,7 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
                         myAccount.setUsername(jsonObject1.getString("username"));
                         myAccount.setToken(jsonObject1.getString("token"));
                         myAccount.setAvatar(jsonObject1.getString("avatar"));
-                        Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
                         myAccount.isLogin=true;
                         myAccount.saveUserInfo();
                         MyLog.i("登录成功：："+myAccount.toString());

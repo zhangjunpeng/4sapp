@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.text.TextUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.MyLog;
@@ -39,12 +40,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
     public static String access_token;
 
     public String refresh_token;
+    private TextView text;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wxentry);
+        text= (TextView) findViewById(R.id.text_wexinentry);
         WeiXinLogin.getInstance(this).api.handleIntent(getIntent(),this);
         MyLog.i("弹出WXEntryActivity");
         myAccount=MyAccount.getInstance();
@@ -71,7 +74,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
             case BaseResp.ErrCode.ERR_OK:
                 Bundle bundle=new Bundle();
                 resp.toBundle(bundle);
-
                 MyLog.i("weixin login back=="+bundle.toString());
                 refresh_token=bundle.getString("_wxapi_sendauth_resp_token");
                 MyLog.i("wx =="+resp.checkArgs());
@@ -80,7 +82,16 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
                 MyLog.i("params 1=="+params[1]);
                 String code=params[1].split("&")[0];
                 String code2=code.split("=")[1];
-                sendToServer("weixin",code2,null,null);
+
+                String state=bundle.getString("_wxapi_sendauth_resp_state");
+                if (state.equals("52game_login")){
+                    sendToServer("weixin",code2,null,null);
+
+                }else if (state.equals("52game_bind")){
+                    sendToBind("weixin",code2,null,MyAccount.getInstance().getToken());
+                }
+
+
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 break;
@@ -91,6 +102,58 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
         }
 
     }
+
+    private void sendToBind(String type, String uid, final String info, String token) {
+        BaseParams baseParams=new BaseParams("user/thirdlogin");
+        baseParams.addParams("logintype",type);
+        baseParams.addParams("uniqueid",uid);
+        if (!TextUtils.isEmpty(info)) {
+            baseParams.addParams("otherinfo",info);
+
+        }
+        if (!TextUtils.isEmpty(token)) {
+            baseParams.addParams("token", token);
+        }
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("bind weixin back=="+result);
+                try {
+                    JSONObject jsob=new JSONObject(result);
+                    boolean su=jsob.getBoolean("success");
+                    int code=jsob.getInt("code");
+                    if (su&&code==200){
+                        text.setText("绑定成功!!");
+                        JSONObject data=jsob.getJSONObject("data");
+                        MyAccount.getInstance().getUserInfo().setWeixin_sign(data.getString("weixin_sign"));
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+
     public void sendToServer(String type, String uid, final String info, String token) {
         BaseParams baseParams=new BaseParams("user/thirdlogin");
         baseParams.addParams("logintype",type);

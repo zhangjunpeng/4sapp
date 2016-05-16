@@ -112,6 +112,13 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:textSize="16dp"
+                        android:maxWidth="150dp"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:singleLine="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:focusableInTouchMode="true"
+                        android:scrollHorizontally="true"
                         android:visibility="invisible"
                         android:textColor="#fff" />
                 </RelativeLayout>

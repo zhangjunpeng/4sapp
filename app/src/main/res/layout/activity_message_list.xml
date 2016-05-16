@@ -6,11 +6,11 @@
         android:id="@+id/titlebar_messlist"
         layout="@layout/titlebar_save"/>
 
-    <com.view.messagecenter.DeleListView
+    <com.app.delslidelistview.DeleListView
         android:id="@+id/listView_messlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.view.messagecenter.DeleListView>
+    </com.app.delslidelistview.DeleListView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

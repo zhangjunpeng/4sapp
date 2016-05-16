@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.UploadUtil;
@@ -131,11 +132,20 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
     private void initData() {
         UserInfo userInfo=myAccount.getUserInfo();
         if (TextUtils.isEmpty(userInfo.getNickname())){
-            String nickname=userInfo.getUsername();
-            String subs=nickname.substring(3,7);
-            MyLog.i("subs==="+subs);
-            nickname=nickname.replace(subs,"*****");
-            textView.setText(nickname);
+            if (!TextUtils.isEmpty(userInfo.getPhone())){
+                String nickname=userInfo.getPhone();
+                String subs=nickname.substring(3,7);
+                MyLog.i("subs==="+subs);
+                nickname=nickname.replace(subs,"*****");
+                textView.setText(nickname);
+            }else {
+                String nickname=userInfo.getEmail();
+                String subs[]=nickname.split("@");
+                MyLog.i("subs==="+subs[0]);
+                nickname=nickname.replace(subs[0],subs[0].replace(subs[0].substring(3,subs[0].length()),"****"));
+                textView.setText(nickname);
+            }
+
         }else {
             textView.setText(userInfo.getNickname());
         }
@@ -150,7 +160,8 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
                 Intent intent;
                 if (MyAccount.isLogin){
                     if (!network){
-                        Toast.makeText(getActivity(),"网络连接失败，请检查网络",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"网络连接失败，请检查网络",Toast.LENGTH_SHORT);
+
                         return;
                     }else {
                         intent=new Intent(getActivity(), MyAcountSettingActivity.class);
@@ -225,7 +236,8 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_login){
             //登录成功返回
             MyLog.i("mysetting~~~~~onActivityResult");
-            Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
+            CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
+
             name2.setVisibility(View.GONE);
             initUserInfo();
         }

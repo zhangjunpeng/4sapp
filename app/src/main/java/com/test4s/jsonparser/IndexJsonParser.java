@@ -1,12 +1,8 @@
 package com.test4s.jsonparser;
 
-import com.test4s.gdb.Investment;
-import com.test4s.gdb.OutSource;
-import com.test4s.net.IndexParser;
+import com.test4s.gdb.IndexAdvert;
+import com.test4s.gdb.IndexItemInfo;
 import com.test4s.net.Url;
-import com.view.index.IndexAdverts;
-import com.view.index.IndexItemSipleInfo;
-import com.view.s4server.CPSimpleInfo;
 import com.view.s4server.IPSimpleInfo;
 
 import org.json.JSONArray;
@@ -26,7 +22,7 @@ public class IndexJsonParser {
     public Map<String,List> map;
     public List<String> order;
     public List<String> names;
-    public  List<IndexAdverts> indexAdvertses;
+    public  List<IndexAdvert> indexAdvertses;
 
     private static IndexJsonParser indexJsonParser;
 
@@ -71,10 +67,10 @@ public class IndexJsonParser {
                         }
                         map.put(method_name,list);
                     }else {
-                        ArrayList<IndexItemSipleInfo> list=new ArrayList<>();
+                        ArrayList<IndexItemInfo> list=new ArrayList<>();
                         for (int j=0;j<array.length();j++){
                             JSONObject item=array.getJSONObject(j);
-                            IndexItemSipleInfo simpleInfo=new IndexItemSipleInfo();
+                            IndexItemInfo simpleInfo=new IndexItemInfo();
                             simpleInfo.setUser_id(item.getString("user_id"));
                             simpleInfo.setLogo(item.getString("logo"));
                             simpleInfo.setIdentity_cat(item.getString("identity_cat"));
@@ -87,9 +83,9 @@ public class IndexJsonParser {
                 JSONArray adverts=data.getJSONArray("adverts");
                 indexAdvertses=new ArrayList<>();
                 for (int i=0;i<adverts.length();i++){
-                    IndexAdverts advert=new IndexAdverts();
+                    IndexAdvert advert=new IndexAdvert();
                     JSONObject jadvert=adverts.getJSONObject(i);
-                    advert.setId(jadvert.getString("id"));
+                    advert.setUser_id(jadvert.getString("id"));
                     advert.setAdvert_name(jadvert.getString("advert_name"));
                     advert.setAdvert_pic(jadvert.getString("advert_pic"));
                     advert.setAdvert_url(jadvert.getString("advert_url"));

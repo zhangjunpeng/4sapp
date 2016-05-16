@@ -23,10 +23,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.MyAccount;
+import com.test4s.gdb.AdvertsDao;
+import com.test4s.gdb.DaoSession;
+import com.test4s.gdb.GameInfoDao;
+import com.test4s.gdb.GameTypeDao;
+import com.test4s.gdb.IPDao;
+import com.test4s.gdb.IndexAdvertDao;
+import com.test4s.gdb.IndexItemInfoDao;
+import com.test4s.gdb.NewsInfoDao;
+import com.test4s.gdb.OrderDao;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
@@ -62,6 +72,8 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
 
     private final static int LoginCode=201;
 
+    private DaoSession daoSession;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         activity= (SettingActivity) getActivity();
@@ -71,6 +83,9 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metric);
         density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
         windowWidth=metric.widthPixels;
+
+        daoSession=MyApplication.daoSession;
+
         super.onCreate(savedInstanceState);
     }
 
@@ -110,14 +125,10 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 showClearDialog();
                 break;
             case R.id.loginout_setting:
+
                 if(myaccount.isLogin){
-                    MyAccount.getInstance().loginOut();
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
+                    showDialog();
                 }else {
-//                    Intent intent=new Intent(getActivity(), AccountActivity.class);
-//                    startActivityForResult(intent,LoginCode);
-//                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
                 break;
             case R.id.check_update:
@@ -169,7 +180,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 case 0:
                     progressdialog.dismiss();
                     cahesize.setText("0 MB");
-                    Toast.makeText(getActivity(),"清理完成",Toast.LENGTH_SHORT).show();
+                    CusToast.showToast(getActivity(),"清理完成",Toast.LENGTH_SHORT);
                     break;
             }
         }
@@ -184,12 +195,16 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         progressdialog.setCanceledOnTouchOutside(false);
         progressdialog.setTitle("正在清理中。。。");
         progressdialog.show();
+
+
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 try {
+                    deleteAll();
                     Thread.sleep(2*1000);
                     handler.sendEmptyMessage(0);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -293,5 +308,75 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 dialog.dismiss();
             }
         });
+    }
+    public void showDialog(){
+        dialog=new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view= LayoutInflater.from(getActivity()).inflate(R.layout.dialog_setting,null);
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        dialog.setContentView(view,params);
+        TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
+        TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
+        TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
+        mes.setText("确定退出账号吗？");
+        clear.setText("退出");
+        clear.setTextColor(Color.rgb(255,157,0));
+        dialog.show();
+        channel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MyAccount.getInstance().loginOut();
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private IndexItemInfoDao getIndexItemInfoDao(){
+        return daoSession.getIndexItemInfoDao();
+    }
+    private IPDao getIPDao(){
+        return daoSession.getIPDao();
+    }
+    private IndexAdvertDao getIndexAdverDao(){
+        return daoSession.getIndexAdvertDao();
+    }
+    private OrderDao getOrderDao(){
+        return daoSession.getOrderDao();
+    }
+    private GameInfoDao getGameInfoDao(){
+        return daoSession.getGameInfoDao();
+    }
+    private AdvertsDao getAdvertsDao(){
+        return  daoSession.getAdvertsDao();
+    }
+    private GameTypeDao getGameTypeDao(){
+        return daoSession.getGameTypeDao();
+    }
+    private NewsInfoDao getNewsInfoDao(){
+        return daoSession.getNewsInfoDao();
+    }
+
+    private void deleteAll(){
+        getIndexItemInfoDao().deleteAll();
+        getIPDao().deleteAll();
+        getIndexAdverDao().deleteAll();
+        getOrderDao().deleteAll();
+        getGameInfoDao().deleteAll();
+        getAdvertsDao().deleteAll();
+        getGameInfoDao().deleteAll();
+        getGameTypeDao().deleteAll();
+        getNewsInfoDao().deleteAll();
     }
 }

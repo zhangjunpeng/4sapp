@@ -2,8 +2,6 @@ package com.view.accountsetting;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,13 +19,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.UploadUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
@@ -187,15 +186,23 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
             return;
         }
         if (TextUtils.isEmpty(userInfo.getNickname())){
-            String nickname=userInfo.getUsername();
-            String subs=nickname.substring(3,7);
-            MyLog.i("subs==="+subs);
-            nickname=nickname.replace(subs,"*****");
-            name.setText(nickname);
-            nick_name.setText(nickname);
+            if (!TextUtils.isEmpty(userInfo.getPhone())){
+                String nickname=userInfo.getPhone();
+                String subs=nickname.substring(3,7);
+                MyLog.i("subs==="+subs);
+                nickname=nickname.replace(subs,"*****");
+                name.setText(nickname);
+                nick_name.setText(nickname);
+            }else {
+                String nickname=userInfo.getEmail();
+                String subs[]=nickname.split("@");
+                MyLog.i("subs==="+subs[0]);
+                nickname=nickname.replace(subs[0],subs[0].replace(subs[0].substring(3,subs[0].length()),"****"));
+                name.setText(nickname);
+            }
+
         }else {
             name.setText(userInfo.getNickname());
-            nick_name.setText(userInfo.getNickname());
         }
 
         if (!userInfo.getProvince_name().equals("null")){
@@ -345,7 +352,8 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
                 handler.sendEmptyMessage(TO_UPLOAD_FILE);
 
             }else{
-                Toast.makeText(getActivity(), "上传的文件路径出错", Toast.LENGTH_LONG).show();
+                CusToast.showToast(getActivity(),"上传的文件路径出错",Toast.LENGTH_SHORT);
+
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -488,7 +496,7 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
                     break;
                 case UPLOAD_FILE_DONE:
                     String result = "响应码："+msg.arg1+"\n响应信息："+msg.obj+"\n耗时："+UploadUtil.getRequestTime()+"秒";
-                    Toast.makeText(getActivity(),result,Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(),result,Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

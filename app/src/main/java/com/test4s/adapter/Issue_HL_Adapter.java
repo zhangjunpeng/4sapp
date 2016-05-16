@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.test4s.gdb.Investment;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 import com.view.s4server.IssueSimpleInfo;

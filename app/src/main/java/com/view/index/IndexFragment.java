@@ -13,42 +13,55 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
+import com.app.tools.Timer;
 import com.app.view.HorizontalListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.squareup.picasso.Picasso;
+import com.test4s.gdb.DaoSession;
+import com.test4s.gdb.GameInfoDao;
+import com.test4s.gdb.IP;
+import com.test4s.gdb.IPDao;
+import com.test4s.gdb.IndexAdvert;
+import com.test4s.gdb.IndexAdvertDao;
+import com.test4s.gdb.IndexItemInfo;
+import com.test4s.gdb.IndexItemInfoDao;
+import com.test4s.gdb.Order;
+import com.test4s.gdb.OrderDao;
 import com.test4s.jsonparser.IndexJsonParser;
+import com.test4s.myapp.MyApplication;
 import com.test4s.net.BaseParams;
 import com.view.activity.ListActivity;
 import com.test4s.adapter.CP_HL_Adapter;
 import com.test4s.adapter.IP_HL_Adapter;
-import com.test4s.adapter.Invesment_HL_Adapter;
-import com.test4s.adapter.OutSource_HL_Adapter;
-import com.test4s.gdb.CP;
 import com.view.s4server.CPDetailActivity;
 import com.test4s.myapp.R;
-import com.test4s.net.IndexParser;
-import com.test4s.jsonparser.GameJsonParser;
 import com.test4s.net.Url;
-import com.view.s4server.CPSimpleInfo;
 import com.view.s4server.IPDetailActivity;
 import com.view.s4server.IPSimpleInfo;
 import com.view.s4server.InvesmentDetialActivity;
 import com.view.s4server.IssueDetailActivity;
 import com.view.s4server.OutSourceActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.logging.Handler;
+
+import de.greenrobot.dao.query.Query;
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * Created by Administrator on 2015/12/7.
@@ -77,31 +90,36 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
     List<ImageView> imageViewList;
     LinearLayout whiteDots;
-    List<IndexAdverts> indexAdvertses;
 
     IndexJsonParser indexJsonParser;
-    int currentItem;
+    static  Integer currentItem=0;
 
     Thread thread;
 
     float density;
 
+    private static boolean first=true;
+    private Map<String, List> map;
+    private List<Order> orders;
+    private List<IndexAdvert> indexAdvertses;
+
+    private DaoSession daoSession;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        thread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (true){
-                        Thread.sleep(5*1000);
-                        handler.sendEmptyMessage(0);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
+        if (thread==null){
+            thread=new Timer(handler);
+            thread.start();
+        }
+
+        daoSession= MyApplication.daoSession;
+
+        map=new HashMap<>();
+        orders=new ArrayList<>();
+        indexAdvertses=new ArrayList<>();
+        imageViewList=new ArrayList<>();
+
+
         super.onCreate(savedInstanceState);
     }
 
@@ -121,15 +139,11 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         view.findViewById(R.id.ip_fg_index).setOnClickListener(this);
         view.findViewById(R.id.tz_fg_index).setOnClickListener(this);
         view.findViewById(R.id.wb_fg_index).setOnClickListener(this);
-
-
-
-        indexJsonParser=IndexJsonParser.getInstance();
-
-        getDensity();
-
+//        indexJsonParser=IndexJsonParser.getInstance();
+        getDataFromDB();
         initData();
 
+        getDensity();
         return  view;
     }
 
@@ -145,25 +159,9 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         params.addSign();
         params.getRequestParams().setCacheMaxAge(1000*60*30);
 
-        Callback.Cancelable cancelable= x.http().post(params.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(params.getRequestParams(), new Callback.CommonCallback<String>() {
             private String result=null;
-            @Override
-            public boolean onCache(String result) {
-                // 得到缓存数据, 缓存过期后不会进入这个方法.
-                // 如果服务端没有返回过期时间, 参考params.setCacheMaxAge(maxAge)方法.
-                //
-                // * 客户端会根据服务端返回的 header 中 max-age 或 expires 来确定本地缓存是否给 onCache 方法.
-                //   如果服务端没有返回 max-age 或 expires, 那么缓存将一直保存, 除非这里自己定义了返回false的
-                //   逻辑, 那么xUtils将请求新数据, 来覆盖它.
-                //
-                // * 如果信任该缓存返回 true, 将不再请求网络;
-                //   返回 false 继续请求网络, 但会在请求头中加上ETag, Last-Modified等信息,
-                //   如果服务端返回304, 则表示数据没有更新, 不继续加载数据.
-                //
-                MyLog.i("缓存");
-                this.result = result;
-                return true; // true: 信任缓存数据, 不在发起网络请求; false不信任缓存数据.
-            }
+            private boolean success=true;
 
             @Override
             public void onSuccess(String result) {
@@ -174,7 +172,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                
+                success=false;
             }
 
             @Override
@@ -184,11 +182,17 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onFinished() {
-                MyLog.i("xutils~~~~~~~~~~~~index"+result);
-                indexJsonParser.jsonParser(result);
-                indexAdvertses=indexJsonParser.indexAdvertses;
-                initViewPager();
-                initView();
+                MyLog.i("~~~~~~~~index"+result);
+//                indexJsonParser.jsonParser(result);
+//                indexAdvertses=indexJsonParser.indexAdvertses;
+                if (success){
+                    MyLog.i("网络获取数据");
+                    deletAll();
+                    jsonParser(result);
+                    initView();
+                }else {
+
+                }
 
             }
         });
@@ -198,40 +202,56 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
     private void initView() {
         MyLog.i("initView1");
-        Map<String,List> map=indexJsonParser.map;
-        final List<String> order=indexJsonParser.order;
-        List<String> names=indexJsonParser.names;
-        MyLog.i("for1");
+//        map=indexJsonParser.map;
+//        order=indexJsonParser.order;
+//        names=indexJsonParser.names;
         MyLog.i("map Size=="+map.size());
+        content.clear();
+        continer.removeAllViews();
+        viewPager.removeAllViews();
+        initViewPager();
+
         for (int i=0;i<map.size();i++){
-            MyLog.i("addView1");
+//            MyLog.i("addView1");
             ViewHolder viewHolder=new ViewHolder();
             LinearLayout layout= (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.layout_index_horlistview,null);
-            MyLog.i("addView2");
-            viewHolder.listView= (HorizontalListView) layout.findViewById(R.id.list_horizontalListview);
+//            MyLog.i("addView2");
+            viewHolder.listView= (HorizontalScrollView) layout.findViewById(R.id.list_horizontalListview);
+
+
+            OverScrollDecoratorHelper.setUpOverScroll(viewHolder.listView);
+            viewHolder.listView.setHorizontalScrollBarEnabled(false);
+
             viewHolder.tj= (TextView) layout.findViewById(R.id.tj_horizontalListview);
             viewHolder.more= (TextView) layout.findViewById(R.id.more_horizontalListview);
-            viewHolder.tj.setText(names.get(i));
-            MyLog.i("addView3");
+            Order order=orders.get(i);
+            viewHolder.tj.setText(order.getName());
+//            MyLog.i("addView3");
             layout.setTag(viewHolder);
-            MyLog.i("addView4");
+//            MyLog.i("addView4");
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             continer.addView(layout,layoutParams);
-            MyLog.i("addView5");
+//            MyLog.i("addView5");
             content.add(layout);
-            MyLog.i("addView6");
+//            MyLog.i("addView6");
         }
         MyLog.i("initView2");
         for (int i=0;i<map.size();i++){
+            String method_name=orders.get(i).getMethod_name();
             ViewHolder viewHolder= (ViewHolder) content.get(i).getTag();
-            if (order.get(i).equals("ip")){
-                ArrayList<IPSimpleInfo> ipSimpleInfos= (ArrayList<IPSimpleInfo>) map.get(order.get(i));
-                IP_HL_Adapter adapter=new IP_HL_Adapter(getActivity(),ipSimpleInfos);
-                viewHolder.listView.setAdapter(adapter);
+            Order order=orders.get(i);
+            if (order.getMethod_name().equals("ip")){
+                ArrayList<IP> ipSimpleInfos= (ArrayList<IP>) map.get(order.getMethod_name());
+//                IP_HL_Adapter adapter=new IP_HL_Adapter(getActivity(),ipSimpleInfos);
+                LinearLayout linearLayout=getLinearInScroll(ipSimpleInfos);
+                viewHolder.listView.addView(linearLayout);
+
             }else {
-                ArrayList<IndexItemSipleInfo> indexSimpleinfos= (ArrayList<IndexItemSipleInfo>) map.get(order.get(i));
-                CP_HL_Adapter adapter=new CP_HL_Adapter(getActivity(),indexSimpleinfos);
-                viewHolder.listView.setAdapter(adapter);
+                ArrayList<IndexItemInfo> indexSimpleinfos= (ArrayList<IndexItemInfo>) map.get(order.getMethod_name());
+//                CP_HL_Adapter adapter=new CP_HL_Adapter(getActivity(),indexSimpleinfos);
+                LinearLayout linearLayout=getLinearInScroll2(indexSimpleinfos,method_name);
+//                viewHolder.listView.setAdapter(adapter);
+                viewHolder.listView.addView(linearLayout);
             }
         }
         MyLog.i("initView3");
@@ -242,7 +262,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(getActivity(), ListActivity.class);
-                    switch (order.get(j)){
+                    Order order=orders.get(j);
+                    switch (order.getMethod_name()){
                         case "ip":
                             intent.putExtra("tag",ListActivity.IP_TAG);
                             break;
@@ -263,57 +284,96 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                     getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
             });
-            final String method_name=order.get(i);
-            if (method_name.equals("ip")){
-                final ArrayList<IPSimpleInfo> ipSimpleInfos= (ArrayList<IPSimpleInfo>) map.get(method_name);
-                viewHolder.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent=new Intent(getActivity(), IPDetailActivity.class);
-                        IPSimpleInfo ipSimpleInfo=ipSimpleInfos.get(position);
-                        intent.putExtra("id",ipSimpleInfo.getId());
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-                    }
-                });
-            }else {
-                final ArrayList<IndexItemSipleInfo> infos= (ArrayList<IndexItemSipleInfo>) map.get(method_name);
-                viewHolder.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent=null;
-                        switch (method_name){
-                            case "cp":
-                                intent=new Intent(getActivity(), CPDetailActivity.class);
-                                break;
-                            case "issue":
-                                intent=new Intent(getActivity(), IssueDetailActivity.class);
-                                break;
-                            case "outsource":
-                                intent=new Intent(getActivity(), OutSourceActivity.class);
 
-                                break;
-                            case "investor":
-                                intent=new Intent(getActivity(), InvesmentDetialActivity.class);
-                                break;
-                        }
-                        IndexItemSipleInfo ipSimpleInfo=infos.get(position);
-                        intent.putExtra("user_id",ipSimpleInfo.getUser_id());
-                        intent.putExtra("identity_cat",ipSimpleInfo.getIdentity_cat());
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-                    }
-                });
-
-            }
 
         }
 
 
         MyLog.i("initView");
     }
+
+    private LinearLayout getLinearInScroll2(final ArrayList<IndexItemInfo> indexSimpleinfos, final String methodname) {
+        LinearLayout linear=new LinearLayout(getActivity());
+        for (int i=0;i<indexSimpleinfos.size();i++){
+            View convertView= LayoutInflater.from(getActivity()).inflate(R.layout.item_horizaontal_index,null);
+            ImageView imageView= (ImageView) convertView.findViewById(R.id.imageView_item_hor_index);
+            TextView textView= (TextView) convertView.findViewById(R.id.text_item_hor_index);
+            IndexItemInfo cp=indexSimpleinfos.get(i);
+            String imageUrl=Url.prePic+cp.getLogo();
+            String name=cp.getCompany_name();
+            Picasso.with(getActivity())
+                    .load(imageUrl)
+                    .into(imageView);
+            textView.setText(name);
+            linear.addView(convertView);
+            final int j=i;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=null;
+                    switch (methodname){
+                        case "cp":
+                            intent=new Intent(getActivity(), CPDetailActivity.class);
+                            break;
+                        case "issue":
+                            intent=new Intent(getActivity(), IssueDetailActivity.class);
+                            break;
+                        case "outsource":
+                            intent=new Intent(getActivity(), OutSourceActivity.class);
+
+                            break;
+                        case "investor":
+                            intent=new Intent(getActivity(), InvesmentDetialActivity.class);
+                            break;
+                    }
+                    IndexItemInfo ipSimpleInfo=indexSimpleinfos.get(j);
+                    intent.putExtra("user_id",ipSimpleInfo.getUser_id());
+                    intent.putExtra("identity_cat",ipSimpleInfo.getIdentity_cat());
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }
+            });
+        }
+        return linear;
+    }
+
+    private LinearLayout getLinearInScroll(final ArrayList<IP> ipSimpleInfos) {
+        LinearLayout linear=new LinearLayout(getActivity());
+        linear.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        for (int i=0;i<ipSimpleInfos.size();i++){
+            View convertView= LayoutInflater.from(getActivity()).inflate(R.layout.item_horizaontal_index,null);
+            ImageView imageView= (ImageView) convertView.findViewById(R.id.imageView_item_hor_index);
+            TextView textView= (TextView) convertView.findViewById(R.id.text_item_hor_index);
+            IP ip=ipSimpleInfos.get(i);
+            String imageUrl= Url.prePic+ip.getIp_logo();
+            String name=ip.getIp_name();
+            Picasso.with(getActivity())
+                    .load(imageUrl)
+                    .into(imageView);
+            textView.setText(name);
+
+            linear.addView(convertView);
+
+            final int j=i;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(getActivity(),IPDetailActivity.class);
+                    IP ipSimpleInfo=ipSimpleInfos.get(j);
+                    intent.putExtra("id",ipSimpleInfo.getId());
+                    startActivity(intent);
+                }
+            });
+        }
+
+        return linear;
+
+    }
+
     class ViewHolder{
-        HorizontalListView listView;
+        HorizontalScrollView listView;
         TextView tj;
         TextView more;
     }
@@ -324,8 +384,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
         MyLog.i("initViewPager");
 
-
-        imageViewList=new ArrayList<>();
+        imageViewList.clear();
+        whiteDots.removeAllViews();
 
 
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(viewPager.getLayoutParams().width,viewPager.getLayoutParams().height);
@@ -406,8 +466,14 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                         if (currentItem == indexAdvertses.size()) {
                             currentItem = 0;
                         }
-
+//                        MyLog.i("currentItem=="+currentItem+"===time==="+new Date().getTime());
                         viewPager.setCurrentItem(currentItem);
+//                        thread.start();
+                        synchronized (currentItem){
+                            currentItem.notify();
+
+                        }
+
                     }
                     break;
             }
@@ -457,9 +523,163 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-//        thread.stop();
+    private void getDataFromDB(){
+        orders.clear();
+        orders=searchOrder();
+        if (orders!=null&&orders.size()!=0){
+            MyLog.i("从数据库获取数据");
+            map.clear();
+            for (int i=0;i<orders.size();i++){
+                Order order=orders.get(i);
+                if (order.getMethod_name().equals("ip")){
+                    ArrayList<IP> ipArrayList= (ArrayList<IP>) searchIP();
+                    map.put(order.getMethod_name(),ipArrayList);
+                }else {
+                    ArrayList<IndexItemInfo> indexItemInfos= (ArrayList<IndexItemInfo>) searchIndexItem(order.getMethod_name());
+                    map.put(order.getMethod_name(),indexItemInfos);
+                }
+            }
+            indexAdvertses=seerchIndexAdvert();
+            MyLog.i("order size=="+orders.size());
+            initView();
+
+        }
     }
+
+
+    public void jsonParser(String res){
+        map.clear();
+        orders.clear();
+        indexAdvertses.clear();
+        try {
+            JSONObject jsonObect=new JSONObject(res);
+            boolean su=jsonObect.getBoolean("success");
+            int code=jsonObect.getInt("code");
+            if (su&&code==200){
+                JSONObject data=jsonObect.getJSONObject("data");
+                Url.prePic=data.getString("prefixPic");
+                Url.saveUrl(Url.prePic);
+                JSONArray reList=data.getJSONArray("reList");
+                for (int i=0;i<reList.length();i++){
+                    JSONObject info=reList.getJSONObject(i);
+                    Order order=new Order();
+                    String method_name=info.getString("method_name");
+                    String name=info.getString("name");
+                    order.setMethod_name(method_name);
+                    order.setName(name);
+                    orders.add(order);
+                    addOrder(order);
+                    JSONArray array=info.getJSONArray(method_name+"list");
+                    if (method_name.equals("ip")){
+                        ArrayList<IP> list=new ArrayList<>();
+                        for (int j=0;j<array.length();j++){
+                            JSONObject item=array.getJSONObject(j);
+                            IP ipsimpleInfo=new IP();
+                            ipsimpleInfo.setIp_name(item.getString("ip_name"));
+                            ipsimpleInfo.setIp_logo(item.getString("ip_logo"));
+                            ipsimpleInfo.setId(item.getString("id"));
+                            list.add(ipsimpleInfo);
+                            addIP(ipsimpleInfo);
+                        }
+                        map.put(method_name,list);
+                    }else {
+                        ArrayList<IndexItemInfo> list=new ArrayList<>();
+                        for (int j=0;j<array.length();j++){
+                            JSONObject item=array.getJSONObject(j);
+                            IndexItemInfo simpleInfo=new IndexItemInfo();
+                            simpleInfo.setUser_id(item.getString("user_id"));
+                            simpleInfo.setLogo(item.getString("logo"));
+                            simpleInfo.setIdentity_cat(item.getString("identity_cat"));
+                            simpleInfo.setCompany_name(item.getString("company_name"));
+                            simpleInfo.setMethod_name(method_name);
+                            list.add(simpleInfo);
+                            addIndexItem(simpleInfo);
+                        }
+
+                        map.put(method_name,list);
+                    }
+                }
+                JSONArray adverts=data.getJSONArray("adverts");
+                for (int i=0;i<adverts.length();i++){
+                    IndexAdvert advert=new IndexAdvert();
+                    JSONObject jadvert=adverts.getJSONObject(i);
+                    advert.setUser_id(jadvert.getString("id"));
+                    advert.setAdvert_name(jadvert.getString("advert_name"));
+                    advert.setAdvert_pic(jadvert.getString("advert_pic"));
+                    advert.setAdvert_url(jadvert.getString("advert_url"));
+                    indexAdvertses.add(advert);
+                    addIndexAdvert(advert);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        first=true;
+    }
+
+    private IndexItemInfoDao getIndexItemInfoDao(){
+        return daoSession.getIndexItemInfoDao();
+    }
+    private IPDao getIPDao(){
+        return daoSession.getIPDao();
+    }
+    private IndexAdvertDao getIndexAdverDao(){
+        return daoSession.getIndexAdvertDao();
+    }
+    private OrderDao getOrderDao(){
+        return daoSession.getOrderDao();
+    }
+
+    private void addIndexItem(IndexItemInfo info){
+        getIndexItemInfoDao().insert(info);
+    }
+    private void addIndexAdvert(IndexAdvert advert){
+        getIndexAdverDao().insert(advert);
+    }
+    private void addIP(IP ip){
+        getIPDao().insert(ip);
+    }
+    private void addOrder(Order order){
+        getOrderDao().insert(order);
+    }
+
+    private List searchIndexItem(String method_name){
+        Query query = getIndexItemInfoDao().queryBuilder()
+                .where(IndexItemInfoDao.Properties.Method_name.eq(method_name))
+                .build();
+        return query.list();
+    }
+    private List searchIP(){
+        Query query = getIPDao().queryBuilder()
+                .build();
+        return query.list();
+    }
+    private List searchOrder(){
+        Query query = getOrderDao().queryBuilder()
+                .build();
+        return query.list();
+    }
+    private List seerchIndexAdvert(){
+        Query query = getIndexAdverDao().queryBuilder()
+                .build();
+        return query.list();
+    }
+
+    private void deletAll(){
+        getIndexAdverDao().deleteAll();
+        getOrderDao().deleteAll();
+        getIndexItemInfoDao().deleteAll();
+        getIPDao().deleteAll();
+    }
+
+
+
+
 }

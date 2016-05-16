@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +18,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
-import com.test4s.adapter.GameAdapter;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.test4s.net.GameListParser;
-import com.test4s.jsonparser.GameJsonParser;
 import com.test4s.net.Url;
 import com.view.search.SearchActivity;
 
@@ -157,6 +154,9 @@ public class GameListActivity extends Activity implements View.OnClickListener{
                 Url.prePic=jsonObject1.getString("prefixPic");
                 packageurl=jsonObject1.getString("prefixPackage");
                 JSONArray jsonArray=jsonObject1.getJSONArray("gameList");
+                if (jsonArray.length()==0){
+                    CusToast.showToast(this,"没有更多游戏", Toast.LENGTH_SHORT);
+                }
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject game=jsonArray.getJSONObject(i);
                     GameInfo gameInfo=new GameInfo();

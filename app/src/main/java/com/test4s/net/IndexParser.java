@@ -1,7 +1,5 @@
 package com.test4s.net;
 
-import com.test4s.gdb.CP;
-import com.test4s.gdb.IP;
 import com.test4s.gdb.Investment;
 import com.test4s.gdb.OutSource;
 import com.view.s4server.CPSimpleInfo;

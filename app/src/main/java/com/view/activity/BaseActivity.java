@@ -1,21 +1,29 @@
 package com.view.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
@@ -77,6 +85,15 @@ public class BaseActivity  extends AppCompatActivity {
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-
+    }
+    public Dialog showLoadingDialog(Context context){
+        Dialog dialog=new Dialog(context,R.style.CustomDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_loading);
+        dialog.show();
+        ImageView imageView= (ImageView) dialog.findViewById(R.id.image_loadingdialog);
+        AnimationDrawable ad = (AnimationDrawable)imageView.getBackground();
+        ad.start();
+        return dialog;
     }
 }

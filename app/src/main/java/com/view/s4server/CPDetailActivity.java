@@ -22,16 +22,13 @@ import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.view.HorizontalListView;
-import com.app.view.MyScrollView;
 import com.app.view.RoundImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.gdb.GameInfo;
-import com.test4s.jsonparser.CPJsonParser;
 import com.test4s.net.BaseParams;
-import com.test4s.net.CPDetailParams;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 import com.view.activity.BaseActivity;
@@ -250,6 +247,7 @@ public class CPDetailActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                setContentView(R.layout.neterror);
 
             }
 
@@ -356,14 +354,13 @@ public class CPDetailActivity extends BaseActivity {
         download_dialog.findViewById(R.id.channel_downdialog).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CPDetailActivity.this,"点击取消",Toast.LENGTH_SHORT).show();
+
                 download_dialog.dismiss();
             }
         });
         download_dialog.findViewById(R.id.ok_downdialog).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CPDetailActivity.this,"点击确定",Toast.LENGTH_SHORT).show();
             }
         });
     }

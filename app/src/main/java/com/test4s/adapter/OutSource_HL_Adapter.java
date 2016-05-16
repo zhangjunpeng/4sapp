@@ -9,13 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.test4s.gdb.IP;
-import com.test4s.gdb.OutSource;
+import com.test4s.gdb.IndexItemInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
-import com.view.index.IndexItemSipleInfo;
-
-import org.xutils.x;
 
 import java.util.List;
 
@@ -23,9 +19,9 @@ import java.util.List;
  * Created by Administrator on 2016/1/14.
  */
 public class OutSource_HL_Adapter extends BaseAdapter{
-    List<IndexItemSipleInfo> list;
+    List<IndexItemInfo> list;
     Context mcontext;
-    public OutSource_HL_Adapter(Context context,List<IndexItemSipleInfo> outSourceList){
+    public OutSource_HL_Adapter(Context context,List<IndexItemInfo> outSourceList){
         list=outSourceList;
         mcontext=context;
     }
@@ -58,7 +54,7 @@ public class OutSource_HL_Adapter extends BaseAdapter{
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        IndexItemSipleInfo outSource=list.get(position);
+        IndexItemInfo outSource=list.get(position);
         String imageUrl= Url.prePic+outSource.getLogo();
         String name=outSource.getCompany_name();
         Picasso.with(mcontext)

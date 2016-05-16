@@ -1,27 +1,18 @@
 package com.view.s4server;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -34,15 +25,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.tools.MyLog;
-import com.app.tools.ScreenUtil;
-import com.app.tools.StringTools;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
-import com.test4s.gdb.IP;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -322,6 +309,7 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                setContentView(R.layout.neterror);
 
             }
 
@@ -471,7 +459,7 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
                 .into(icon);
         name_ipdetail.setText(ip_name);
         name_title.setText(ip_name);
-        ipcat.setText("类型 ："+ip_cat+"\n风格 ："+ip_style+"\n授权范围 ："+uthority+"\n上市时间 ："+over_time);
+        ipcat.setText("类型 ："+ip_cat+"\n风格 ："+ip_style+"\n授权范围 ："+uthority+"\n上线时间 ："+over_time);
 
 
     }

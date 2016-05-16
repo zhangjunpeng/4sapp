@@ -1,5 +1,6 @@
 package com.test4s.net;
 
+import com.test4s.gdb.Adverts;
 import com.test4s.gdb.GameInfo;
 
 import java.util.List;

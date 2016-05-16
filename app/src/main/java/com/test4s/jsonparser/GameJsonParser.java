@@ -1,8 +1,8 @@
 package com.test4s.jsonparser;
 
 import com.app.tools.MyLog;
+import com.test4s.gdb.Adverts;
 import com.test4s.gdb.GameInfo;
-import com.test4s.net.Adverts;
 import com.test4s.net.GameDetialParser;
 import com.test4s.net.GameListParser;
 import com.test4s.net.Url;
@@ -76,15 +76,13 @@ public class GameJsonParser {
                         gameInfo.setGame_img(jsonObject1.getString("game_img"));
                         gameInfo.setGame_id(jsonObject1.getString("game_id"));
                         gameInfo.setGame_name(jsonObject1.getString("game_name"));
+                        gameInfo.setTitle(jsonObject1.getString("title"));
                         gameInfos.add(gameInfo);
                     }
                     titles.add(title);
                     map.put(i+"",gameInfos);
                 }
                 MyLog.i("games");
-
-
-
             }
         } catch (JSONException e) {
             e.printStackTrace();

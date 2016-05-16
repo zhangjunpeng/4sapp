@@ -1,6 +1,7 @@
 package com.test4s.account;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,18 +19,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.test4s.net.LoginParams;
 import com.view.Evaluation.EvaluationActivity;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 import com.view.messagecenter.MessageList;
 import com.view.myattention.AttentionActivity;
 import com.view.myreport.ReprotListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xutils.DbManager;
 import org.xutils.common.Callback;
 import org.xutils.x;
 
@@ -59,6 +61,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     MyAccount myAccount;
     SinaWeiboLogin sinaWeiboLogin;
 
+    private Dialog dialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,7 +84,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         save.setVisibility(View.INVISIBLE);
         title.setText("登录");
 
-        login.setClickable(false);
 
         myAccount=MyAccount.getInstance();
 
@@ -94,6 +97,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
         transition= getActivity().getSupportFragmentManager().beginTransaction();
         initListener();
+
+        login.setClickable(false);
+
         return view;
     }
 
@@ -169,6 +175,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.loginButton_login:
+                dialog=showLoadingDialog(getActivity());
                 login();
                 break;
             case R.id.reg_login:
@@ -230,8 +237,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
                         myAccount.setUsername(jsonObject1.getString("username"));
                         myAccount.setToken(jsonObject1.getString("token"));
                         myAccount.setAvatar(jsonObject1.getString("avatar"));
-                        Toast.makeText(getActivity(),"登录成功",Toast.LENGTH_SHORT).show();
+
+                        CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
+
                         myAccount.saveUserInfo();
+
                         loginSuccess();
 
                     }else {
@@ -259,6 +269,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
             @Override
             public void onFinished() {
+                dialog.dismiss();
 
             }
         });
@@ -301,5 +312,66 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
     public void showwarning(String mes){
         warning.setVisibility(View.VISIBLE);
+    }
+    private void initUserInfo() {
+        BaseParams baseParams=new BaseParams("user/index");
+        baseParams.addParams("token", MyAccount.getInstance().getToken());
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("UserInfo==="+result);
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                    boolean su=jsonObject.getBoolean("success");
+                    int code=jsonObject.getInt("code");
+                    if (su&&code==200){
+                        UserInfo  userInfo=new UserInfo();
+                        JSONObject jsonObject2=jsonObject.getJSONObject("data");
+                        JSONObject jsonObject3=jsonObject2.getJSONObject("userInfo");
+                        userInfo.setId(jsonObject3.getString("id"));
+                        userInfo.setUsername(jsonObject3.getString("username"));
+                        userInfo.setNickname(jsonObject3.getString("nickname"));
+                        userInfo.setEmail(jsonObject3.getString("email"));
+                        userInfo.setPhone(jsonObject3.getString("phone"));
+                        userInfo.setAvatar(jsonObject3.getString("avatar"));
+                        userInfo.setUser_identity(jsonObject3.getString("user_identity"));
+                        userInfo.setGame_like(jsonObject3.getString("game_like"));
+                        userInfo.setJob_id(jsonObject3.getString("job_id"));
+                        userInfo.setEdu_id(jsonObject3.getString("edu_id"));
+                        userInfo.setProvince(jsonObject3.getString("province"));
+                        userInfo.setCity(jsonObject3.getString("city"));
+                        userInfo.setCounty(jsonObject3.getString("county"));
+                        userInfo.setAddr(jsonObject3.getString("addr"));
+                        userInfo.setProvince_name(jsonObject3.getString("province_name"));
+                        userInfo.setCity_name(jsonObject3.getString("city_name"));
+                        userInfo.setCounty_name(jsonObject3.getString("county_name"));
+                        userInfo.setEdu_name(jsonObject3.getString("edu_name"));
+                        userInfo.setJob_name(jsonObject3.getString("job_name"));
+
+                        MyAccount.getInstance().setUserInfo(userInfo);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MyLog.i("UserInfo==="+ex.toString());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 }

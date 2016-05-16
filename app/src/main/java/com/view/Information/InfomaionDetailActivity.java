@@ -27,6 +27,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -92,7 +93,8 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
                     //  getFocus(inputPopwindow.editText);
                     popupInputMethodWindow();
                 }else {
-                    Toast.makeText(InfomaionDetailActivity.this,"没有登录，不能评论",Toast.LENGTH_SHORT).show();
+                    CusToast.showToast(InfomaionDetailActivity.this,"没有登录，不能评论",Toast.LENGTH_SHORT);
+
                 }
             }
         });

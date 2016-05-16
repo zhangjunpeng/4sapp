@@ -9,10 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
-import com.test4s.gdb.CP;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
-import com.test4s.net.GameListParser;
 import com.test4s.net.Url;
 
 import org.xutils.x;

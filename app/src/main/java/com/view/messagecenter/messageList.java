@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.delslidelistview.DeleListView;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;

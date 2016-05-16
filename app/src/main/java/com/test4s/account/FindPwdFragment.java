@@ -1,5 +1,6 @@
 package com.test4s.account;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,15 +19,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.x;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016/2/19.
@@ -45,6 +49,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
     private LinearLayout warning;
     private TextView warntext;
 
+    private Dialog dialog;
 
     private String pa;
     private int time=60;
@@ -59,6 +64,8 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
                     getCode.setBackgroundResource(R.drawable.border_getcode_orange);
                     getCode.setText("重新获取");
                     getCode.setClickable(true);
+                    time=60;
+
                     break;
             }
         }
@@ -84,10 +91,10 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
 
         save.setVisibility(View.INVISIBLE);
         title.setText("重置密码");
-        sub.setClickable(false);
         setImmerseLayout(view.findViewById(R.id.titlebar_fpw));
 
         initListener();
+        sub.setClickable(false);
         return view;
     }
 
@@ -138,6 +145,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
                 codeChange();
                 break;
             case R.id.button_sub_fpw:
+                dialog=showLoadingDialog(getActivity());
                 reg();
                 break;
             case R.id.back_savebar:
@@ -163,6 +171,11 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
         String password=pwd.getText().toString();
         String code_s=code.getText().toString();
 
+        if (!passwordMatch(password)){
+            showwarn("新密码必须由字母和数字组成");
+            return;
+        }
+
 //        RegisterParms regParams=new RegisterParms(phone,password,code_s,pa);
         BaseParams baseParams=new BaseParams("user/forgetpwd");
         baseParams.addParams("username",phone);
@@ -179,7 +192,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
                     boolean su=jsonObject.getBoolean("success");
                     int code=jsonObject.getInt("code");
                     if (su&&code==200){
-                        Toast.makeText(getActivity(),"密码重置成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"密码重置成功",Toast.LENGTH_SHORT);
                         AccountActivity accountActivity=(AccountActivity)getActivity();
                         accountActivity.backlogin();
                     }else {
@@ -203,7 +216,7 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
 
             @Override
             public void onFinished() {
-
+                dialog.dismiss();
             }
         });
     }
@@ -275,5 +288,17 @@ public class FindPwdFragment extends BaseFragment implements View.OnClickListene
 
     }
 
+    public boolean passwordMatch(String password){
+        String regEx_1="[^a-zA-Z0-9]";
+
+        String regEx_abc="[^a-zA-Z]";
+        String regEx_num="[^0-9]";
+
+
+        boolean result= Pattern.compile(regEx_1).matcher(password).find();
+        boolean result_num= Pattern.compile(regEx_abc).matcher(password).find();
+        boolean result_abc= Pattern.compile(regEx_num).matcher(password).find();
+        return (!result)&&result_abc&&result_num;
+    }
 
 }

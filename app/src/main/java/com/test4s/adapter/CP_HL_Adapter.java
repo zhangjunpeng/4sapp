@@ -9,16 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.test4s.gdb.CP;
-import com.test4s.gdb.IP;
-import com.test4s.gdb.Investment;
-import com.test4s.gdb.OutSource;
+import com.test4s.gdb.IndexItemInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
-import com.view.index.IndexItemSipleInfo;
-import com.view.s4server.CPSimpleInfo;
-
-import org.xutils.x;
 
 import java.util.List;
 
@@ -27,9 +20,9 @@ import java.util.List;
  */
 public class CP_HL_Adapter extends BaseAdapter {
 
-    List<IndexItemSipleInfo> list;
+    List<IndexItemInfo> list;
     Context mcontext;
-    public CP_HL_Adapter(Context context,List<IndexItemSipleInfo> cpList){
+    public CP_HL_Adapter(Context context,List<IndexItemInfo> cpList){
         list=cpList;
         mcontext=context;
     }
@@ -62,7 +55,7 @@ public class CP_HL_Adapter extends BaseAdapter {
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        IndexItemSipleInfo cp=list.get(position);
+        IndexItemInfo cp=list.get(position);
         String imageUrl=Url.prePic+cp.getLogo();
         String name=cp.getCompany_name();
         Picasso.with(mcontext)

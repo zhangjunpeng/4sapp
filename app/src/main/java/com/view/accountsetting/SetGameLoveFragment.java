@@ -15,9 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -142,7 +144,8 @@ public class SetGameLoveFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(gametype_id)||TextUtils.isEmpty(gametype)){
-                    Toast.makeText(getActivity(),"请选择偏好游戏类型",Toast.LENGTH_SHORT).show();
+                    CusToast.showToast(getActivity(),"请选择偏好游戏类型",Toast.LENGTH_SHORT);
+
                     return;
                 }
                 changeGameLove();
@@ -181,7 +184,10 @@ public class SetGameLoveFragment extends BaseFragment {
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+
+                        CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

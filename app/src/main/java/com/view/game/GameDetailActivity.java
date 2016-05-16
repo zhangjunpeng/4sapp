@@ -6,21 +6,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.view.HorizontalListView;
@@ -31,14 +28,10 @@ import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.test4s.net.GameDetailParams;
-import com.test4s.net.GameDetialParser;
-import com.test4s.jsonparser.GameJsonParser;
 import com.test4s.net.Url;
 import com.view.activity.BaseActivity;
 import com.view.myattention.AttentionChange;
 import com.view.s4server.CPDetailActivity;
-import com.view.search.Search;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,9 +39,7 @@ import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.x;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class GameDetailActivity extends BaseActivity implements View.OnClickListener {
@@ -291,7 +282,7 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                setContentView(R.layout.neterror);
             }
 
             @Override
@@ -396,6 +387,7 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
             MyLog.i("解析完成");
         } catch (JSONException e) {
             e.printStackTrace();
+
         }
 
     }
@@ -447,7 +439,7 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
             info="上传时间："+create_timestring+"\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
 
         }else {
-            info="上传时间："+create_timestring+"\n其他："+game_download_nums+game_download_unit+"下载"+" · "+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
+            info="上传时间："+create_timestring+"\n包体大小："+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+"/"+gameInfo.getGame_platform()+"/"+game_typestring;
 
         }
 

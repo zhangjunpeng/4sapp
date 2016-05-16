@@ -11,15 +11,21 @@
 
     >
 
-    <ImageView
-        android:id="@+id/back_titlebar"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginLeft="17.33dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-
-        />
+    <RelativeLayout
+        android:layout_width="37.33dp"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/back_titlebar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="17.33dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            />
+    </RelativeLayout>
     <TextView
         android:id="@+id/title_titlebar"
         android:layout_width="wrap_content"

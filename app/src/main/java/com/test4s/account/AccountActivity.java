@@ -85,6 +85,7 @@ public class AccountActivity extends AppCompatActivity {
 
 
     public void backlogin(){
+
         FragmentTransaction transaction=fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
         transaction.replace(R.id.contianer_loginActivity,loginFragment).commit();

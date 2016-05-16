@@ -12,7 +12,11 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.exception.WeiboException;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -39,11 +43,12 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
     private String qq_openid;
     private String qq_token;
     private String qq_expir;
+    private SendListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_third_login);
+        setContentView(R.layout.dialog_loading);
         third=getIntent().getStringExtra("third");
         myAccount=MyAccount.getInstance();
         starLogin();
@@ -52,7 +57,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
     private void starLogin() {
         switch (third){
             case "qq":
-                TencentLogin tencentLogin=TencentLogin.getIntance(this);
+                TencentLogin tencentLogin=TencentLogin.getIntance(this,this);
                 tencentLogin.login();
                 break;
             case "weixin":
@@ -63,7 +68,58 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
                 break;
             case "sina":
                 sinaWeiboLogin=SinaWeiboLogin.getInstance(this);
-                sinaWeiboLogin.login();
+                sinaWeiboLogin.login(new WeiboAuthListener() {
+                    @Override
+                    public void onComplete(Bundle values) {
+                        MyLog.i("vaulues=="+values.toString());
+                        // 从 Bundle 中解析 Token
+                        Oauth2AccessToken mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+                        //从这里获取用户输入的 电话号码信息
+                        String phoneNum = mAccessToken.getPhoneNum();
+                        if (mAccessToken.isSessionValid()) {
+                            // 显示 Token
+//                updateTokenView(false);
+                            MyLog.i("weibo toke ==" + mAccessToken);
+                            String info="";
+                            JSONObject jsonObject=new JSONObject();
+
+
+
+                            String nickname=values.getString("userName","");
+                            if (!TextUtils.isEmpty(nickname)){
+                                try {
+                                    jsonObject.put("type","SINA");
+                                    jsonObject.put("nick",nickname);
+                                    jsonObject.put("name",nickname);
+                                    jsonObject.put("head","");
+                                    info=jsonObject.toString();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            send("sina",mAccessToken.getUid(),info,null);
+                        } else {
+                            // 以下几种情况，您会收到 Code：
+                            // 1. 当您未在平台上注册的应用程序的包名与签名时；
+                            // 2. 当您注册的应用程序包名与签名不正确时；
+                            // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
+                            String code = values.getString("code");
+                            if (!TextUtils.isEmpty(code)) {
+                                MyLog.i("weibo ");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onWeiboException(WeiboException e) {
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
                 break;
         }
     }
@@ -98,7 +154,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
         overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
         MyLog.i("绑定手机号2");
     }
-    public void sendToServer(final String type, final String uid, final String info, String token) {
+    public void send(final String type, final String uid, final String info, String token) {
         BaseParams baseParams=new BaseParams("user/thirdlogin");
         baseParams.addParams("logintype",type);
         baseParams.addParams("uniqueid",uid);
@@ -135,7 +191,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
                             myAccount.setUsername(jsonObject1.getString("username"));
                             myAccount.setToken(jsonObject1.getString("token"));
                             myAccount.setAvatar(jsonObject1.getString("avatar"));
-                            Toast.makeText(ThirdLoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                            CusToast.showToast(ThirdLoginActivity.this,"登录成功",Toast.LENGTH_SHORT);
                             myAccount.saveUserInfo();
                             MyLog.i("第三方登录成功1");
                             loginSuccess();
@@ -183,10 +239,10 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
 
     private void getQQUserInfo(final String logintype) {
 
-        TencentLogin tencentLogin=TencentLogin.getIntance(this);
+        TencentLogin tencentLogin=TencentLogin.getIntance(this,this);
         tencentLogin.mtencent.setOpenId(qq_openid);
         tencentLogin.mtencent.setAccessToken(qq_token,qq_expir);
-        tencentLogin.getUserInfo(new IUiListener() {
+        tencentLogin.getUserInfo(this,new IUiListener() {
             @Override
             public void onComplete(Object o) {
                 MyLog.i("qq UserInfo==="+o.toString());
@@ -252,7 +308,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
             qq_token=jsob.getString("access_token");
             qq_expir=jsob.getString("expires_in");
 
-            sendToServer("qq",qq_openid,null,null);
+            send("qq",qq_openid,null,null);
 
         } catch (JSONException e) {
             e.printStackTrace();

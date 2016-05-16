@@ -1,7 +1,6 @@
 package com.view.myattention;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 import com.view.game.GameDetailActivity;
-import com.view.s4server.CPDetailActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

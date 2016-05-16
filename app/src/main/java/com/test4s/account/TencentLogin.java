@@ -2,6 +2,7 @@ package com.test4s.account;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 
 import com.app.tools.MyLog;
 import com.tencent.connect.*;
@@ -16,16 +17,30 @@ import com.tencent.tauth.UiError;
  */
 public class TencentLogin {
     private static TencentLogin intance;
-    private ThirdLoginActivity mcontext;
+    private Fragment mFragment;
+    private Activity mActivity;
     public Tencent mtencent;
     public String token;
-    private TencentLogin(ThirdLoginActivity context){
-        mcontext=context;
-        mtencent=Tencent.createInstance("1105244367",context.getApplicationContext());
+    private IUiListener listener;
+    private TencentLogin(Activity activity,IUiListener listener){
+        this.listener=listener;
+        mActivity=activity;
+        mtencent=Tencent.createInstance("1105244367",activity.getApplicationContext());
     }
-    public static TencentLogin getIntance(ThirdLoginActivity activity){
+    private TencentLogin(Fragment fragment,IUiListener listener){
+        this.listener=listener;
+        mFragment=fragment;
+        mtencent=Tencent.createInstance("1105244367",fragment.getActivity().getApplicationContext());
+    }
+    public static TencentLogin getIntance(Activity activity,IUiListener listener){
         if (intance==null){
-            intance=new TencentLogin(activity);
+            intance=new TencentLogin(activity,listener);
+        }
+        return intance;
+    }
+    public static TencentLogin getIntance(Fragment fragment, IUiListener listener){
+        if (intance==null){
+            intance=new TencentLogin(fragment,listener);
         }
         return intance;
     }
@@ -33,35 +48,23 @@ public class TencentLogin {
     public void login(){
         if (!mtencent.isSessionValid())
         {
-            mtencent.login(mcontext, "all", mcontext);
+            if (mActivity==null){
+                mtencent.login(mFragment, "all", listener);
+
+            }else if (mFragment==null){
+                mtencent.login(mActivity, "all", listener);
+            }
         }
     }
 
-    private class BaseUiListener implements IUiListener{
 
-        @Override
-        public void onComplete(Object o) {
-            MyLog.i("qq userinfo =="+o.toString());
-        }
-
-        @Override
-        public void onError(UiError uiError) {
-
-        }
-
-        @Override
-        public void onCancel() {
-
-        }
-    }
-
-    public void getUserInfo(IUiListener listener){
-        com.tencent.connect.UserInfo userInfo=new UserInfo(mcontext,mtencent.getQQToken());
+    public void getUserInfo(Context context,IUiListener listener){
+        com.tencent.connect.UserInfo userInfo=new UserInfo(context,mtencent.getQQToken());
         userInfo.getUserInfo(listener);
     }
     public void loginOut(){
         if (mtencent!=null){
-            mtencent.logout(mcontext);
+            mtencent.logout(mActivity);
         }
     }
 }

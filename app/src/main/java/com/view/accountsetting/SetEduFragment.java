@@ -15,9 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -159,7 +161,9 @@ public class SetEduFragment extends BaseFragment implements View.OnClickListener
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+
+                        CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -188,7 +192,8 @@ public class SetEduFragment extends BaseFragment implements View.OnClickListener
         switch (v.getId()){
             case R.id.save_savebar:
                 if (TextUtils.isEmpty(edu_id)||TextUtils.isEmpty(edu_name)){
-                    Toast.makeText(getActivity(),"请选择学历",Toast.LENGTH_SHORT).show();
+
+                    CusToast.showToast(getActivity(),"请选择学历",Toast.LENGTH_SHORT);
                     return;
                 }
                 changeEdu();

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.test4s.myapp.R;
 
 /**
@@ -157,13 +158,14 @@ public class SelectPicActivity extends Activity implements OnClickListener{
         {
             if(data == null)
             {
-                Toast.makeText(this, "选择图片文件出错", Toast.LENGTH_LONG).show();
+                CusToast.showToast(this,"选择图片文件出错",Toast.LENGTH_SHORT);
                 return;
             }
             photoUri = data.getData();
             if(photoUri == null )
             {
-                Toast.makeText(this, "选择图片文件出错", Toast.LENGTH_LONG).show();
+                CusToast.showToast(this,"选择图片文件出错",Toast.LENGTH_SHORT);
+
                 return;
             }
         }
@@ -183,7 +185,8 @@ public class SelectPicActivity extends Activity implements OnClickListener{
             setResult(Activity.RESULT_OK, lastIntent);
             finish();
         }else{
-            Toast.makeText(this, "选择图片文件不正确", Toast.LENGTH_LONG).show();
+            CusToast.showToast(this,"选择图片文件不正确",Toast.LENGTH_SHORT);
+
         }
     }
 }

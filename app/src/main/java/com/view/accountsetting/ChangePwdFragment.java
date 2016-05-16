@@ -11,12 +11,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
+import com.test4s.account.PasswordMatch;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -44,6 +48,9 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
     private EditText cpwd_edit;
     private Button changeButton;
 
+    private RelativeLayout layout;
+    private TextView warning;
+
 
     @Nullable
     @Override
@@ -60,6 +67,9 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
         cpwd_edit= (EditText) view.findViewById(R.id.comfirpwd_changepwd);
         changeButton= (Button) view.findViewById(R.id.change_changepwd);
 
+        layout= (RelativeLayout) view.findViewById(R.id.re_warning_changepwd);
+        warning= (TextView) view.findViewById(R.id.warning_changepwd);
+
         title.setText("修改密码");
         save.setVisibility(View.INVISIBLE);
 
@@ -67,6 +77,7 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
 
         back.setOnClickListener(this);
         changeButton.setOnClickListener(this);
+        changeButton.setClickable(false);
 
         initTextwatcher();
 
@@ -104,13 +115,37 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
         oldpwd=pwd_edit.getText().toString();
         newpwd=newpwd_edit.getText().toString();
         String c_pwd=cpwd_edit.getText().toString();
-        if (newpwd.equals(c_pwd)&&oldpwd.length()>6&&newpwd.length()>=6){
-            changeButton.setBackgroundResource(R.drawable.border_button_orange);
-            changeButton.setClickable(true);
+
+        if (oldpwd.length()>=6&&newpwd.length()>=6&&c_pwd.length()>=6){
+            if ((!newpwd.equals(c_pwd))){
+                showWarning("两次输入密码不一致");
+
+            }else if (newpwd.equals(c_pwd)&&newpwd.length()>=6){
+                layout.setVisibility(View.INVISIBLE);
+            }
+            if (newpwd.equals(c_pwd)){
+                changeButton.setBackgroundResource(R.drawable.border_button_orange);
+                changeButton.setClickable(true);
+            }else {
+                changeButton.setBackgroundResource(R.drawable.border_button_gray);
+                changeButton.setClickable(false);
+            }
         }
+
+
+
+
     }
 
     public void changepwd(){
+        if (newpwd.equals(oldpwd)){
+            showWarning("新旧密码不能相同");
+            return;
+        }
+        if (!PasswordMatch.passwordMatch(newpwd)){
+            showWarning("新密码必须由字母和数字组成");
+            return;
+        }
         BaseParams baseParams=new BaseParams("user/chgpassword");
         baseParams.addParams("token", MyAccount.getInstance().getToken());
         baseParams.addParams("password",oldpwd);
@@ -126,11 +161,18 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
                     boolean su=jsonObject1.getBoolean("success");
                     int code=jsonObject1.getInt("code");
                     if (su&&code==200){
+                        ClearWindows.clearInput(getActivity(),pwd_edit);
+                        ClearWindows.clearInput(getActivity(),newpwd_edit);
+                        ClearWindows.clearInput(getActivity(),cpwd_edit);
                         MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
                         FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
+                    }else {
+                        String mes=jsonObject1.getString("msg");
+                        showWarning(mes);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -154,6 +196,12 @@ public class ChangePwdFragment extends BaseFragment implements View.OnClickListe
         });
 
     }
+
+    private void showWarning(String mes) {
+        layout.setVisibility(View.VISIBLE);
+        warning.setText(mes);
+    }
+
 
     @Override
     public void onClick(View v) {

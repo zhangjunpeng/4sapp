@@ -19,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -97,6 +99,8 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
         getcode.setOnClickListener(this);
         bindnew.setOnClickListener(this);
 
+        bindnew.setClickable(false);
+
         initTextChangeListener();
         return view;
     }
@@ -163,6 +167,15 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
             case R.id.bind_bindnewphone:
                 bindPhone();
                 break;
+            case R.id.back_savebar:
+                ClearWindows.clearInput(getActivity(),phone_editText);
+                ClearWindows.clearInput(getActivity(),code_editText);
+
+                MyAcountSettingFragment myAcountSettingFragment=new MyAcountSettingFragment();
+                FragmentTransaction transaction= getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.in_form_left,R.anim.out_to_right);
+                transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
+                break;
         }
     }
 
@@ -170,11 +183,11 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
         String phoneNum=phone_editText.getText().toString();
         String code=code_editText.getText().toString();
         if (TextUtils.isEmpty(phoneNum)||phoneNum.length()!=11){
-            Toast.makeText(getActivity(),"手机号码格式错误",Toast.LENGTH_SHORT).show();
+            showWarning("手机号码格式错误");
             return;
         }
         if (TextUtils.isEmpty(pa)){
-            Toast.makeText(getActivity(),"验证码错误",Toast.LENGTH_SHORT).show();
+            showWarning("验证码错误");
             return;
         }
         BaseParams baseParams=new BaseParams("user/chgphone");
@@ -200,8 +213,7 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
                         transaction.replace(R.id.contianner_mysetting,myAcountSettingFragment).commit();
                     }else{
                         String msg=js.getString("msg");
-                        warning.setText(msg);
-                        warning.setVisibility(View.VISIBLE);
+                        showWarning(msg);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -227,13 +239,15 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void receiveCode() {
+        getcode.setClickable(false);
         String phonenum=phone_editText.getText().toString();
         if (TextUtils.isEmpty(phonenum)||phonenum.length()!=11){
-            Toast.makeText(getActivity(),"手机号码格式错误",Toast.LENGTH_SHORT).show();
+            showWarning("手机号码格式错误");
             return;
         }
         BaseParams baseParams=new BaseParams("sms/index");
         baseParams.addParams("phone",phonenum);
+        baseParams.addParams("type","bind");
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
@@ -247,6 +261,9 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
                         JSONObject data=js.getJSONObject("data");
                         pa=data.getString("pa");
                         codeChange();
+                    }else {
+                        String mes=js.getString("msg");
+                        showWarning(mes);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -266,6 +283,7 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
 
             @Override
             public void onFinished() {
+                getcode.setClickable(true);
 
             }
         });
@@ -283,8 +301,10 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
                     break;
                 case 1:
                     getcode.setBackgroundResource(R.drawable.border_getcode_orange);
-                    getcode.setText("验证码");
+                    getcode.setText("重新获取");
                     getcode.setClickable(true);
+                    time=59;
+
                     break;
             }
             super.handleMessage(msg);
@@ -313,6 +333,10 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
             }
         }).start();
 
+    }
+    private void showWarning(String mes) {
+        layout.setVisibility(View.VISIBLE);
+        warning.setText(mes);
     }
 
 

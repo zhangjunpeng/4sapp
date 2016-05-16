@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
    >
-    <com.view.messagecenter.DeleListView
+    <com.app.delslidelistview.DeleListView
         android:id="@+id/listview_pclist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></com.view.messagecenter.DeleListView>
+        ></com.app.delslidelistview.DeleListView>
     <ImageView
         android:layout_width="70dp"
         android:layout_height="65dp"

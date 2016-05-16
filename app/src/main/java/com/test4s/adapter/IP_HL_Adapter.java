@@ -9,13 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.test4s.gdb.CP;
 import com.test4s.gdb.IP;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 import com.view.s4server.IPSimpleInfo;
-
-import org.xutils.x;
 
 import java.util.List;
 
@@ -23,9 +20,9 @@ import java.util.List;
  * Created by Administrator on 2016/1/14.
  */
 public class IP_HL_Adapter extends BaseAdapter {
-    List<IPSimpleInfo> list;
+    List<IP> list;
     Context mcontext;
-    public IP_HL_Adapter(Context context,List<IPSimpleInfo> ipList){
+    public IP_HL_Adapter(Context context,List<IP> ipList){
         list=ipList;
         mcontext=context;
     }
@@ -58,8 +55,8 @@ public class IP_HL_Adapter extends BaseAdapter {
         }else {
             viewHolder= (ViewHolder) convertView.getTag();
         }
-        IPSimpleInfo ip=list.get(position);
-        String imageUrl= Url.prePic+ip.getLogo();
+        IP ip=list.get(position);
+        String imageUrl= Url.prePic+ip.getIp_logo();
         String name=ip.getIp_name();
         Picasso.with(mcontext)
                 .load(imageUrl)

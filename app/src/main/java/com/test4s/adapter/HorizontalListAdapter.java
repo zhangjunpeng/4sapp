@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.test4s.gdb.CP;
-import com.test4s.gdb.GameInfo;
 import com.test4s.gdb.IP;
 import com.test4s.gdb.Investment;
 import com.test4s.gdb.OutSource;

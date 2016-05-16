@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.test4s.myapp"
-    android:versionCode="1">
+    android:versionCode="3"
+    android:versionName="1.2"
+    >
+
 
     <uses-sdk android:minSdkVersion="18" />
 
@@ -50,14 +53,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.test4s.myapp.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.test4s.myapp.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
 
@@ -285,7 +288,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <!-- 微信回调页面 -->
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.test4s.myapp.wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/title_activity_wxentry" />
         <!-- 微博页面 -->
@@ -315,13 +318,13 @@
         <activity
             android:name="com.test4s.account.ThirdLoginActivity"
             android:label="@string/title_activity_third_login"
-            android:theme="@style/MyDialogStyle" />
+            android:theme="@style/CustomDialog" />
         <activity
             android:name="com.view.Introduce.IntroduceActivity"
             android:label="@string/title_activity_introduce"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".FirsActivity"
+            android:name="com.test4s.myapp.FirsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

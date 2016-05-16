@@ -41,8 +41,7 @@ import java.util.concurrent.Executors;
 
 public class ListActivity extends FragmentActivity implements OnClickListener{
 
-    PullToRefreshListView listView;
-    
+
     ImageView back;
     TextView title;
     ImageView search;
@@ -123,10 +122,13 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
 
     private void initView() {
         Fragment fragment=null;
+        Bundle bundle=new Bundle();
+        bundle.putBoolean("recommend",true);
         switch (tag) {
             case CP_TAG:
                 title.setText("开发者");
                 fragment=new CPListFragment();
+
                 break;
             case IP_TAG:
                 title.setText("IP");
@@ -145,6 +147,7 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
                 fragment=new IssueListFragment();
                 break;
         }
+        fragment.setArguments(bundle);
         transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         transaction.replace(R.id.contianner_listactivity,fragment).commit();
     }

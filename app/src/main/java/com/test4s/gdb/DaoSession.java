@@ -15,6 +15,12 @@ import com.test4s.gdb.OutSource;
 import com.test4s.gdb.IP;
 import com.test4s.gdb.CP;
 import com.test4s.gdb.Distribution;
+import com.test4s.gdb.GameType;
+import com.test4s.gdb.Adverts;
+import com.test4s.gdb.IndexItemInfo;
+import com.test4s.gdb.IndexAdvert;
+import com.test4s.gdb.Order;
+import com.test4s.gdb.NewsInfo;
 import com.test4s.gdb.History;
 import com.test4s.gdb.Information;
 
@@ -24,6 +30,12 @@ import com.test4s.gdb.OutSourceDao;
 import com.test4s.gdb.IPDao;
 import com.test4s.gdb.CPDao;
 import com.test4s.gdb.DistributionDao;
+import com.test4s.gdb.GameTypeDao;
+import com.test4s.gdb.AdvertsDao;
+import com.test4s.gdb.IndexItemInfoDao;
+import com.test4s.gdb.IndexAdvertDao;
+import com.test4s.gdb.OrderDao;
+import com.test4s.gdb.NewsInfoDao;
 import com.test4s.gdb.HistoryDao;
 import com.test4s.gdb.InformationDao;
 
@@ -42,6 +54,12 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig iPDaoConfig;
     private final DaoConfig cPDaoConfig;
     private final DaoConfig distributionDaoConfig;
+    private final DaoConfig gameTypeDaoConfig;
+    private final DaoConfig advertsDaoConfig;
+    private final DaoConfig indexItemInfoDaoConfig;
+    private final DaoConfig indexAdvertDaoConfig;
+    private final DaoConfig orderDaoConfig;
+    private final DaoConfig newsInfoDaoConfig;
     private final DaoConfig historyDaoConfig;
     private final DaoConfig informationDaoConfig;
 
@@ -51,6 +69,12 @@ public class DaoSession extends AbstractDaoSession {
     private final IPDao iPDao;
     private final CPDao cPDao;
     private final DistributionDao distributionDao;
+    private final GameTypeDao gameTypeDao;
+    private final AdvertsDao advertsDao;
+    private final IndexItemInfoDao indexItemInfoDao;
+    private final IndexAdvertDao indexAdvertDao;
+    private final OrderDao orderDao;
+    private final NewsInfoDao newsInfoDao;
     private final HistoryDao historyDao;
     private final InformationDao informationDao;
 
@@ -76,6 +100,24 @@ public class DaoSession extends AbstractDaoSession {
         distributionDaoConfig = daoConfigMap.get(DistributionDao.class).clone();
         distributionDaoConfig.initIdentityScope(type);
 
+        gameTypeDaoConfig = daoConfigMap.get(GameTypeDao.class).clone();
+        gameTypeDaoConfig.initIdentityScope(type);
+
+        advertsDaoConfig = daoConfigMap.get(AdvertsDao.class).clone();
+        advertsDaoConfig.initIdentityScope(type);
+
+        indexItemInfoDaoConfig = daoConfigMap.get(IndexItemInfoDao.class).clone();
+        indexItemInfoDaoConfig.initIdentityScope(type);
+
+        indexAdvertDaoConfig = daoConfigMap.get(IndexAdvertDao.class).clone();
+        indexAdvertDaoConfig.initIdentityScope(type);
+
+        orderDaoConfig = daoConfigMap.get(OrderDao.class).clone();
+        orderDaoConfig.initIdentityScope(type);
+
+        newsInfoDaoConfig = daoConfigMap.get(NewsInfoDao.class).clone();
+        newsInfoDaoConfig.initIdentityScope(type);
+
         historyDaoConfig = daoConfigMap.get(HistoryDao.class).clone();
         historyDaoConfig.initIdentityScope(type);
 
@@ -88,6 +130,12 @@ public class DaoSession extends AbstractDaoSession {
         iPDao = new IPDao(iPDaoConfig, this);
         cPDao = new CPDao(cPDaoConfig, this);
         distributionDao = new DistributionDao(distributionDaoConfig, this);
+        gameTypeDao = new GameTypeDao(gameTypeDaoConfig, this);
+        advertsDao = new AdvertsDao(advertsDaoConfig, this);
+        indexItemInfoDao = new IndexItemInfoDao(indexItemInfoDaoConfig, this);
+        indexAdvertDao = new IndexAdvertDao(indexAdvertDaoConfig, this);
+        orderDao = new OrderDao(orderDaoConfig, this);
+        newsInfoDao = new NewsInfoDao(newsInfoDaoConfig, this);
         historyDao = new HistoryDao(historyDaoConfig, this);
         informationDao = new InformationDao(informationDaoConfig, this);
 
@@ -97,6 +145,12 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(IP.class, iPDao);
         registerDao(CP.class, cPDao);
         registerDao(Distribution.class, distributionDao);
+        registerDao(GameType.class, gameTypeDao);
+        registerDao(Adverts.class, advertsDao);
+        registerDao(IndexItemInfo.class, indexItemInfoDao);
+        registerDao(IndexAdvert.class, indexAdvertDao);
+        registerDao(Order.class, orderDao);
+        registerDao(NewsInfo.class, newsInfoDao);
         registerDao(History.class, historyDao);
         registerDao(Information.class, informationDao);
     }
@@ -108,6 +162,12 @@ public class DaoSession extends AbstractDaoSession {
         iPDaoConfig.getIdentityScope().clear();
         cPDaoConfig.getIdentityScope().clear();
         distributionDaoConfig.getIdentityScope().clear();
+        gameTypeDaoConfig.getIdentityScope().clear();
+        advertsDaoConfig.getIdentityScope().clear();
+        indexItemInfoDaoConfig.getIdentityScope().clear();
+        indexAdvertDaoConfig.getIdentityScope().clear();
+        orderDaoConfig.getIdentityScope().clear();
+        newsInfoDaoConfig.getIdentityScope().clear();
         historyDaoConfig.getIdentityScope().clear();
         informationDaoConfig.getIdentityScope().clear();
     }
@@ -134,6 +194,30 @@ public class DaoSession extends AbstractDaoSession {
 
     public DistributionDao getDistributionDao() {
         return distributionDao;
+    }
+
+    public GameTypeDao getGameTypeDao() {
+        return gameTypeDao;
+    }
+
+    public AdvertsDao getAdvertsDao() {
+        return advertsDao;
+    }
+
+    public IndexItemInfoDao getIndexItemInfoDao() {
+        return indexItemInfoDao;
+    }
+
+    public IndexAdvertDao getIndexAdvertDao() {
+        return indexAdvertDao;
+    }
+
+    public OrderDao getOrderDao() {
+        return orderDao;
+    }
+
+    public NewsInfoDao getNewsInfoDao() {
+        return newsInfoDao;
     }
 
     public HistoryDao getHistoryDao() {

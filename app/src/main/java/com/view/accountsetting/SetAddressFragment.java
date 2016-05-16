@@ -14,9 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -154,7 +156,8 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
                     boolean issu=js.getBoolean("success");
                     int code=js.getInt("code");
                     if (issu&&code==200){
-                        Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
 
 
                         ClearWindows.clearInput(getActivity(),addr);
@@ -165,8 +168,7 @@ public class SetAddressFragment extends BaseFragment implements View.OnClickList
                         userInfo.setProvince_name(province);
                         userInfo.setCity_name(city);
                         userInfo.setCounty_name(county);
-
-
+                        userInfo.setAddr(address);
 
                         switch (tag){
                             case "set":

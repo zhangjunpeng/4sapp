@@ -13,18 +13,23 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
+import com.app.view.PullListView;
 import com.app.view.RoundImageView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
+import com.test4s.gdb.DaoSession;
+import com.test4s.gdb.NewsInfo;
+import com.test4s.gdb.NewsInfoDao;
+import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
 import com.view.Information.InfomaionDetailActivity;
-import com.view.Information.NewsInfo;
-import com.view.s4server.InvesmentDetialActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +40,8 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.dao.query.Query;
+
 /**
  * Created by Administrator on 2015/12/7.
  */
@@ -42,16 +49,19 @@ public class InformationFragment extends Fragment {
 
     List<NewsInfo> newInfos;
 
-    PullToRefreshListView listView;
+    PullListView listView;
     MyAdapter myapapter;
+
+    private DaoSession daoSession;
 
     int p=1;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        daoSession= MyApplication.daoSession;
         newInfos=new ArrayList<>();
         MyLog.i("newInfos=="+newInfos);
-        myapapter=new MyAdapter(getActivity(),newInfos);
+        myapapter=new MyAdapter(getActivity());
     }
 
 
@@ -60,8 +70,11 @@ public class InformationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_information,null);
-        listView= (PullToRefreshListView) view.findViewById(R.id.ptflistView_infolist);
+        listView= (PullListView) view.findViewById(R.id.ptflistView_infolist);
         listView.setAdapter(myapapter);
+
+        getDataFromDB();
+
         initData("1");
         initListener();
         return view;
@@ -69,17 +82,21 @@ public class InformationFragment extends Fragment {
 
     private void initListener() {
         listView.setMode(PullToRefreshBase.Mode.BOTH);
-        listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+        listView.setRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 newInfos.clear();
                 initData("1");
+                MyLog.i("listview===下拉刷新");
+
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 p++;
                 initData(p+"");
+                MyLog.i("listview===上拉加载");
+
 
             }
         });
@@ -96,21 +113,23 @@ public class InformationFragment extends Fragment {
         });
     }
 
-    private void initData(String p) {
+    private void initData(final String p) {
+
         BaseParams baseParams=new BaseParams("news/newslist");
         baseParams.addParams("p",p);
         baseParams.addSign();
-        baseParams.getRequestParams().setCacheMaxAge(60*10*1000);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             String res;
+            boolean su=true;
             @Override
             public void onSuccess(String result) {
                 res=result;
+                su=true;
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                su=false;
             }
 
             @Override
@@ -121,16 +140,19 @@ public class InformationFragment extends Fragment {
             @Override
             public void onFinished() {
                 MyLog.i("infoList=="+res);
-                jsonParser(res);
-                myapapter.notifyDataSetChanged();
-                listView.onRefreshComplete();
+                if (su){
+                    if (p.equals("1")){
+                        deleteAll();
+                    }
+                    jsonParser(res);
+                    myapapter.notifyDataSetChanged();
+                    listView.onRefreshComplete();
+                }else {
+
+                }
+
             }
 
-            @Override
-            public boolean onCache(String result) {
-                res=result;
-                return true;
-            }
         });
     }
 
@@ -144,10 +166,13 @@ public class InformationFragment extends Fragment {
                 Url.prePic=data.getString("prefixPic");
                 InfomaionDetailActivity.prefixUrl=data.getString("prefixUrl");
                 JSONArray array=data.getJSONArray("newsList");
+                if (array.length()==0){
+                    CusToast.showToast(getActivity(),"没有更多信息", Toast.LENGTH_SHORT);
+                }
                 for (int i=0;i<array.length();i++){
                     NewsInfo newsinfo=new NewsInfo();
                     JSONObject info=array.getJSONObject(i);
-                    newsinfo.setId(info.getString("id"));
+                    newsinfo.setUeser_id(info.getString("id"));
                     newsinfo.setTitle(info.getString("title"));
                     newsinfo.setViews(info.getString("views"));
                     newsinfo.setComments(info.getString("comments"));
@@ -155,6 +180,7 @@ public class InformationFragment extends Fragment {
                     newsinfo.setUrl(info.getString("url"));
                     newsinfo.setTime(info.getString("time"));
                     newInfos.add(newsinfo);
+                    addNewsInfo(newsinfo);
                 }
             }
         } catch (JSONException e) {
@@ -164,16 +190,14 @@ public class InformationFragment extends Fragment {
     }
     class MyAdapter extends BaseAdapter{
 
-        private List<NewsInfo> list;
         private Context mcontext;
 
-        public MyAdapter(Context contex,List<NewsInfo> list){
+        public MyAdapter(Context contex){
             mcontext=contex;
-            this.list=list;
         }
         @Override
         public int getCount() {
-            return list.size();
+            return newInfos.size();
         }
 
         @Override
@@ -200,7 +224,7 @@ public class InformationFragment extends Fragment {
             }else {
                 viewHolder= (ViewHolder) convertView.getTag();
             }
-            NewsInfo info=list.get(position);
+            NewsInfo info=newInfos.get(position);
             Picasso.with(mcontext)
                     .load(Url.prePic+info.getCover_img())
                     .placeholder(R.drawable.a2)
@@ -215,6 +239,28 @@ public class InformationFragment extends Fragment {
             private TextView name;
             private TextView conment_num;
             private TextView time;
+        }
+    }
+
+    private NewsInfoDao getNewsInfoDao(){
+        return daoSession.getNewsInfoDao();
+    }
+    private void addNewsInfo(NewsInfo info){
+        getNewsInfoDao().insert(info);
+    }
+    private List searchNewsInfo(){
+        Query query=getNewsInfoDao().queryBuilder()
+                .build();
+        return query.list();
+    }
+    private void deleteAll(){
+        getNewsInfoDao().deleteAll();
+    }
+    private void getDataFromDB(){
+        newInfos=searchNewsInfo();
+        if (newInfos!=null) {
+            myapapter.notifyDataSetChanged();
+            listView.onRefreshComplete();
         }
     }
 }

@@ -22,6 +22,45 @@ public class ExampleGenerator {
         Entity ip=schema.addEntity("IP");
         Entity cp=schema.addEntity("CP");
         Entity distribution=schema.addEntity("Distribution");
+        Entity gameType=schema.addEntity("GameType");
+        Entity advert=schema.addEntity("Adverts");
+        Entity indexItemInfo=schema.addEntity("IndexItemInfo");
+        Entity indexAdvert=schema.addEntity("IndexAdvert");
+        Entity order=schema.addEntity("Order");
+        Entity newsInfo=schema.addEntity("NewsInfo");
+
+        //newsInfo
+        newsInfo.addIdProperty().primaryKey();
+        newsInfo.addStringProperty("ueser_id");
+        newsInfo.addStringProperty("title");
+        newsInfo.addStringProperty("views");
+        newsInfo.addStringProperty("comments");
+        newsInfo.addStringProperty("cover_img");
+        newsInfo.addStringProperty("time");
+        newsInfo.addStringProperty("url");
+
+
+        //Index Order
+        order.addIdProperty().primaryKey();
+        order.addStringProperty("method_name");
+        order.addStringProperty("name");
+
+        //indexItemInfo
+        indexItemInfo.addIdProperty().primaryKey();
+        indexItemInfo.addStringProperty("user_id");
+        indexItemInfo.addStringProperty("logo");
+        indexItemInfo.addStringProperty("identity_cat");
+        indexItemInfo.addStringProperty("company_name");
+        indexItemInfo.addStringProperty("method_name");
+
+
+        //indexAdvert
+        indexAdvert.addIdProperty().primaryKey();
+        indexAdvert.addStringProperty("user_id");
+        indexAdvert.addStringProperty("advert_pic");
+        indexAdvert.addStringProperty("advert_name");
+        indexAdvert.addStringProperty("advert_url");
+
 
         //游戏详情
         gameInfo.addIdProperty().primaryKey();
@@ -46,6 +85,19 @@ public class ExampleGenerator {
         gameInfo.addStringProperty("sdk");
         gameInfo.addStringProperty("pack");
         gameInfo.addStringProperty("checked");
+        gameInfo.addStringProperty("title");
+
+        //gameIndex
+        gameType.addIdProperty().primaryKey();
+//        gameType.addStringProperty("method_name");
+        gameType.addStringProperty("title");
+
+        //advert
+        advert.addIdProperty().primaryKey();
+        advert.addStringProperty("advert_pic");
+        advert.addStringProperty("advert_name");
+        advert.addStringProperty("advert_url");
+
 
         //Investment投资公司
         investment.addIdProperty().primaryKey();

@@ -151,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#7D7D7D"
-                    android:text="米兰达可儿"
+                    android:text="未设置"
                     android:layout_toLeftOf="@+id/grayarrow_name_myaccountsetting"
                     android:textSize="12dp"
                     android:layout_centerVertical="true"
@@ -425,7 +425,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="#B8B8B8"
-
                 />
             <ImageView
                 android:layout_width="match_parent"
@@ -462,7 +461,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#7D7D7D"
-                    android:text="未绑定"
                     android:layout_toLeftOf="@+id/grayarrow_bindother_myaccountsetting"
                     android:textSize="12dp"
                     android:layout_centerVertical="true"

@@ -16,8 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 
 /**
@@ -79,6 +81,8 @@ public class BindPhoneFragment extends BaseFragment implements View.OnClickListe
 
         getFocus(phone_input);
 
+        check.setClickable(false);
+
         phone_input.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -108,7 +112,7 @@ public class BindPhoneFragment extends BaseFragment implements View.OnClickListe
     private void checkPhone() {
         String phonenum=phone_input.getText().toString();
         if (phonenum.equals(userInfo.getPhone())){
-            Toast.makeText(getActivity(),"手机号验证成功",Toast.LENGTH_SHORT).show();
+            CusToast.showToast(getActivity(),"手机号验证成功",Toast.LENGTH_SHORT);
             BindNewPhoneFragment bindnewphone=new BindNewPhoneFragment();
             FragmentTransaction transaction=getActivity().getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);

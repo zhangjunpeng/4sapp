@@ -13,9 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 
@@ -75,7 +77,8 @@ public class SetNickFragment extends BaseFragment implements View.OnClickListene
 
                 nickname_s=nickname.getText().toString();
                 if (TextUtils.isEmpty(nickname_s)){
-                    Toast.makeText(getActivity(),"昵称不能为空",Toast.LENGTH_SHORT).show();
+                    CusToast.showToast(getActivity(),"昵称不能为空",Toast.LENGTH_SHORT);
+
                     return;
                 }
                 MyAccount myAccount=MyAccount.getInstance();
@@ -95,7 +98,8 @@ public class SetNickFragment extends BaseFragment implements View.OnClickListene
                                 //强制隐藏android输入框
                                 ClearWindows.clearInput(getActivity(),nickname);
 
-                                Toast.makeText(getActivity(),"修改成功",Toast.LENGTH_SHORT).show();
+                                CusToast.showToast(getActivity(),"修改成功",Toast.LENGTH_SHORT);
+
                                 MyAccount.getInstance().getUserInfo().setNickname(nickname_s);
                                 MyAccount.getInstance().setNickname(nickname_s);
                                 MyAccount.getInstance().saveUserInfo();

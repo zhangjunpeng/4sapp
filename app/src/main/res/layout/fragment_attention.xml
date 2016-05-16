@@ -3,11 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.app.view.PullListView
         android:id="@+id/listview_attention_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></com.handmark.pulltorefresh.library.PullToRefreshListView>
+        ></com.app.view.PullListView>
     <ImageView
         android:layout_width="72dp"
         android:layout_height="67dp"

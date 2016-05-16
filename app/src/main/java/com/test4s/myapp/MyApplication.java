@@ -2,12 +2,12 @@ package com.test4s.myapp;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 
 import com.app.tools.MyLog;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
@@ -20,11 +20,14 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.test4s.account.MyAccount;
 import com.test4s.gdb.DaoMaster;
 import com.test4s.gdb.DaoSession;
+import com.test4s.net.BaseParams;
+import com.test4s.net.Url;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -52,6 +55,9 @@ public class MyApplication extends Application {
 
     private static final String APP_ID="wx53c55fc6f1efaad2";
     public static IWXAPI api;
+    final static String SP_NAME="4stest";
+    private SharedPreferences sharedPreferences;
+
 
     @Override
     public void onCreate() {
@@ -98,6 +104,10 @@ public class MyApplication extends Application {
         //注册到微信
 //        regToWx();
 
+        //
+//        getKey();
+        getPicpreurl();
+
         //UIL图片库初始化
         File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), getPackageResourcePath()+"image/Cache");
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
@@ -109,10 +119,9 @@ public class MyApplication extends Application {
                 .denyCacheImageMultipleSizesInMemory()
                 .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024)) // You can pass your own memory cache implementation/你可以通过自己的内存缓存实现
                 .memoryCacheSize(2 * 1024 * 1024)
-                .diskCacheSize(50 * 1024 * 1024)
                 .diskCacheFileNameGenerator(new Md5FileNameGenerator())//将保存的时候的URI名称用MD5 加密
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .diskCacheFileCount(100) //缓存的文件数量
+                .diskCacheFileCount(200) //缓存的文件数量
                 .diskCache(new UnlimitedDiskCache(cacheDir))//自定义缓存路径
                 .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
                 .imageDownloader(new BaseImageDownloader(mcontext, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间
@@ -121,6 +130,10 @@ public class MyApplication extends Application {
         ImageLoader.getInstance().init(config);
     }
 
+    private void getPicpreurl() {
+//        sharedPreferences= MyApplication.mcontext.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+//        Url.prePic=sharedPreferences.getString("picpre","http://s.52game.com/");
+    }
 
 
     public static boolean checkUpdate(){
@@ -150,6 +163,45 @@ public class MyApplication extends Application {
         });
 
         return false;
+    }
+    private void getKey() {
+        MyLog.i("getkey");
+
+        BaseParams baseparam=new BaseParams("api/getkey");
+        x.http().post(baseparam.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("getkey back=="+result);
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                    boolean su=jsonObject.getBoolean("success");
+                    int code=jsonObject.getInt("code");
+                    if (su&&code==200){
+                        JSONObject data=jsonObject.getJSONObject("data");
+                        Url.key=data.getString("md5key");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MyLog.i("error==="+ex.toString());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                MyLog.i("error==="+cex.toString());
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
 }

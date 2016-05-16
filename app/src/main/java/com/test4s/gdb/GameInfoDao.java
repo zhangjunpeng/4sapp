@@ -45,6 +45,7 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         public final static Property Sdk = new Property(19, String.class, "sdk", false, "SDK");
         public final static Property Pack = new Property(20, String.class, "pack", false, "PACK");
         public final static Property Checked = new Property(21, String.class, "checked", false, "CHECKED");
+        public final static Property Title = new Property(22, String.class, "title", false, "TITLE");
     };
 
 
@@ -81,7 +82,8 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
                 "'ENABLED' INTEGER," + // 18: enabled
                 "'SDK' TEXT," + // 19: sdk
                 "'PACK' TEXT," + // 20: pack
-                "'CHECKED' TEXT);"); // 21: checked
+                "'CHECKED' TEXT," + // 21: checked
+                "'TITLE' TEXT);"); // 22: title
     }
 
     /** Drops the underlying database table. */
@@ -204,6 +206,11 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         if (checked != null) {
             stmt.bindString(22, checked);
         }
+ 
+        String title = entity.getTitle();
+        if (title != null) {
+            stmt.bindString(23, title);
+        }
     }
 
     /** @inheritdoc */
@@ -237,7 +244,8 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
             cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18), // enabled
             cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // sdk
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // pack
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21) // checked
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // checked
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22) // title
         );
         return entity;
     }
@@ -267,6 +275,7 @@ public class GameInfoDao extends AbstractDao<GameInfo, Long> {
         entity.setSdk(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
         entity.setPack(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
         entity.setChecked(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setTitle(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
      }
     
     /** @inheritdoc */

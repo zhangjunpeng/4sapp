@@ -14,6 +14,12 @@ import com.test4s.gdb.OutSourceDao;
 import com.test4s.gdb.IPDao;
 import com.test4s.gdb.CPDao;
 import com.test4s.gdb.DistributionDao;
+import com.test4s.gdb.GameTypeDao;
+import com.test4s.gdb.AdvertsDao;
+import com.test4s.gdb.IndexItemInfoDao;
+import com.test4s.gdb.IndexAdvertDao;
+import com.test4s.gdb.OrderDao;
+import com.test4s.gdb.NewsInfoDao;
 import com.test4s.gdb.HistoryDao;
 import com.test4s.gdb.InformationDao;
 
@@ -32,6 +38,12 @@ public class DaoMaster extends AbstractDaoMaster {
         IPDao.createTable(db, ifNotExists);
         CPDao.createTable(db, ifNotExists);
         DistributionDao.createTable(db, ifNotExists);
+        GameTypeDao.createTable(db, ifNotExists);
+        AdvertsDao.createTable(db, ifNotExists);
+        IndexItemInfoDao.createTable(db, ifNotExists);
+        IndexAdvertDao.createTable(db, ifNotExists);
+        OrderDao.createTable(db, ifNotExists);
+        NewsInfoDao.createTable(db, ifNotExists);
         HistoryDao.createTable(db, ifNotExists);
         InformationDao.createTable(db, ifNotExists);
     }
@@ -44,6 +56,12 @@ public class DaoMaster extends AbstractDaoMaster {
         IPDao.dropTable(db, ifExists);
         CPDao.dropTable(db, ifExists);
         DistributionDao.dropTable(db, ifExists);
+        GameTypeDao.dropTable(db, ifExists);
+        AdvertsDao.dropTable(db, ifExists);
+        IndexItemInfoDao.dropTable(db, ifExists);
+        IndexAdvertDao.dropTable(db, ifExists);
+        OrderDao.dropTable(db, ifExists);
+        NewsInfoDao.dropTable(db, ifExists);
         HistoryDao.dropTable(db, ifExists);
         InformationDao.dropTable(db, ifExists);
     }
@@ -83,6 +101,12 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(IPDao.class);
         registerDaoClass(CPDao.class);
         registerDaoClass(DistributionDao.class);
+        registerDaoClass(GameTypeDao.class);
+        registerDaoClass(AdvertsDao.class);
+        registerDaoClass(IndexItemInfoDao.class);
+        registerDaoClass(IndexAdvertDao.class);
+        registerDaoClass(OrderDao.class);
+        registerDaoClass(NewsInfoDao.class);
         registerDaoClass(HistoryDao.class);
         registerDaoClass(InformationDao.class);
     }

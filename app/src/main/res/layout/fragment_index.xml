@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:scrollbars="none"
     android:background="#FFF"
     >
     <LinearLayout
@@ -43,6 +44,29 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:src="@drawable/tz_select"
+
+                    android:id="@+id/tz_fg_index" />
+                <TextView
+                    android:layout_width="62dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:gravity="center"
+
+                    android:textColor="#212121"
+                    android:text="找投资"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
@@ -71,51 +95,6 @@
                 <ImageView
                     android:layout_width="62dp"
                     android:layout_height="62dp"
-                    android:src="@drawable/wb_select"
-
-                    android:id="@+id/wb_fg_index" />
-                <TextView
-                    android:layout_width="62dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:gravity="center"
-
-                    android:textColor="#212121"
-                    android:text="找外包"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="62dp"
-                    android:layout_height="62dp"
-                    android:src="@drawable/tz_select"
-
-                    android:id="@+id/tz_fg_index" />
-                <TextView
-                android:layout_width="62dp"
-                android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:gravity="center"
-
-                android:textColor="#212121"
-                android:text="找投资"
-                />
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="62dp"
-                    android:layout_height="62dp"
                     android:src="@drawable/fx"
 
                     android:id="@+id/fx_fg_index" />
@@ -129,6 +108,30 @@
                     android:text="找发行"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:src="@drawable/wb_select"
+
+                    android:id="@+id/wb_fg_index" />
+                <TextView
+                    android:layout_width="62dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:gravity="center"
+
+                    android:textColor="#212121"
+                    android:text="找外包"
+                    />
+            </LinearLayout>
+
+
             
     </LinearLayout>
         <LinearLayout

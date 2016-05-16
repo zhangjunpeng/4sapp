@@ -1,5 +1,6 @@
 package com.view.s4server;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,14 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.squareup.picasso.Picasso;
+import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -35,35 +39,46 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/2/18.
  */
-public class InvesmentListFragment extends Fragment{
+public class InvesmentListFragment extends BaseFragment{
     View view;
 
     List<InvesmentSimpleInfo> invesmentSimpleInfos;
     PullToRefreshListView listView;
     MyIssueAdapter myAdapter;
 
-    private TextView title;
-    private ImageView search;
-    private ImageView back;
 
     int p=1;
 
+    private Dialog dialog;
+    private Button refreash;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        dialog=showLoadingDialog(getActivity());
+
         invesmentSimpleInfos=new ArrayList<>();
         myAdapter=new MyIssueAdapter(getActivity(),invesmentSimpleInfos);
-
         super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         view=inflater.inflate(R.layout.fragment_list,null);
         listView= (PullToRefreshListView) view.findViewById(R.id.pullToRefresh_fglist);
         listView.setAdapter(myAdapter);
+        refreash= (Button) view.findViewById(R.id.refeash_list);
+        refreash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.setVisibility(View.VISIBLE);
+
+                dialog.show();
+                initData("1");
+            }
+        });
         initLisener();
         initData("1");
 
@@ -100,11 +115,12 @@ public class InvesmentListFragment extends Fragment{
     }
 
     private void initData(String p) {
+
         BaseParams baseParams=new BaseParams("index/investorlist");
         baseParams.addParams("p",p);
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(30*60*1000);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             String res;
 
             @Override
@@ -115,6 +131,7 @@ public class InvesmentListFragment extends Fragment{
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                listView.setVisibility(View.GONE);
 
             }
 
@@ -128,14 +145,11 @@ public class InvesmentListFragment extends Fragment{
                 jsonParser(res);
                 myAdapter.notifyDataSetChanged();
                 listView.onRefreshComplete();
+                if (dialog.isShowing()){
+                    dialog.dismiss();
+                }
             }
 
-            @Override
-            public boolean onCache(String result) {
-                res=result;
-
-                return true;
-            }
         });
     }
 
@@ -148,6 +162,9 @@ public class InvesmentListFragment extends Fragment{
                 JSONObject jsonObject1=jsonObject.getJSONObject("data");
                 Url.prePic=jsonObject1.getString("prefixPic");
                 JSONArray issues=jsonObject1.getJSONArray("investorList");
+                if (issues.length()==0){
+                    CusToast.showToast(getActivity(),"没有更多信息", Toast.LENGTH_SHORT);
+                }
                 for (int i=0;i<issues.length();i++){
                     JSONObject jsonObject2=issues.getJSONObject(i);
                     InvesmentSimpleInfo invesmentSimpleInfo=new InvesmentSimpleInfo();

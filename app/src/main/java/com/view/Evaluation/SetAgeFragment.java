@@ -3,7 +3,6 @@ package com.view.Evaluation;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
-import com.view.accountsetting.BaseFragment;
+import com.test4s.myapp.BaseFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;

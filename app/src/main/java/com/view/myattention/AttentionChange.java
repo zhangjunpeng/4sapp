@@ -3,6 +3,7 @@ package com.view.myattention;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.test4s.account.MyAccount;
 import com.test4s.net.BaseParams;
 
@@ -31,7 +32,8 @@ public class AttentionChange {
                     int code=jsonObject.getInt("code");
                     if (su&&code==200){
                         String mes="关注成功";
-                        Toast.makeText(context,mes,Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(context,mes,Toast.LENGTH_SHORT);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -70,7 +72,8 @@ public class AttentionChange {
                     int code=jsonObject.getInt("code");
                     if (su&&code==200){
                         String mes="取消关注";
-                        Toast.makeText(context,mes,Toast.LENGTH_SHORT).show();
+                        CusToast.showToast(context,mes,Toast.LENGTH_SHORT);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

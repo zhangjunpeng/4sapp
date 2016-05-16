@@ -8,10 +8,10 @@
         android:id="@+id/title_gamelist"
         layout="@layout/titlebar"/>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.app.view.PullListView
         android:id="@+id/ptflistView_gamelist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        ></com.handmark.pulltorefresh.library.PullToRefreshListView>
+        ></com.app.view.PullListView>
     </LinearLayout>

@@ -1,8 +1,10 @@
 package com.test4s.myapp;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -25,21 +28,19 @@ import android.widget.Toast;
 
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
+import com.test4s.gdb.CPDao;
+import com.test4s.gdb.DaoSession;
 import com.view.activity.BaseActivity;
 import com.view.index.GameFragment;
 import com.view.index.IndexFragment;
 import com.view.index.InformationFragment;
 import com.view.index.MySettingFragment;
-import com.test4s.gdb.CPDao;
-import com.test4s.gdb.DaoSession;
 import com.view.search.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jpush.android.api.JPushInterface;
-
-public class MainActivity extends FragmentActivity implements View.OnClickListener,GestureDetector.OnGestureListener{
+public class MainActivity extends FragmentActivity  implements View.OnClickListener,GestureDetector.OnGestureListener{
 
     DaoSession daoSession;
     private List<Fragment> fragments;
@@ -329,14 +330,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
-//            if((System.currentTimeMillis()-exitTime) > 2000){
-//                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
-//                exitTime = System.currentTimeMillis();
-//            } else {
-//                finish();
-//                System.exit(0);
-//            }
-            showDialog();
+            if((System.currentTimeMillis()-exitTime) > 2000){
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+//            showLoadingDialog();
+//            showDialog();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -366,10 +368,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 finish();
                 dialog.dismiss();
             }
         });
+    }
+    public Dialog showLoadingDialog(){
+        final Dialog dialog=new Dialog(this,R.style.CustomDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_loading);
+        dialog.show();
+        ImageView imageView= (ImageView) dialog.findViewById(R.id.image_loadingdialog);
+        AnimationDrawable ad = (AnimationDrawable)imageView.getBackground();
+
+        ad.start();
+        return dialog;
     }
 }

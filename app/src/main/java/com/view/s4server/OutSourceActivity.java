@@ -217,6 +217,7 @@ public class OutSourceActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                setContentView(R.layout.neterror);
 
             }
 
