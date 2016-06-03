@@ -122,22 +122,18 @@ public class PlayerInfoFragment extends Fragment{
                 linearParams.topMargin= (int) (5*density);
                 linear_con=new LinearLayout(getActivity());
                 linear_con.setOrientation(LinearLayout.HORIZONTAL);
-                linear_con.setGravity(Gravity.CENTER_VERTICAL);
+                linear_con.setGravity(Gravity.TOP);
 
-                LinearLayout linear=new LinearLayout(getActivity());
-                linear.setOrientation(LinearLayout.HORIZONTAL);
-                linear.setGravity(Gravity.CENTER);
-                ImageView image=new ImageView(getActivity());
-                TextView text=new TextView(getActivity());
-                LinearLayout.LayoutParams imageParams=new LinearLayout.LayoutParams((int) (11*density),(int) (11*density));
-                LinearLayout.LayoutParams textParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                textParams.leftMargin= (int) (6*density);
+                View view=LayoutInflater.from(getActivity()).inflate(R.layout.lengend,null);
+
+                ImageView image= (ImageView) view.findViewById(R.id.image_lengend);
+                TextView text= (TextView) view.findViewById(R.id.name_legend);
+
                 image.setBackgroundColor(colors[i]);
                 text.setText(map.get("name"));
                 text.setTextColor(Color.rgb(180,180,180));
-                linear.addView(image,imageParams);
-                linear.addView(text,textParams);
-                linear_con.addView(linear,params);
+
+                linear_con.addView(view,params);
 
                 legend_linear.addView(linear_con,linearParams);
 
@@ -146,20 +142,23 @@ public class PlayerInfoFragment extends Fragment{
                 LinearLayout linear=new LinearLayout(getActivity());
                 linear.setId(i);
                 linear.setOrientation(LinearLayout.HORIZONTAL);
-                linear.setGravity(Gravity.CENTER);
-//                linear.setGravity(Gravity.CENTER_HORIZONTAL);
-//                linear.setLayoutParams(params);
-                ImageView image=new ImageView(getActivity());
-                TextView text=new TextView(getActivity());
-                LinearLayout.LayoutParams imageParams=new LinearLayout.LayoutParams((int) (11*density),(int) (11*density));
-                LinearLayout.LayoutParams textParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                textParams.leftMargin= (int) (6*density);
+                linear.setGravity(Gravity.TOP);
+
+                View view=LayoutInflater.from(getActivity()).inflate(R.layout.lengend,null);
+
+                ImageView image= (ImageView) view.findViewById(R.id.image_lengend);
+                TextView text= (TextView) view.findViewById(R.id.name_legend);
+
                 image.setBackgroundColor(colors[i]);
                 text.setText(map.get("name"));
                 text.setTextColor(Color.rgb(180,180,180));
-                linear.addView(image,imageParams);
-                linear.addView(text,textParams);
-                linear_con.addView(linear,params);
+
+//                linear.setGravity(Gravity.CENTER_HORIZONTAL);
+//                linear.setLayoutParams(params);
+                image.setBackgroundColor(colors[i]);
+                text.setText(map.get("name"));
+                text.setTextColor(Color.rgb(180,180,180));
+                linear_con.addView(view,params);
 
 
             }

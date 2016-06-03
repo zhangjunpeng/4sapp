@@ -2,6 +2,7 @@ package com.test4s.account;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -30,11 +31,10 @@ public class SinaWeiboLogin implements WeiboAuthListener{
                     + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
                     + "follow_app_official_microblog," + "invitation_write";
     private AuthInfo mAuthInfo;
-
     /**
      * 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能
      */
-    private Oauth2AccessToken mAccessToken;
+    public static Oauth2AccessToken mAccessToken;
 
     /**
      * 注意：SsoHandler 仅当 SDK 支持 SSO 时有效
@@ -47,10 +47,13 @@ public class SinaWeiboLogin implements WeiboAuthListener{
         // 快速授权时，请不要传入 SCOPE，否则可能会授权不成功
         mAuthInfo = new AuthInfo(context, "963258147", "https://api.weibo.com/oauth2/default.html",SCOPE);
         mSsoHandler = new SsoHandler(context, mAuthInfo);
+        // 第一次启动本应用，AccessToken 不可用
+        mAccessToken = AccessTokenKeeper.readAccessToken(context);
     }
 
     public static SinaWeiboLogin getInstance(Activity ac){
         if (instance==null){
+            MyLog.i("创建实例");
             instance=new SinaWeiboLogin(ac);
         }
         return instance;
@@ -58,6 +61,7 @@ public class SinaWeiboLogin implements WeiboAuthListener{
 
     public void login(WeiboAuthListener listener){
         MyLog.i("微博登录");
+
         mSsoHandler.authorize(listener);
     }
     public void bind(WeiboAuthListener listener){
@@ -99,9 +103,4 @@ public class SinaWeiboLogin implements WeiboAuthListener{
         public void onWeiboException(WeiboException e) {
         }
     }
-
-    public void loginout(){
-}
-
-
 }

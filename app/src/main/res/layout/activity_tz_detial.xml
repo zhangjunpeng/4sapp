@@ -35,15 +35,15 @@
                 app:layout_collapseMode="pin"
                 >
 
-                <com.app.view.RoundImageView
+                <ImageView
                     android:id="@+id/roundImage_tzdetail"
                     android:layout_width="111dp"
                     android:layout_height="111dp"
                     android:layout_marginTop="86.66dp"
                     android:scaleType="fitXY"
+                    android:padding="1px"
+                    android:background="@drawable/rundimageborder"
                     android:src="@drawable/default_icon"
-                    app:borderRadius="5dp"
-                    app:type="round"
                     android:layout_centerHorizontal="true"
                     />
 
@@ -82,11 +82,15 @@
                     android:layout_height="match_parent"
                     >
                     <ImageView
+                        android:id="@+id/back_tzdetail"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent" />
+                    <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_centerVertical="true"
                         android:src="@drawable/back"
-                        android:id="@+id/back_tzdetail" />
+                         />
                     <ImageView
                         android:id="@+id/care_tzdetatil"
                         android:layout_width="20dp"
@@ -197,9 +201,9 @@
                     android:textSize="12dp"
                     android:textColor="#FF9D00"
                     android:text="全部"
-                    android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="10dp"
+                    android:visibility="gone"
                     />
 
             </RelativeLayout>

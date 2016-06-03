@@ -8,6 +8,7 @@ public class GameType {
 
     private Long id;
     private String title;
+    private String advert_cat_id;
 
     public GameType() {
     }
@@ -16,9 +17,10 @@ public class GameType {
         this.id = id;
     }
 
-    public GameType(Long id, String title) {
+    public GameType(Long id, String title, String advert_cat_id) {
         this.id = id;
         this.title = title;
+        this.advert_cat_id = advert_cat_id;
     }
 
     public Long getId() {
@@ -35,6 +37,14 @@ public class GameType {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAdvert_cat_id() {
+        return advert_cat_id;
+    }
+
+    public void setAdvert_cat_id(String advert_cat_id) {
+        this.advert_cat_id = advert_cat_id;
     }
 
 }

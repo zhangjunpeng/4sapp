@@ -34,15 +34,15 @@
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="pin"
                 >
-                <com.app.view.RoundImageView
+                <ImageView
                     android:id="@+id/roundImage_ipdetail"
                     android:layout_width="111dp"
                     android:layout_height="111dp"
                     android:layout_marginTop="86.66dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/default_icon"
-                    app:borderRadius="5dp"
-                    app:type="round"
+                    android:padding="1px"
+                    android:background="@drawable/rundimageborder"
                     android:layout_centerHorizontal="true"
                     />
 
@@ -80,11 +80,15 @@
                     android:layout_height="match_parent"
                     >
                     <ImageView
+                        android:id="@+id/back_ipdetail"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent" />
+                    <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_centerVertical="true"
                         android:src="@drawable/back"
-                        android:id="@+id/back_ipdetail" />
+                         />
                     <ImageView
                         android:id="@+id/care_ipdetatil"
                         android:layout_width="20dp"
@@ -192,7 +196,6 @@
                     android:textSize="12dp"
                     android:textColor="#FF9D00"
                     android:text="全部"
-                    android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="10dp"
                     />
@@ -258,8 +261,8 @@
                 android:layout_height="187dp"
                 android:layout_marginRight="14dp"
                 android:layout_marginLeft="14dp"
-                android:orientation="vertical"
                 android:layout_marginTop="11dp"
+                android:background="#000000"
                 ></WebView>
             </LinearLayout>
             <LinearLayout
@@ -289,7 +292,7 @@
                 android:id="@+id/ipdes_ipdetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
+                android:divider="@null"
                 ></ListView>
             </LinearLayout>
         <LinearLayout
@@ -321,6 +324,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:divider="@null"
                 android:layout_marginBottom="50dp"
                 ></ListView>
             </LinearLayout>

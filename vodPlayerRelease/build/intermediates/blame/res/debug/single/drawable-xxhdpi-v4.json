@@ -1,0 +1,254 @@
+[
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_full.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_full.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_star_half_black_16dp.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_star_half_black_16dp.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_volume.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_volume.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_textfield_default_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_textfield_default_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_longpressed_holo.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_longpressed_holo.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_play.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_play.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_switch_track_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_switch_track_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_pause.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_pause.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_light.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_light.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_5.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_5.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_btn_switch_to_on_mtrl_00012.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_btn_switch_to_on_mtrl_00012.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_star_half_black_36dp.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_star_half_black_36dp.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_4.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_4.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_textfield_search_default_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_textfield_search_default_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_7.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_7.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_half.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_half.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_popup_background_mtrl_mult.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_popup_background_mtrl_mult.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\bg_bottom.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\bg_bottom.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_back.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_back.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_1.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_1.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_btn_rating_star_on_mtrl_alpha.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_btn_rating_star_on_mtrl_alpha.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_005.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_005.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_pressed_holo_light.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_pressed_holo_light.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\bg_top.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\bg_top.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_10.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_10.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\btn_try.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\btn_try.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\bg_float.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\bg_float.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_scrubber_primary_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_scrubber_primary_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_8.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_8.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_scrubber_control_off_mtrl_alpha.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_scrubber_control_off_mtrl_alpha.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\bg_quality.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\bg_quality.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_focused_holo.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_focused_holo.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_search_api_mtrl_alpha.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_search_api_mtrl_alpha.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\progress_thumb_normal.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\progress_thumb_normal.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_pressed_holo_dark.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_pressed_holo_dark.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_textfield_search_activated_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_textfield_search_activated_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_star_black_36dp.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_star_black_36dp.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_cab_background_top_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_cab_background_top_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_selector_disabled_holo_light.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_selector_disabled_holo_light.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_menu_hardkey_panel_mtrl_mult.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_menu_hardkey_panel_mtrl_mult.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_2.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_2.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_silent_notice.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_silent_notice.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_rewind.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_rewind.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_volume_notice.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_volume_notice.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_forward.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_forward.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_btn_switch_to_on_mtrl_00001.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_btn_switch_to_on_mtrl_00001.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_divider_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_divider_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_commit_search_api_mtrl_alpha.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_commit_search_api_mtrl_alpha.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_textfield_activated_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ic_star_black_16dp.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ic_star_black_16dp.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_list_selector_disabled_holo_dark.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_list_selector_disabled_holo_dark.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_silent.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_silent.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_6.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_6.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\progress_thumb_press.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\progress_thumb_press.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_spinner_mtrl_am_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_spinner_mtrl_am_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\loading_3.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\loading_3.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\icon_qaulity_switch.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\src\\main\\res\\drawable-xxhdpi\\icon_qaulity_switch.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_ab_share_pack_mtrl_alpha.9.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_ab_share_pack_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\abc_btn_rating_star_off_mtrl_alpha.png",
+        "source": "E:\\work\\MyApp\\vodPlayerRelease\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.0\\res\\drawable-xxhdpi-v4\\abc_btn_rating_star_off_mtrl_alpha.png"
+    }
+]

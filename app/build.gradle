@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -9,6 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -25,6 +28,17 @@ android {
     }
     productFlavors {
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'lib/armeabi-v7a/libwebpbackport.so'
+    }
 }
 sourceSets {
     main {
@@ -35,7 +49,11 @@ sourceSets {
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+//    maven {
+//        url 'https://oss.sonatype.org/content/repositories/snapshots'
+//    }
 }
+
 
 
 dependencies {
@@ -54,4 +72,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'me.everything:overscroll-decor-android:1.0.1'
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
 }

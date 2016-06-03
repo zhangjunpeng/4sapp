@@ -18,6 +18,7 @@ import com.view.game.GameDetailActivity;
 import com.view.s4server.CPDetailActivity;
 import com.view.s4server.IPDetailActivity;
 import com.view.s4server.InvesmentDetialActivity;
+import com.view.s4server.IssueDetailActivity;
 import com.view.s4server.OutSourceActivity;
 
 import org.json.JSONArray;
@@ -125,8 +126,7 @@ public class SearchEndFragment extends Fragment {
     class MyListAdapter extends BaseAdapter{
         Context context;
         List<Object> list;
-        String id_s="";
-        String iden_cat="";
+
 
         public MyListAdapter(Context context,List<Object> dataList){
             list=dataList;
@@ -159,7 +159,8 @@ public class SearchEndFragment extends Fragment {
             }else {
                 viewHolder= (ViewHolder) convertView.getTag();
             }
-
+            String id_s="";
+            String iden_cat="";
             if (identity_cat.equals("1")||identity_cat.equals("5")){
                 SearchIPInfo ipInfo= (SearchIPInfo) list.get(position);
                 viewHolder.name.setText(ipInfo.getName());
@@ -170,6 +171,8 @@ public class SearchEndFragment extends Fragment {
                 id_s=dataInfo.getUser_id();
                 iden_cat=dataInfo.getIdentity_cat();
             }
+            final String finalId_s = id_s;
+            final String finalIden_cat = iden_cat;
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -177,31 +180,31 @@ public class SearchEndFragment extends Fragment {
                     switch (identity_cat){
                         case "1":
                             intent=new Intent(getActivity(), GameDetailActivity.class);
-                            intent.putExtra("game_id",id_s);
+                            intent.putExtra("game_id", finalId_s);
                             break;
                         case "2":
                             intent=new Intent(getActivity(), CPDetailActivity.class);
-                            intent.putExtra("user_id",id_s);
-                            intent.putExtra("identity_cat",iden_cat);
+                            intent.putExtra("user_id", finalId_s);
+                            intent.putExtra("identity_cat", finalIden_cat);
                             break;
                         case "3":
                             intent=new Intent(getActivity(), OutSourceActivity.class);
-                            intent.putExtra("user_id",id_s);
-                            intent.putExtra("identity_cat",iden_cat);
+                            intent.putExtra("user_id", finalId_s);
+                            intent.putExtra("identity_cat", finalIden_cat);
                             break;
                         case "4":
                             intent=new Intent(getActivity(), InvesmentDetialActivity.class);
-                            intent.putExtra("user_id",id_s);
-                            intent.putExtra("identity_cat",iden_cat);
+                            intent.putExtra("user_id", finalId_s);
+                            intent.putExtra("identity_cat", finalIden_cat);
                             break;
                         case "5":
                             intent=new Intent(getActivity(), IPDetailActivity.class);
-                            intent.putExtra("id",id_s);
+                            intent.putExtra("id", finalId_s);
                             break;
                         case "6":
-                            intent=new Intent(getActivity(), InvesmentDetialActivity.class);
-                            intent.putExtra("user_id",id_s);
-                            intent.putExtra("identity_cat",iden_cat);
+                            intent=new Intent(getActivity(), IssueDetailActivity.class);
+                            intent.putExtra("user_id", finalId_s);
+                            intent.putExtra("identity_cat", finalIden_cat);
                             break;
                     }
                     startActivity(intent);

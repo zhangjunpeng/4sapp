@@ -55,6 +55,7 @@
 
     </LinearLayout>
     <ImageView
+        android:id="@+id/line_pcdetail"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="#4c4c4c"

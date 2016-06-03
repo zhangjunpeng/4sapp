@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
@@ -32,9 +33,9 @@ import java.util.List;
 public class IssuesAttentionAdapter extends BaseAdapter {
     List<Object> list;
     Activity context;
-    PullToRefreshListView listView;
+    ListView listView;
 
-    public IssuesAttentionAdapter(Activity context, List<Object> list, PullToRefreshListView listView){
+    public IssuesAttentionAdapter(Activity context, List<Object> list, ListView listView){
         this.context=context;
         this.list=list;
         this.listView=listView;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- list item分割线的高度 -->
+
+    <dimen name="streams_item_width">50dp</dimen>
+    <dimen name="streams_item_height">30dp</dimen>
+    
+    <dimen name="volume_seekbar_width">35dp</dimen>
+    <dimen name="volume_seekbar_height">130dp</dimen>
+
+</resources>

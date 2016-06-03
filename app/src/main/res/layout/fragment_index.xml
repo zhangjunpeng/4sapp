@@ -95,7 +95,7 @@
                 <ImageView
                     android:layout_width="62dp"
                     android:layout_height="62dp"
-                    android:src="@drawable/fx"
+                    android:src="@drawable/fx_select"
 
                     android:id="@+id/fx_fg_index" />
                 <TextView
@@ -125,7 +125,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="12dp"
                     android:gravity="center"
-
                     android:textColor="#212121"
                     android:text="找外包"
                     />

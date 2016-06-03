@@ -403,12 +403,22 @@
                     android:layout_marginLeft="17.33dp"
                     />
             </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#CACACA"
+                />
            <LinearLayout
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:orientation="vertical"
                android:id="@+id/questionListview_pcdetail"
                ></LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#CACACA"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -431,6 +441,11 @@
                     android:layout_marginLeft="17.33dp"
                     />
             </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#CACACA"
+                />
             <TextView
                 android:id="@+id/advise_pcdetail"
                 android:layout_width="match_parent"

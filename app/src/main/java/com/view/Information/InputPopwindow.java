@@ -2,7 +2,10 @@ package com.view.Information;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +14,13 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 
 /**
  * Created by Administrator on 2016/3/15.
  */
-public class InputPopwindow extends PopupWindow {
+public class InputPopwindow extends PopupWindow implements TextWatcher {
     public EditText editText;
     private TextView send;
     private TextView channel;
@@ -37,6 +41,8 @@ public class InputPopwindow extends PopupWindow {
         });
         send.setOnClickListener(myListener);
 
+        editText.addTextChangedListener(this);
+
         this.setContentView(view);
         //设置SelectPicPopupWindow弹出窗体的宽
         this.setWidth(ViewGroup.LayoutParams.FILL_PARENT);
@@ -53,4 +59,25 @@ public class InputPopwindow extends PopupWindow {
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        MyLog.i("commond text change");
+        if (s.length()>0){
+            send.setTextColor(Color.rgb(255,156,0));
+            send.setClickable(true);
+        }else {
+            send.setTextColor(Color.rgb(50,50,50));
+            send.setClickable(false);
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
 }

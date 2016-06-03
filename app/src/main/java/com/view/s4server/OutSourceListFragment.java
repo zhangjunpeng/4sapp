@@ -3,11 +3,13 @@ package com.view.s4server;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -25,6 +27,7 @@ import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.ListActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,13 +38,18 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
+
 /**
  * Created by Administrator on 2016/2/18.
  */
 public class OutSourceListFragment extends BaseFragment{
     View view;
 
-    PullListView listView;
+    ListView listView;
 
     int p=1;
 
@@ -49,16 +57,28 @@ public class OutSourceListFragment extends BaseFragment{
 
     MyOutSourceListAdapter myAdapter;
 
-    private Dialog dialog;
     private Button refreash;
+    private boolean recommend;
+    private View showall;
+    private PtrClassicFrameLayout prt_cp;
+    private View footview;
+    private View headview;
+    private MyScrollViewListener listener;
+    private int Foot_flag;
+    private View nomore;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        dialog=showLoadingDialog(getActivity());
-
         osSimpleInfos=new ArrayList<>();
         myAdapter=new MyOutSourceListAdapter(getActivity(),osSimpleInfos);
 
+        listener=new MyScrollViewListener();
+
+        nomore=getTextView(getActivity());
+        Bundle bundle=getArguments();
+        if (bundle!=null){
+            recommend=bundle.getBoolean("recommend",false);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -67,24 +87,79 @@ public class OutSourceListFragment extends BaseFragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view=inflater.inflate(R.layout.fragment_list,null);
-        listView= (PullListView) view.findViewById(R.id.pullToRefresh_fglist);
+        listView= (ListView) view.findViewById(R.id.pullToRefresh_fglist);
+
+
+        prt_cp= (PtrClassicFrameLayout) view.findViewById(R.id.prt_cplist);
+        footview=LayoutInflater.from(getActivity()).inflate(R.layout.footerloading,null);
+        ImageView image= (ImageView) footview.findViewById(R.id.image_footerloading);
+        AnimationDrawable drable= (AnimationDrawable) image.getBackground();
+        drable.start();
+
+        headview=LayoutInflater.from(getActivity()).inflate(R.layout.handerloading,null);
+        ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
+        AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
+        drawable.start();
+
         refreash= (Button) view.findViewById(R.id.refeash_list);
         refreash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listView.setVisibility(View.VISIBLE);
-                dialog.show();
                 initData("1");
             }
         });
         listView.setAdapter(myAdapter);
-        initData(1+"");
+//        initData(1+"");
+        initPtrLayout();
+
         initListView();
         return view;
     }
+    private void initPtrLayout() {
+
+        prt_cp.setHeaderView(headview);
+
+        prt_cp.setResistance(1.7f);
+        prt_cp.setRatioOfHeaderHeightToRefresh(1.2f);
+        prt_cp.setDurationToClose(200);
+        prt_cp.setDurationToCloseHeader(1000);
+// default is false
+        prt_cp.setPullToRefresh(false);
+// default is true
+        prt_cp.setKeepHeaderWhenRefresh(true);
+
+//        prt_cp.setPinContent(true);
+
+        prt_cp.setPtrHandler(new PtrHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                MyLog.i("~~~~下拉刷新");
+                p=1;
+                osSimpleInfos.clear();
+                listView.setOnScrollListener(listener);
+                initData(p+"");
+            }
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame,content,header);
+            }
+        });
+        prt_cp.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                prt_cp.autoRefresh();
+            }
+        },100);
+    }
+
 
     private void initData(String p) {
         BaseParams baseParams=new BaseParams("index/outsourcelist");
+        if (recommend){
+            baseParams.addParams("ret","2");
+        }
         baseParams.addParams("p",p);
         baseParams.addSign();
 //        baseParams.getRequestParams().setCacheMaxAge(10*60*1000);
@@ -92,14 +167,21 @@ public class OutSourceListFragment extends BaseFragment{
             @Override
             public void onSuccess(String result) {
                 MyLog.i("outsourcelist==="+result);
+                if (listView.getFooterViewsCount()==0){
+                    listView.addFooterView(footview);
+                }
+                if (Foot_flag!=1){
+                    listView.removeFooterView(showall);
+                    listView.removeFooterView(nomore);
+                    listView.addFooterView(footview);
+                    Foot_flag=1;
+                }
                 jsonParser(result);
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                if (dialog.isShowing()){
-                    dialog.dismiss();
-                }
+
                 listView.setVisibility(View.GONE);
             }
 
@@ -110,11 +192,11 @@ public class OutSourceListFragment extends BaseFragment{
 
             @Override
             public void onFinished() {
-                listView.onRefreshComplete();
                 myAdapter.notifyDataSetChanged();
-                if (dialog.isShowing()){
-                    dialog.dismiss();
+                if (prt_cp.isRefreshing()){
+                    prt_cp.refreshComplete();
                 }
+
             }
         });
 
@@ -130,7 +212,18 @@ public class OutSourceListFragment extends BaseFragment{
                 Url.prePic=jsonObject1.getString("prefixPic");
                 JSONArray jsonArray=jsonObject1.getJSONArray("outsourceList");
                 if (jsonArray.length()==0){
-                    CusToast.showToast(getActivity(),"没有更多外包信息", Toast.LENGTH_SHORT);
+                    listView.setOnScrollListener(null);
+                    if (recommend){
+                        listView.removeFooterView(footview);
+                        listView.addFooterView(showall);
+                        Foot_flag=2;
+                    }else {
+                        listView.removeFooterView(footview);
+//                        CusToast.showToast(getActivity(), "没有更多开发者信息", Toast.LENGTH_SHORT);
+                        listView.addFooterView(nomore);
+                        Foot_flag=3;
+                    }
+
                 }
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject2=jsonArray.getJSONObject(i);
@@ -155,24 +248,28 @@ public class OutSourceListFragment extends BaseFragment{
     }
 
     private void initListView() {
-        listView.setMode(PullToRefreshBase.Mode.BOTH);
-        listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-            @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                osSimpleInfos.clear();
-                initData("1");
+        showall=LayoutInflater.from(getActivity()).inflate(R.layout.showall,null);
 
-            }
-
+        showall.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                p++;
-                initData(p+"");
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), ListActivity.class);
+                intent.putExtra("tag",ListActivity.OutSource_TAG);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
+        listView.setOnScrollListener(listener);
+
+
+        Foot_flag=1;
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (view==nomore){
+                    return;
+                }
                 Intent intent=new Intent(getActivity(),OutSourceActivity.class);
                 OutSourceSimpleInfo outsoucrxe=osSimpleInfos.get((int) id);
                 intent.putExtra("user_id",outsoucrxe.getUser_id());
@@ -182,6 +279,27 @@ public class OutSourceListFragment extends BaseFragment{
             }
         });
 
+    }
+    class MyScrollViewListener implements AbsListView.OnScrollListener {
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+                // 当不滚动时
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    // 判断滚动到底部
+                    if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+                        p++;
+                        initData(p + "");
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
     }
 
 

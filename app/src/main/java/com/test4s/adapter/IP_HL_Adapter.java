@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.app.tools.MyDisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.gdb.IP;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
@@ -22,6 +23,8 @@ import java.util.List;
 public class IP_HL_Adapter extends BaseAdapter {
     List<IP> list;
     Context mcontext;
+    private ImageLoader imageLoader= ImageLoader.getInstance();
+
     public IP_HL_Adapter(Context context,List<IP> ipList){
         list=ipList;
         mcontext=context;
@@ -58,9 +61,11 @@ public class IP_HL_Adapter extends BaseAdapter {
         IP ip=list.get(position);
         String imageUrl= Url.prePic+ip.getIp_logo();
         String name=ip.getIp_name();
-        Picasso.with(mcontext)
-                .load(imageUrl)
-                .into(viewHolder.imageView);
+//        Picasso.with(mcontext)
+//                .load(imageUrl)
+//                .into(viewHolder.imageView);
+        imageLoader.displayImage(imageUrl,viewHolder.imageView, MyDisplayImageOptions.getdefaultImageOptions());
+
         viewHolder.textView.setText(name);
         return convertView;
     }

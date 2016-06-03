@@ -23,7 +23,7 @@ public class MyScrollView extends ScrollView
     super(context, attrs);
     mGestureDetector = new GestureDetector(new YScrollDetector());
     setFadingEdgeLength(0);
-    OverScrollDecoratorHelper.setUpOverScroll(this);
+//    OverScrollDecoratorHelper.setUpOverScroll(this);
 
   }
 

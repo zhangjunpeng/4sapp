@@ -178,63 +178,84 @@ public class ExpertReportActivity extends BaseActivity {
             content=content.replace("&nbsp;"," ");
             MyLog.i("content=="+content);
             viewHolder.content.setText(content);
-            switch (map.get("name")){
+            String name=map.get("name");
+            String namemessage="";
+            switch (name){
                 case "taste":
-                    viewHolder.name.setText("核心结论");
+                    namemessage="核心结论";
                     break;
                 case "method":
-                    viewHolder.name.setText("玩法概述");
+                    namemessage="玩法概述";
+
                     break;
                 case "advantage":
-                    viewHolder.name.setText("优势");
+                    namemessage="优势";
+
                     break;
                 case "bad":
-                    viewHolder.name.setText("劣势");
+                    namemessage="劣势";
+
                     break;
                 case "art_quality":
-                    viewHolder.name.setText("感官表现");
+                    namemessage="感官表现";
+
                     break;
                 case "music":
-                    viewHolder.name.setText("音乐和音效");
+                    namemessage="音乐和音效";
+
                     break;
                 case "battle_show":
-                    viewHolder.name.setText("背景题材");
+                    namemessage="背景题材";
+
                     break;
                 case "mode_style":
-                    viewHolder.name.setText("交互操作");
+                    namemessage="交互操作";
+
                     break;
                 case "game_ui":
-                    viewHolder.name.setText("游戏UI");
+                    namemessage="游戏UI";
+
                     break;
                 case "funny":
-                    viewHolder.name.setText("可玩性");
+                    namemessage="可玩性";
+
                     break;
                 case "rational":
-                    viewHolder.name.setText("合理性");
+                    namemessage="合理性";
+
                     break;
                 case "plentiful":
+                    namemessage="核心结论";
+
                     viewHolder.name.setText("丰富性");
                     break;
                 case "new_hand":
-                    viewHolder.name.setText("新手引导");
+                    namemessage="新手引导";
+
                     break;
                 case "business":
-                    viewHolder.name.setText("商业化");
+                    namemessage="商业化";
+
                     break;
                 case "social":
-                    viewHolder.name.setText("社交内容");
+                    namemessage="社交内容";
+
                     break;
                 case "other":
-                    viewHolder.name.setText("其他");
+                    namemessage="其他";
+
                     break;
                 case "procedures":
-                    viewHolder.name.setText("程序底层");
+                    namemessage="程序底层";
+
                     break;
                 case "advise":
-                    viewHolder.name.setText("优化建议");
-                    break;
+                    namemessage="优化建议";
 
+                    break;
             }
+            viewHolder.name.setText(namemessage);
+
 
             return convertView;
         }

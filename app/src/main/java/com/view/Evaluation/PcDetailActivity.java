@@ -18,10 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
 import com.test4s.myapp.R;
@@ -61,7 +62,8 @@ public class PcDetailActivity extends BaseActivity {
 
     LinearLayout list;
     List<Question> quetions;
-    
+    private ImageLoader imageLoader=ImageLoader.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,6 +183,13 @@ public class PcDetailActivity extends BaseActivity {
             viewHolder.question= (TextView) convertView.findViewById(R.id.question_item_pcdetail);
             viewHolder.stars= (LinearLayout) convertView.findViewById(R.id.stars_item_pcdetail);
 
+            if (i==quetions.size()-1){
+                ImageView line= (ImageView) convertView.findViewById(R.id.line_pcdetail);
+//                LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) line.getLayoutParams();
+//                params.rightMargin=0;
+                line.setVisibility(View.INVISIBLE);
+            }
+
             Question question=quetions.get(i);
             viewHolder.question.setText(question.getId()+"、"+question.getQues());
             setStar(Integer.parseInt(question.getScore()),viewHolder.stars);
@@ -271,12 +280,16 @@ public class PcDetailActivity extends BaseActivity {
             if (su&&code==200){
                 JSONObject data=json.getJSONObject("data");
                 JSONObject info=data.getJSONObject("gameInfo");
-                Picasso.with(this)
-                        .load(Url.prePic+info.getString("game_img"))
-                        .into(icon);
-                Picasso.with(this)
-                        .load(Url.prePic+info.getString("game_grade"))
-                        .into(grade);
+//                Picasso.with(this)
+//                        .load(Url.prePic+info.getString("game_img"))
+//                        .into(icon);
+                imageLoader.displayImage(Url.prePic+info.getString("game_img"),icon, MyDisplayImageOptions.getdefaultImageOptions());
+
+//                Picasso.with(this)
+//                        .load(Url.prePic+info.getString("game_grade"))
+//                        .into(grade);
+                imageLoader.displayImage(Url.prePic+info.getString("game_grade"),grade, MyDisplayImageOptions.getdefaultImageOptions());
+
                 name.setText(info.getString("game_name"));
                 timeText.setText(info.getString("create_time"));
                 if (TextUtils.isEmpty(info.getString("game_platform"))){

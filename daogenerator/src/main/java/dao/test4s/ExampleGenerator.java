@@ -8,7 +8,7 @@ import de.greenrobot.daogenerator.ToMany;
 
 public class ExampleGenerator {
     public static void main(String[] args) throws Exception{
-        Schema schema = new Schema(1, "com.test4s.gdb");
+        Schema schema = new Schema(2, "com.test4s.gdb");
         addGameInfo(schema);
         addInformation(schema);
         new DaoGenerator().generateAll(schema, "E:\\work\\MyApp\\app\\src\\main\\java");
@@ -91,6 +91,7 @@ public class ExampleGenerator {
         gameType.addIdProperty().primaryKey();
 //        gameType.addStringProperty("method_name");
         gameType.addStringProperty("title");
+        gameType.addStringProperty("advert_cat_id");
 
         //advert
         advert.addIdProperty().primaryKey();

@@ -1,5 +1,6 @@
 package com.test4s.myapp;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -57,7 +58,6 @@ public class MyApplication extends Application {
     public static IWXAPI api;
     final static String SP_NAME="4stest";
     private SharedPreferences sharedPreferences;
-
 
     @Override
     public void onCreate() {
@@ -128,8 +128,10 @@ public class MyApplication extends Application {
                 .writeDebugLogs() // Remove for release app
                 .build();//开始构建
         ImageLoader.getInstance().init(config);
-    }
 
+        //优酷视频
+
+    }
     private void getPicpreurl() {
 //        sharedPreferences= MyApplication.mcontext.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
 //        Url.prePic=sharedPreferences.getString("picpre","http://s.52game.com/");

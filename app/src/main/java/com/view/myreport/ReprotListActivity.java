@@ -2,6 +2,7 @@ package com.view.myreport;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
@@ -42,6 +46,7 @@ public class ReprotListActivity extends BaseActivity {
     ImageView back;
     TextView title;
     TextView save;
+    private ImageLoader imageLoader=ImageLoader.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +168,7 @@ public class ReprotListActivity extends BaseActivity {
                 convertView= LayoutInflater.from(context).inflate(R.layout.item_evaluationlist,parent,false);
                 viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gameevalu);
                 viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gameevalu);
-                viewHolder.bg= (Button) convertView.findViewById(R.id.cancel_care_evalu);
+                viewHolder.bg= (TextView) convertView.findViewById(R.id.cancel_care_evalu);
                 viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu);
                 viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu);
                 viewHolder.delete= (ImageView) convertView.findViewById(R.id.delete_item_evalu);
@@ -197,17 +202,26 @@ public class ReprotListActivity extends BaseActivity {
                     deleteTestGame(gameInfo.getGame_id());
                 }
             });
-            Picasso.with(context)
-                    .load(Url.prePic+gameInfo.getGame_img())
-                    .placeholder(R.drawable.default_icon)
-                    .into(viewHolder.icon);
+            if (position==gameInfos.size()-1){
+                LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.height=1;
+                convertView.findViewById(R.id.line_reportlist).setLayoutParams(layoutParams);
+            }
+//            Picasso.with(context)
+//                    .load(Url.prePic+gameInfo.getGame_img())
+//                    .placeholder(R.drawable.default_icon)
+//                    .into(viewHolder.icon);
+//            Picasso.with(context)
+//                    .load(Url.prePic+gameInfo.getGame_grade())
+//                    .into(viewHolder.gamerating);
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_img(),viewHolder.icon, MyDisplayImageOptions.getdefaultImageOptions());
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_grade(),viewHolder.gamerating,MyDisplayImageOptions.getdefaultImageOptions());
+
             viewHolder.name.setText(gameInfo.getGame_name());
-            Picasso.with(context)
-                    .load(Url.prePic+gameInfo.getGame_grade())
-                    .into(viewHolder.gamerating);
+
             viewHolder.info.setText(gameInfo.getGame_platform()+"\n"+gameInfo.getGame_stage()+" / "+gameInfo.getGame_type()+"\n"+timeToDate(gameInfo.getCreate_time()));
-//            switch (gameInfo.getStatus()){
-//                case "查看报告":
+            switch (gameInfo.getStatus()){
+                case "查看报告":
                     viewHolder.bg.setText(gameInfo.getStatus());
                     viewHolder.bg.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -218,26 +232,26 @@ public class ReprotListActivity extends BaseActivity {
                             overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                         }
                     });
-//                    break;
-//                case "测评中":
-//                    viewHolder.bg.setText(gameInfo.getStatus());
-//                    viewHolder.bg.setTextColor(Color.rgb(76,76,76));
-//                    viewHolder.bg.setBackgroundResource(R.drawable.grayborder_button);
-//                    viewHolder.bg.setClickable(false);
-//                    break;
-//                case "审核失败":
-//                    viewHolder.bg.setText(gameInfo.getStatus());
-//                    viewHolder.bg.setTextColor(Color.rgb(76,76,76));
-//                    viewHolder.bg.setBackgroundResource(R.drawable.grayborder_button);
-//                    viewHolder.bg.setClickable(false);
-//                    break;
-//            }
+                    break;
+                case "测评中":
+                    viewHolder.bg.setText(gameInfo.getStatus());
+                    viewHolder.bg.setTextColor(Color.rgb(76,76,76));
+                    viewHolder.bg.setBackgroundResource(R.drawable.grayborder_button);
+                    viewHolder.bg.setClickable(false);
+                    break;
+                case "审核失败":
+                    viewHolder.bg.setText(gameInfo.getStatus());
+                    viewHolder.bg.setTextColor(Color.rgb(76,76,76));
+                    viewHolder.bg.setBackgroundResource(R.drawable.grayborder_button);
+                    viewHolder.bg.setClickable(false);
+                    break;
+            }
             return convertView;
         }
         class ViewHolder{
             ImageView icon;
             TextView name;
-            Button bg;
+            TextView bg;
             TextView info;
             ImageView gamerating;
             ImageView delete;

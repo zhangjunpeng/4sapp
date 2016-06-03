@@ -2,6 +2,7 @@ package com.test4s.account;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +26,7 @@ import com.app.tools.MyLog;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.myapp.BaseFragment;
+import com.view.setting.SettingActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +54,8 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
     private TextView warntext;
 
     private Dialog dialog;
+
+    private TextView agreement;
 
 
     private String pa;
@@ -90,6 +94,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
 
         warning= (LinearLayout) view.findViewById(R.id.warning_reg);
         warntext= (TextView) view.findViewById(R.id.waringtext_reg);
+        agreement= (TextView) view.findViewById(R.id.user_agreement);
 
         save.setVisibility(View.INVISIBLE);
         title.setText("注 册");
@@ -124,6 +129,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
         code.addTextChangedListener(textWatcher);
         pwd.addTextChangedListener(textWatcher);
         back.setOnClickListener(this);
+        agreement.setOnClickListener(this);
     }
 
     private void changeButton() {
@@ -156,7 +162,12 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 AccountActivity ac= (AccountActivity) getActivity();
                 ac.backlogin();
                 break;
-
+            case R.id.user_agreement:
+                Intent intent=new Intent(getActivity(), SettingActivity.class);
+                intent.putExtra("tag","agreement");
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                break;
         }
     }
 

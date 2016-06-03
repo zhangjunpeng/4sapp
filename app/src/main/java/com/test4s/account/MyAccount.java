@@ -36,6 +36,9 @@ public class MyAccount {
 
     private UserInfo userInfo;
 
+    public static TencentLogin tencentLogin;
+
+
     public UserInfo getUserInfo() {
         return userInfo;
     }

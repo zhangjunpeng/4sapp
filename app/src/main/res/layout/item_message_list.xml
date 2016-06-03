@@ -12,6 +12,11 @@
         android:background="#fff"
         android:orientation="vertical"
         >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#CACACA"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,7 +59,16 @@
             android:text="尊敬的7703798442@qq.com，感谢您注册4st est游戏创客服务平台，我们将与您一起…"
             android:textColor="#4C4C4C"
             android:id="@+id/message_item_meslist" />
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            ></LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#CACACA"
+            />
     </LinearLayout>
     <RelativeLayout
         android:layout_width="125dp"
@@ -71,5 +85,6 @@
             android:src="@drawable/deleicon_messlist"
             />
     </RelativeLayout>
+
 
 </LinearLayout>

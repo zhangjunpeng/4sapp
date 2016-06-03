@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.app.tools.ClearWindows;
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
@@ -27,6 +30,7 @@ public class AdviceReportFragment extends Fragment {
     private EditText editText;
     private Button submit;
     private SettingActivity settingActivity;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +73,9 @@ public class AdviceReportFragment extends Fragment {
                     boolean su=jsonObject.getBoolean("success");
                     int code=jsonObject.getInt("code");
                     if (su&&code==200){
-
+                        CusToast.showToast(getActivity(),"提交成功，感谢您的反馈。", Toast.LENGTH_SHORT);
+                        settingActivity.backToSetting();
+                        ClearWindows.clearInput(getActivity(),editText);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

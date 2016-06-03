@@ -71,7 +71,9 @@ public class SearchEndActivity extends BaseActivity {
 
         fragmentList=new ArrayList<>();
 
-
+        if (etext.length()>0){
+            clearInput.setVisibility(View.VISIBLE);
+        }
 
         initListener();
 
@@ -89,6 +91,8 @@ public class SearchEndActivity extends BaseActivity {
                     MyLog.i("keyword==="+keyword);
                     fragmentList.clear();
                     MyLog.i("size=="+fragmentList.size());
+                    horizontalScrollView.arrowScroll(View.FOCUS_LEFT);
+                    selectTitle(0);
                     initData(keyword);
                 }
             }
@@ -118,6 +122,12 @@ public class SearchEndActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        clearInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setText("");
             }
         });
     }

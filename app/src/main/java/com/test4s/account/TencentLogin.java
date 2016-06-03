@@ -50,7 +50,6 @@ public class TencentLogin {
         {
             if (mActivity==null){
                 mtencent.login(mFragment, "all", listener);
-
             }else if (mFragment==null){
                 mtencent.login(mActivity, "all", listener);
             }

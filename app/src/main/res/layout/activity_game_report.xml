@@ -18,7 +18,7 @@
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="74dp"
-            android:background="@drawable/grayborder_button"
+            android:background="@drawable/rundimageborder"
             >
             <com.app.view.RoundImageView
                 android:id="@+id/icon_gamereport"
@@ -27,7 +27,7 @@
                 android:src="@drawable/default_icon"
                 app:type="round"
                 />
-            <com.app.view.RoundImageView
+            <com.app.view.TopLeftCornerImage
                 android:id="@+id/grade_gamereport"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

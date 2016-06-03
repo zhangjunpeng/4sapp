@@ -12,6 +12,7 @@
     <HorizontalScrollView
         android:id="@+id/srollview_attention"
         android:layout_width="match_parent"
+        android:scrollbars="none"
         android:layout_height="45dp">
         <LinearLayout
             android:id="@+id/contianer_attention_title"
@@ -137,6 +138,12 @@
         </LinearLayout>
 
     </HorizontalScrollView>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:src="@drawable/attenshadow"
+        android:scaleType="fitXY"
+        />
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_attention"
         android:layout_width="match_parent"

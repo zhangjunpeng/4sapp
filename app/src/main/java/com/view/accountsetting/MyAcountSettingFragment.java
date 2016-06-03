@@ -199,14 +199,21 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
                 MyLog.i("subs==="+subs[0]);
                 nickname=nickname.replace(subs[0],subs[0].replace(subs[0].substring(3,subs[0].length()),"****"));
                 name.setText(nickname);
+                nick_name.setText(nickname);
+
             }
 
         }else {
             name.setText(userInfo.getNickname());
+            nick_name.setText(userInfo.getNickname());
+
         }
 
-        if (!userInfo.getProvince_name().equals("null")){
+        if (userInfo.getProvince_name().equals("null")||userInfo.getProvince_name().equals("")){
+            adress.setText("未设置");
+        }else {
             adress.setText(userInfo.getProvince_name()+" "+userInfo.getCity_name());
+
         }
 
         if (TextUtils.isEmpty(userInfo.getUser_identity())){

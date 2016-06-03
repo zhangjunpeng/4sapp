@@ -1,2 +1,2 @@
-include ':app', ':daogenerator', ':sdktest'
+include ':app', ':daogenerator', ':sdktest', ':YoukuPlayerOpenSDK'
 include ':pulltorefresh'

@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.app.tools.MyDisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.gdb.IndexItemInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
@@ -26,6 +27,7 @@ public class CP_HL_Adapter extends BaseAdapter {
         list=cpList;
         mcontext=context;
     }
+    ImageLoader imageLoader=ImageLoader.getInstance();
 
     @Override
     public int getCount() {
@@ -58,9 +60,10 @@ public class CP_HL_Adapter extends BaseAdapter {
         IndexItemInfo cp=list.get(position);
         String imageUrl=Url.prePic+cp.getLogo();
         String name=cp.getCompany_name();
-        Picasso.with(mcontext)
-                .load(imageUrl)
-                .into(viewHolder.imageView);
+        imageLoader.displayImage(imageUrl,viewHolder.imageView, MyDisplayImageOptions.getdefaultImageOptions());
+//        Picasso.with(mcontext)
+//                .load()
+//                .into(viewHolder.imageView);
         viewHolder.textView.setText(name);
         return convertView;
     }

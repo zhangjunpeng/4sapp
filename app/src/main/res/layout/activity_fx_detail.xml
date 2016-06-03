@@ -35,15 +35,15 @@
                 app:layout_collapseMode="pin"
                 >
 
-                <com.app.view.RoundImageView
+                <ImageView
                     android:id="@+id/roundImage_fxdetail"
                     android:layout_width="111dp"
                     android:layout_height="111dp"
                     android:layout_marginTop="86.66dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/default_icon"
-                    app:borderRadius="5dp"
-                    app:type="round"
+                    android:padding="1px"
+                    android:background="@drawable/rundimageborder"
                     android:layout_centerHorizontal="true"
                     />
 
@@ -81,11 +81,15 @@
                     android:layout_height="match_parent"
                     >
                     <ImageView
+                        android:id="@+id/back_fxdetail"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent" />
+                    <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_centerVertical="true"
                         android:src="@drawable/back"
-                        android:id="@+id/back_fxdetail" />
+                         />
                     <ImageView
                         android:id="@+id/care_fxdetatil"
                         android:layout_width="20dp"

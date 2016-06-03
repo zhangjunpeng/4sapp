@@ -15,11 +15,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
+import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -70,6 +72,7 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
     LinearLayout div_intro;
     LinearLayout div_anli;
 
+    private ImageLoader imageLoader= ImageLoader.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +132,7 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
         }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(60*1000*60);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             String res;
             @Override
             public void onSuccess(String result) {
@@ -153,11 +156,6 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
                 jsonparser(res);
             }
 
-            @Override
-            public boolean onCache(String result) {
-                res=result;
-                return true;
-            }
         });
     }
     private void changeCare(boolean iscare){
@@ -217,9 +215,10 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
             care_title.setImageResource(R.drawable.cared);
             care.setImageResource(R.drawable.attention_has);
         }
-        Picasso.with(this)
-                .load(Url.prePic+logostring)
-                .into(icon);
+        imageLoader.displayImage(Url.prePic+logostring,icon, MyDisplayImageOptions.getroundImageOptions());
+//        Picasso.with(this)
+//                .load(Url.prePic+logostring)
+//                .into(icon);
         if (TextUtils.isEmpty(introstring)){
             div_intro.setVisibility(View.GONE);
         }else {
@@ -297,6 +296,8 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
         switch (v.getId()){
             case R.id.back_tzdetail:
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+
                 break;
         }
 
@@ -308,15 +309,17 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
             LinearLayout layout= (LinearLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_item_invesdetail,null);
             MyLog.i("addView2");
             InvestCaseInfo caseInfo=cases.get(i);
-            viewHolder.icon= (RoundImageView) layout.findViewById(R.id.icon_item_invesdetail);
+            viewHolder.icon= (ImageView) layout.findViewById(R.id.icon_item_invesdetail);
             viewHolder.time= (TextView) layout.findViewById(R.id.time_item_invesdetail);
             viewHolder.name= (TextView) layout.findViewById(R.id.name_item_invesdetail);
             viewHolder.money= (TextView) layout.findViewById(R.id.money_item_invesdetail);
             viewHolder.stage= (TextView) layout.findViewById(R.id.stage_item_invesdetail);
-            Picasso.with(this)
-                    .load(Url.prePic+caseInfo.getLogo())
-                    .placeholder(R.drawable.default_icon)
-                    .into(viewHolder.icon);
+            imageLoader.displayImage(Url.prePic+caseInfo.getLogo(),viewHolder.icon,MyDisplayImageOptions.getroundImageOptions());
+//
+//            Picasso.with(this)
+//                    .load(Url.prePic+caseInfo.getLogo())
+//                    .placeholder(R.drawable.default_icon)
+//                    .into(viewHolder.icon);
             viewHolder.time.setText("上线时间 ："+caseInfo.getOnline_time());
             viewHolder.name.setText(caseInfo.getName());
             viewHolder.money.setText("投资金额 ："+caseInfo.getInvest_money());
@@ -341,7 +344,7 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
     }
     class ViewHolder{
         TextView time;
-        RoundImageView icon;
+        ImageView icon;
         TextView name;
         TextView money;
         TextView stage;

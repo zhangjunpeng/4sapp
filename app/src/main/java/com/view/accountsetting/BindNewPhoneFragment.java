@@ -162,7 +162,6 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
         switch (v.getId()){
             case R.id.getcode_bindnewphone:
                 receiveCode();
-                
                 break;
             case R.id.bind_bindnewphone:
                 bindPhone();
@@ -239,7 +238,6 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
     }
 
     private void receiveCode() {
-        getcode.setClickable(false);
         String phonenum=phone_editText.getText().toString();
         if (TextUtils.isEmpty(phonenum)||phonenum.length()!=11){
             showWarning("手机号码格式错误");
@@ -249,6 +247,7 @@ public class BindNewPhoneFragment extends BaseFragment implements View.OnClickLi
         baseParams.addParams("phone",phonenum);
         baseParams.addParams("type","bind");
         baseParams.addSign();
+        getcode.setClickable(false);
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

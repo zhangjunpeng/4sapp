@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
@@ -32,8 +33,8 @@ public class CPAttentionAdapter extends BaseAdapter {
 
     List<Object> list;
     Activity context;
-    PullToRefreshListView listView;
-    public CPAttentionAdapter(Activity context, List<Object> list, PullToRefreshListView listView){
+    ListView listView;
+    public CPAttentionAdapter(Activity context, List<Object> list, ListView listView){
         this.context=context;
         this.list=list;
         this.listView=listView;

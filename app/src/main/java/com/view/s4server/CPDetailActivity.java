@@ -20,11 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.view.HorizontalListView;
 import com.app.view.RoundImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.gdb.GameInfo;
@@ -62,7 +63,7 @@ public class CPDetailActivity extends BaseActivity {
     private String identity_cat;
 
     private AppBarLayout appBarLayout;
-    private RoundImageView icon;
+    private ImageView icon;
     private ImageView care;
     private TextView name;
     private TextView intro;
@@ -85,6 +86,12 @@ public class CPDetailActivity extends BaseActivity {
     private LinearLayout div_other;
     private LinearLayout div_intro;
 
+    private TextView othergamemore;
+
+    private ImageLoader imageloder=ImageLoader.getInstance();
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +102,8 @@ public class CPDetailActivity extends BaseActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         setContentView(R.layout.activity_cpdetail);
+
+        setVisible(false);
         // create our manager instance after the content view is set
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         // enable status bar tint
@@ -111,7 +120,7 @@ public class CPDetailActivity extends BaseActivity {
         name_title= (TextView) findViewById(R.id.title_cpdetail);
         care_title= (ImageView) findViewById(R.id.care_cpdetatil);
         share= (ImageView) findViewById(R.id.share_cpdetail);
-        icon= (RoundImageView) findViewById(R.id.roundImage_cpdetail);
+        icon= (ImageView) findViewById(R.id.roundImage_cpdetail);
         name= (TextView) findViewById(R.id.name_cpdetail);
 
         care= (ImageView) findViewById(R.id.attention_cpdetail);
@@ -122,6 +131,8 @@ public class CPDetailActivity extends BaseActivity {
         all= (TextView) findViewById(R.id.all_cpdetail);
         div_other= (LinearLayout) findViewById(R.id.div_othergame_cpdetail);
         div_intro= (LinearLayout) findViewById(R.id.div_intro_cpdetail);
+        othergamemore= (TextView) findViewById(R.id.other_game_cpdetail);
+
 
         user_id=getIntent().getStringExtra("user_id");
         identity_cat=getIntent().getStringExtra("identity_cat");
@@ -200,6 +211,8 @@ public class CPDetailActivity extends BaseActivity {
             public void onClick(View v) {
                 setResult(Activity.RESULT_OK);
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+
             }
         });
     }
@@ -232,13 +245,8 @@ public class CPDetailActivity extends BaseActivity {
         }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(1000*60*30);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             private String result;
-            @Override
-            public boolean onCache(String result) {
-                this.result=result;
-                return true;
-            }
 
             @Override
             public void onSuccess(String result) {
@@ -308,9 +316,12 @@ public class CPDetailActivity extends BaseActivity {
     private void initView() {
         name_title.setText(namestring);
         name.setText(namestring);
-        Picasso.with(this)
-                .load(Url.prePic+logostring)
-                .into(icon);
+
+//        Picasso.with(this)
+//                .load(Url.prePic+logostring)
+//                .into(icon);
+
+        imageloder.displayImage(Url.prePic+logostring,icon, MyDisplayImageOptions.getroundImageOptions());
 
         if (TextUtils.isEmpty(introstring)){
             div_intro.setVisibility(View.GONE);
@@ -330,6 +341,9 @@ public class CPDetailActivity extends BaseActivity {
         if (othergames.size()==0){
             div_other.setVisibility(View.GONE);
         }else {
+            if (othergames.size()<10){
+                othergamemore.setVisibility(View.INVISIBLE);
+            }
             Game_HL_Adapter gameAdaper=new Game_HL_Adapter(this,othergames);
             horizontalListView.setAdapter(gameAdaper);
             horizontalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -343,6 +357,7 @@ public class CPDetailActivity extends BaseActivity {
                 }
             });
         }
+        setVisible(true);
     }
 
 

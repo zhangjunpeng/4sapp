@@ -160,6 +160,7 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
         final BaseParams baseParams=new BaseParams("api/sendemail");
         baseParams.addParams("email",email);
         baseParams.addSign();
+        getCode.setClickable(false);
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -169,13 +170,15 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                     boolean su=js.getBoolean("success");
                     int code=js.getInt("code");
                     if (su&&code==200){
+                        codeChange();
+
                         JSONObject js1=js.getJSONObject("data");
                         pa=js1.getString("pa");
-                        codeChange();
                         CusToast.showToast(getActivity(),"发送邮件成功",Toast.LENGTH_SHORT);
                     }else {
                         String mes=js.getString("msg");
                         showWarning(mes);
+                        getCode.setClickable(true);
 
                     }
                 } catch (JSONException e) {
@@ -272,7 +275,7 @@ public class BindEmailFragment extends BaseFragment implements View.OnClickListe
                     break;
                 case 1:
                     getCode.setBackgroundResource(R.drawable.border_getcode_orange);
-                    getCode.setText("验证码");
+                    getCode.setText("重新获取");
                     getCode.setClickable(true);
                     time=59;
 

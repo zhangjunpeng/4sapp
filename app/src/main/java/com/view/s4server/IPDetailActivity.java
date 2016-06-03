@@ -3,6 +3,7 @@ package com.view.s4server;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -23,11 +24,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
@@ -44,6 +50,7 @@ import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class IPDetailActivity extends BaseActivity implements View.OnClickListener{
 
@@ -62,7 +69,6 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
     TextView name_ipdetail;
     TextView ipcat;
     TextView ipintro;
-    WebView webView;
     ListView deslistView;
     ListView otheripListView;
     TextView all;
@@ -104,6 +110,32 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
     private LinearLayout div_des;
     private LinearLayout div_relate;
 
+    private String html="<div id=\"youkuplayer\" style=\"width:996px;height:561px\"></div>\n" +
+            "<script type=\"text/javascript\" src=\"http://player.youku.com/jsapi\">\n" +
+            "    player = new YKU.Player('youkuplayer',{\n" +
+            "        styleid: '0',\n" +
+            "        client_id: '22f67ce1674f8f6e',\n" +
+            "        vid: 'XMTU4MDI2MDEyNA',\n" +
+            "        autoplay: true,\n" +
+            "        show_related: true,\n" +
+            "        embsig: 'VERSION_TIMESTAMP_SIGNATURE',\n" +
+            "        events:{\n" +
+            "            onPlayEnd: function(){ /*your code*/ }\n" +
+            "        }\n" +
+            "    });\n" +
+            "    function playVideo(){\n" +
+            "        player.playVideo();\n" +
+            "    }\n" +
+            "</script>";
+    private String html2="<iframe height=187 width=332 src=\"http://player.youku.com/embed/XMTU4MDI2MDEyNA==\" frameborder=0 allowfullscreen></iframe>";
+
+
+    private ImageLoader imageloder=ImageLoader.getInstance();
+//    private YoukuBasePlayerManager basePlayerManager;
+//    private YoukuPlayer youkuPlayer;
+//    private YoukuPlayerView youkuvideo;
+//    private JCVideoPlayerStandard videoPlayerStandard;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,24 +179,45 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
         div_des= (LinearLayout) findViewById(R.id.div_des_ipdetail);
         div_relate= (LinearLayout) findViewById(R.id.div_relate_ipdetail);
 
+        webView= (WebView) findViewById(R.id.video_ipdetail);
+//        WebSettings settings = webView.getSettings();
+////WebView启用Javascript脚本执行
+//        settings.setJavaScriptEnabled(true);//是否允许javascript脚本
+//        settings.setJavaScriptCanOpenWindowsAutomatically(true);//是否允许页面弹窗
+
+//        webView.loadData(html2, "text/html; charset=UTF-8", null);
+
+//        videoPlayerStandard= (JCVideoPlayerStandard) findViewById(R.id.video_ipdetail);
+//        videoPlayerStandard.setUp("http://player.youku.com/player.php/sid/XMTU4MDI2MDEyNA==/v.swf"
+//                , "ip演示");
+//        videoPlayerStandard.
+//        initYouku();
+//
+//        VODPlayer  player = new VODPlayer(this, true);
+//        videoContian.addView(player.getPlayRootLayout());
+//
+//        VideoLists videos= new VideoLists();
+//        Video v1 = new Video();
+//        v1.url = "http://player.youku.com/embed/XMTU4MzE1NTYyMA==";
+//        v1.quality = "标清";
+//        videos.addVideo(v1);
+//        player.playVideo(videos);
 
 
         findViewById(R.id.back_ipdetail).setOnClickListener(this);
-
-        webView= (WebView) findViewById(R.id.video_ipdetail);
         WebSettings settings = webView.getSettings();
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setPluginState(WebSettings.PluginState.ON);
-
 //        webView.loadData("<iframe height=498 width=510 src=\"http://player.youku.com/embed/XMTQ5MjA1NTgwNA==\" frameborder=0 allowfullscreen></iframe>","html/text",null);
+//        webView.loadUrl("http://player.youku.com/embed/XMTQ5MjA1NTgwNA==");
         settings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient() {
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-        });
+//        webView.setWebViewClient(new WebViewClient() {
+//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                view.loadUrl(url);
+//                return true;
+//            }
+//        });
         //获取屏幕密度
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
@@ -176,6 +229,60 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
 
 
     }
+
+//    private void initYouku() {
+//        basePlayerManager = new YoukuBasePlayerManager(this) {
+//
+//            @Override
+//            public void setPadHorizontalLayout() {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//            @Override
+//            public void onInitializationSuccess(YoukuPlayer player) {
+//                // TODO Auto-generated method stub
+//                // 初始化成功后需要添加该行代码
+//                addPlugins();
+//
+//                // 实例化YoukuPlayer实例
+//                youkuPlayer = player;
+//
+//                // 进行播放
+//                goPlay();
+//            }
+//
+//            @Override
+//            public void onSmallscreenListener() {
+//                // TODO Auto-generated method stub
+//
+//            }
+//
+//            @Override
+//            public void onFullscreenListener() {
+//                // TODO Auto-generated method stub
+//
+//            }
+//        };
+//        basePlayerManager.onCreate();
+//
+//        // 播放器控件
+//        youkuvideo= (YoukuPlayerView) findViewById(R.id.video_ipdetail);
+//
+//
+//        //控制竖屏和全屏时候的布局参数。这两句必填。
+//        youkuvideo
+//                .setSmallScreenLayoutParams(new LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.WRAP_CONTENT,
+//                        LinearLayout.LayoutParams.WRAP_CONTENT));
+//        youkuvideo.initialize(basePlayerManager);
+//
+//    }
+//
+//    private void goPlay() {
+//        youkuPlayer.playVideo("XMTU4MjU5NDkyNA");
+//
+//    }
 
     private void initListener() {
 
@@ -244,42 +351,45 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
+    public void onLowMemory() { // android系统调用
+        super.onLowMemory();
+//        basePlayerManager.onLowMemory();
+    }
+    @Override
     protected void onResume() {
         super.onResume();
-        toggleWebViewState(true);
+//        basePlayerManager.onResume();
+        webView.loadUrl(video_url);
+    }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        basePlayerManager.onStart();
     }
-    private void toggleWebViewState(boolean pause)
-    {
-        try
-        {
-            Class.forName("android.webkit.WebView")
-                    .getMethod(pause
-                            ? "onPause"
-                            : "onResume", (Class[]) null)
-                    .invoke(webView, (Object[]) null);
-        }
-        catch (Exception e){}
-    }
+
 
     @Override
     protected void onPause() {
         super.onPause();
+//        videoPlayerStandard.releaseAllVideos();
 //        toggleWebViewState(true);
-//        webView.onPause();
+        webView.onPause();
 
+//        basePlayerManager.onPause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        webView.loadUrl("");
+
+//        basePlayerManager.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
 
@@ -301,7 +411,7 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
                     if (su&&code==200){
                         parser(jsonObject.getString("data"));
                     }
-                    
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -366,11 +476,10 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
                 JSONObject ip=derivatives.getJSONObject(i);
                 IPDesInfo ipDesInfo=new IPDesInfo();
                 ipDesInfo.setName(ip.getString("name"));
-                ipDesInfo.setInfo(ip.getString("info"));
                 ipDesInfo.setYear(ip.getString("year"));
                 ipDesInfo.setMonth(ip.getString("month"));
                 ipDesInfo.setLogo(ip.getString("logo"));
-                ipDesInfo.setIp_info(ip.getString("ip_info"));
+                ipDesInfo.setInfo(ip.getString("info"));
                 ipderivatives.add(ipDesInfo);
             }
             } else {
@@ -448,15 +557,20 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
             care_detail.setImageResource(R.drawable.attention_has);
         }
 
-        if (TextUtils.isEmpty(video_url)){
+        if (TextUtils.isEmpty(video_url)||video_url.equals("null")){
             div_video.setVisibility(View.GONE);
         }else {
+//            webView.loadUrl(video_url);
             webView.loadUrl(video_url);
         }
 
-        Picasso.with(this)
-                .load(Url.prePic+ip_logo)
-                .into(icon);
+
+
+        imageloder.displayImage(Url.prePic+ip_logo,icon, MyDisplayImageOptions.getroundImageOptions());
+
+//        Picasso.with(this)
+//                .load(Url.prePic+ip_logo)
+//                .into(icon);
         name_ipdetail.setText(ip_name);
         name_title.setText(ip_name);
         ipcat.setText("类型 ："+ip_cat+"\n风格 ："+ip_style+"\n授权范围 ："+uthority+"\n上线时间 ："+over_time);
@@ -491,6 +605,8 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
         switch (v.getId()){
             case R.id.back_ipdetail:
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+
                 break;
         }
     }
@@ -580,4 +696,10 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        webView.loadUrl("");
+
+    }
 }

@@ -19,8 +19,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.view.HorizontalListView;
+import com.app.view.MyDialog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
@@ -32,6 +35,7 @@ import com.test4s.net.Url;
 import com.view.activity.BaseActivity;
 import com.view.myattention.AttentionChange;
 import com.view.s4server.CPDetailActivity;
+import com.view.s4server.IssueDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,6 +121,12 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
     private String game_typestring;
 
     private ImageView back;
+    private ImageLoader imageLoader=ImageLoader.getInstance();
+    private String ident_cat="2";
+
+    private View view;
+    private ImageView gradeimage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +138,8 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         setContentView(R.layout.activity_game_detail);
+        view=findViewById(R.id.gamedetail);
+        view.setVisibility(View.INVISIBLE);
         // create our manager instance after the content view is set
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         // enable status bar tint
@@ -172,6 +184,7 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
         div_updateInfo= (LinearLayout) findViewById(R.id.div_updateinfo_gameDetail);
         div_othergame= (LinearLayout) findViewById(R.id.div_othergame_gamedetail);
         div_advise= (LinearLayout) findViewById(R.id.div_advise_gamedetail);
+        gradeimage= (ImageView) findViewById(R.id.grade_gamedetail);
 
         find_fx= (TextView) findViewById(R.id.find_fx);
         find_ip= (TextView) findViewById(R.id.find_ip);
@@ -212,8 +225,11 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
                     down_title.setVisibility(View.INVISIBLE);
                     care_title.setVisibility(View.INVISIBLE);
                 }else {
-                    if (gameInfo.getPack().equals("1")&&gameInfo.getChecked().equals("1")){
+                    if (!TextUtils.isEmpty(gameInfo.getGame_download_url())){
                         down_title.setVisibility(View.VISIBLE);
+
+                    }else {
+                        down_title.setVisibility(View.INVISIBLE);
 
                     }
                     care_title.setVisibility(View.VISIBLE);
@@ -282,6 +298,7 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                MyLog.i(ex.toString());
                 setContentView(R.layout.neterror);
             }
 
@@ -326,9 +343,11 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
                 create_timestring=info.getString("create_time");
                 game_test_numsstring=info.getString("game_test_nums");
                 requirement=info.getString("requirement");
+                ident_cat=info.getString("identity_cat");
 
                 gameInfo.setPack(info.getString("pack"));
                 gameInfo.setChecked(info.getString("checked"));
+                gameInfo.setGame_grade(info.getString("quality"));
                 String fo=info.getString("focus");
                 if (fo.equals("false")||fo.equals("0")){
                     focus=false;
@@ -397,11 +416,16 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
 
         String imageUrl=Url.prePic+gameInfo.getGame_img();
 
-        Picasso.with(this)
-                .load(imageUrl)
-                .placeholder(R.drawable.default_icon)
-                .into(icon);
+//        Picasso.with(this)
+//                .load(imageUrl)
+//                .placeholder(R.drawable.default_icon)
+//                .into(icon);
+        imageLoader.displayImage(imageUrl,icon, MyDisplayImageOptions.getroundImageOptions());
 
+        if (!TextUtils.isEmpty(gameInfo.getGame_grade())){
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_grade(),gradeimage, MyDisplayImageOptions.getdefaultImageOptions());
+
+        }
 
         MyLog.i("game_namestring==="+gameInfo.getGame_name());
         game_name.setText(gameInfo.getGame_name());
@@ -432,16 +456,27 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
         }
         MyLog.i("game_download_url=="+gameInfo.getGame_download_url());
         String info="";
-        if (!gameInfo.getPack().equals("1")||!gameInfo.getChecked().equals("1")){
+        info="上传时间："+create_timestring+"\n包体大小："+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+"/"+gameInfo.getGame_platform()+"/"+game_typestring;
+        if (TextUtils.isEmpty(gameInfo.getGame_download_url())){
             down_title.setVisibility(View.GONE);
             download.setVisibility(View.GONE);
             down_title.setClickable(false);
-            info="上传时间："+create_timestring+"\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
 
         }else {
-            info="上传时间："+create_timestring+"\n包体大小："+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+"/"+gameInfo.getGame_platform()+"/"+game_typestring;
-
+            down_title.setVisibility(View.VISIBLE);
+            download.setVisibility(View.VISIBLE);
+            down_title.setClickable(true);
         }
+//        if (!gameInfo.getPack().equals("1")||!gameInfo.getChecked().equals("1")){
+//            down_title.setVisibility(View.GONE);
+//            download.setVisibility(View.GONE);
+//            down_title.setClickable(false);
+//            info="上传时间："+create_timestring+"\n标   签："+gameInfo.getGame_stage()+" · "+gameInfo.getGame_platform();
+//
+//        }else {
+//            info="上传时间："+create_timestring+"\n包体大小："+gameInfo.getGame_size()+"M\n标   签："+gameInfo.getGame_stage()+"/"+gameInfo.getGame_platform()+"/"+game_typestring;
+//
+//        }
 
         MyLog.i("score=="+score);
         if (score.equals("null")){
@@ -505,6 +540,8 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
             conmentnum.setText("(" + advise_num + ")");
             addAdvices(adviseList);
         }
+//        setVisible(true);
+        view.setVisibility(View.VISIBLE);
     }
 
     private void addAdvices(List<Advise> adviseList) {
@@ -562,18 +599,13 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
 
             params.rightMargin = (int) (3 * density);
             params.bottomMargin = (int) (18 * density);
-//            MyLog.i("leftmargin=="+(3*density));
             params.leftMargin=(int) (3*density);
             imageView.setId(i);
-//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setLayoutParams(params);
 
             gameShot.addView(imageView, params);
-//            MyLog.i("添加ImageView==="+Url.prePic + game_shots.get(i));
-            Picasso.with(this)
-                    .load(Url.prePic + game_shots.get(i))
-                    .placeholder(R.drawable.default_icon)
-                    .into(imageView);
+            imageLoader.displayImage(Url.prePic + game_shots.get(i),imageView, MyDisplayImageOptions.getdefaultImageOptions());
+
         }
     }
 
@@ -599,9 +631,16 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.name_company_game:
-                Intent intent=new Intent(this, CPDetailActivity.class);
-                intent.putExtra("user_id",cp_id);
-                intent.putExtra("identity_cat","2");
+                Intent intent=null;
+                if (ident_cat.equals("2")) {
+                    intent = new Intent(this, CPDetailActivity.class);
+                    intent.putExtra("user_id", cp_id);
+                    intent.putExtra("identity_cat", "2");
+                }else {
+                    intent = new Intent(this, IssueDetailActivity.class);
+                    intent.putExtra("user_id", cp_id);
+                    intent.putExtra("identity_cat", "6");
+                }
                 startActivity(intent);
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 break;

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\aes.lua",
+        "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\raw\\aes.lua"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\res\\merged\\androidTest\\debug\\raw\\mediaplayer_configuration.xml",
+        "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\raw\\mediaplayer_configuration.xml"
+    }
+]

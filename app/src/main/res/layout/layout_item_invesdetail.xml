@@ -55,7 +55,7 @@
             android:textColor="#838483"
             android:textSize="13dp"
             />
-        <com.app.view.RoundImageView
+        <ImageView
             android:id="@+id/icon_item_invesdetail"
             android:layout_width="84dp"
             android:layout_height="84dp"
@@ -63,6 +63,7 @@
             android:layout_marginLeft="17dp"
             android:layout_marginTop="38dp"
             android:src="@drawable/default_icon"
+
             />
         <TextView
             android:id="@+id/name_item_invesdetail"

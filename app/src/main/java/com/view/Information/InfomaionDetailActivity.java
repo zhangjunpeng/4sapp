@@ -10,6 +10,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.CusToast;
@@ -34,13 +38,14 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
+import com.view.activity.BaseActivity;
 
 import org.xutils.common.Callback;
 import org.xutils.x;
 
 import java.util.concurrent.Executors;
 
-public class InfomaionDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class InfomaionDetailActivity extends BaseActivity implements View.OnClickListener {
 
 
     private EditText editText;
@@ -58,6 +63,8 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
     private ImageView back;
 
     private InputPopwindow inputPopwindow;
+    private TextView send;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,43 +82,15 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
         comment_pop=LayoutInflater.from(this).inflate(R.layout.popwindow_comment,null);
         continar.addView(click_pop);
         id=getIntent().getStringExtra("id");
+        url=getIntent().getStringExtra("url");
 
+        send= (TextView) comment_pop.findViewById(R.id.send_popwindow);
+        editText= (EditText) comment_pop.findViewById(R.id.edit_popwindow);
+        send.setClickable(false);
 
-        initData();
-        initListener();
-
-    }
-
-    private void initListener() {
         findViewById(R.id.back_infodetail).setOnClickListener(this);
         findViewById(R.id.share_infodetail).setOnClickListener(this);
-        continar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MyAccount.isLogin){
-                    inputPopwindow.showAtLocation(InfomaionDetailActivity.this.findViewById(R.id.contianer_infodetail),Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 100);
-                    //  getFocus(inputPopwindow.editText);
-                    popupInputMethodWindow();
-                }else {
-                    CusToast.showToast(InfomaionDetailActivity.this,"没有登录，不能评论",Toast.LENGTH_SHORT);
 
-                }
-            }
-        });
-        inputPopwindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-            }
-        });
-        //监听触屏事件
-        inputPopwindow.setTouchInterceptor(new View.OnTouchListener() {
-            public boolean onTouch(View view, MotionEvent event) {
-                return false;
-            }
-        });
-    }
-
-    private void initData() {
         WebSettings settings = webview.getSettings();
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
@@ -125,9 +104,53 @@ public class InfomaionDetailActivity extends AppCompatActivity implements View.O
                 return true;
             }
         });
-        url=getIntent().getStringExtra("url");
-        webview.loadUrl(prefixUrl+url);
 
+        if (TextUtils.isEmpty(id)){
+            continar.setVisibility(View.GONE);
+            webview.loadUrl(url);
+        }else {
+            webview.loadUrl(prefixUrl+url);
+            initData();
+            initListener();
+
+        }
+
+
+    }
+
+    private void initListener() {
+        findViewById(R.id.back_infodetail).setOnClickListener(this);
+        findViewById(R.id.share_infodetail).setOnClickListener(this);
+
+        continar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyAccount.isLogin){
+                    continar.removeAllViews();
+                    inputPopwindow.showAtLocation(InfomaionDetailActivity.this.findViewById(R.id.contianer_infodetail),Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+                    //  getFocus(inputPopwindow.editText);
+                    popupInputMethodWindow();
+                }else {
+//                    CusToast.showToast(InfomaionDetailActivity.this,"没有登录，不能评论",Toast.LENGTH_SHORT);
+                    goLogin(InfomaionDetailActivity.this);
+                }
+            }
+        });
+        inputPopwindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                continar.addView(click_pop);
+            }
+        });
+        //监听触屏事件
+        inputPopwindow.setTouchInterceptor(new View.OnTouchListener() {
+            public boolean onTouch(View view, MotionEvent event) {
+                return false;
+            }
+        });
+    }
+
+    private void initData() {
 
         //弹出窗口
         inputPopwindow=new InputPopwindow(InfomaionDetailActivity.this, new View.OnClickListener() {

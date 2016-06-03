@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.CusToast;
@@ -46,7 +47,7 @@ public class SelectPicActivity extends Activity implements OnClickListener{
     private static final String TAG = "SelectPicActivity";
 
     private LinearLayout dialogLayout;
-    private Button takePhotoBtn,pickPhotoBtn,cancelBtn;
+    private TextView takePhotoBtn,pickPhotoBtn,cancelBtn;
 
     /**获取到的图片路径*/
     private String picPath;
@@ -58,6 +59,7 @@ public class SelectPicActivity extends Activity implements OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_pic);
+        getWindow().setBackgroundDrawableResource(R.drawable.border_dialog);
         initView();
     }
     /**
@@ -66,11 +68,11 @@ public class SelectPicActivity extends Activity implements OnClickListener{
     private void initView() {
         dialogLayout = (LinearLayout) findViewById(R.id.dialog_layout);
         dialogLayout.setOnClickListener(this);
-        takePhotoBtn = (Button) findViewById(R.id.btn_take_photo);
+        takePhotoBtn = (TextView) findViewById(R.id.btn_take_photo);
         takePhotoBtn.setOnClickListener(this);
-        pickPhotoBtn = (Button) findViewById(R.id.btn_pick_photo);
+        pickPhotoBtn = (TextView) findViewById(R.id.btn_pick_photo);
         pickPhotoBtn.setOnClickListener(this);
-        cancelBtn = (Button) findViewById(R.id.btn_cancel);
+        cancelBtn = (TextView) findViewById(R.id.btn_cancel);
         cancelBtn.setOnClickListener(this);
 
         lastIntent = getIntent();

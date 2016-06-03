@@ -17,10 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.view.RoundImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.UserInfo;
 import com.test4s.myapp.MainActivity;
@@ -71,6 +72,7 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
     private UserInfo userInfo;
 
     final static int RequstCode=301;
+    private ImageLoader imageLoader=ImageLoader.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,12 +247,16 @@ public class StartPCActivity extends AppCompatActivity implements View.OnClickLi
         gameTypeText.setText(" "+game_type+" ");
         gameStageText.setText(" "+game_stage+" ");
         nameText.setText(game_name);
-        Picasso.with(this)
-                .load(Url.prePic+game_img)
-                .into(icon);
-        Picasso.with(this)
-                .load(Url.prePic+game_grade)
-                .into(gamegrade);
+//        Picasso.with(this)
+//                .load(Url.prePic+game_img)
+//                .into(icon);
+        imageLoader.displayImage(Url.prePic+game_img,icon, MyDisplayImageOptions.getdefaultImageOptions());
+
+//        Picasso.with(this)
+//                .load(Url.prePic+game_grade)
+//                .into(gamegrade);
+        imageLoader.displayImage(Url.prePic+game_grade,gamegrade, MyDisplayImageOptions.getdefaultImageOptions());
+
 
         checkInfo();
 

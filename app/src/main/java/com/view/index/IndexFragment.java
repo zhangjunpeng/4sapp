@@ -1,6 +1,7 @@
 package com.view.index;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -17,12 +18,16 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.Timer;
 import com.app.view.HorizontalListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.gdb.DaoSession;
 import com.test4s.gdb.GameInfoDao;
@@ -37,6 +42,7 @@ import com.test4s.gdb.OrderDao;
 import com.test4s.jsonparser.IndexJsonParser;
 import com.test4s.myapp.MyApplication;
 import com.test4s.net.BaseParams;
+import com.view.Information.InfomaionDetailActivity;
 import com.view.activity.ListActivity;
 import com.test4s.adapter.CP_HL_Adapter;
 import com.test4s.adapter.IP_HL_Adapter;
@@ -68,30 +74,14 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
  */
 public class IndexFragment extends Fragment implements View.OnClickListener{
 
-    List<HorizontalListView> horizonlist;
-
-    TextView tj1;
-    TextView tj2;
-    TextView tj3;
-    TextView tj4;
-    TextView tj5;
-
-    AdapterView.OnItemClickListener listener1;
-    AdapterView.OnItemClickListener listener2;
-    AdapterView.OnItemClickListener listener3;
-    AdapterView.OnItemClickListener listener4;
-    AdapterView.OnItemClickListener listener5;
-
     List<LinearLayout> content;
 
     LinearLayout continer;
 
     private ViewPager viewPager;
 
-    List<ImageView> imageViewList;
     LinearLayout whiteDots;
 
-    IndexJsonParser indexJsonParser;
     static  Integer currentItem=0;
 
     Thread thread;
@@ -102,10 +92,14 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     private Map<String, List> map;
     private List<Order> orders;
     private List<IndexAdvert> indexAdvertses;
+    private List<ImageView> imageViewList;
+    private ViewPagerAdapter adapter;
 
     private DaoSession daoSession;
+    private Activity context;
+    private ImageLoader imageLoader=ImageLoader.getInstance();
 
-    @Override
+  @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (thread==null){
             thread=new Timer(handler);
@@ -114,12 +108,11 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 
         daoSession= MyApplication.daoSession;
 
+        context=getActivity();
         map=new HashMap<>();
         orders=new ArrayList<>();
         indexAdvertses=new ArrayList<>();
         imageViewList=new ArrayList<>();
-
-
         super.onCreate(savedInstanceState);
     }
 
@@ -140,11 +133,43 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         view.findViewById(R.id.tz_fg_index).setOnClickListener(this);
         view.findViewById(R.id.wb_fg_index).setOnClickListener(this);
 //        indexJsonParser=IndexJsonParser.getInstance();
-        getDataFromDB();
+
+        adapter=new ViewPagerAdapter(imageViewList);
+        viewPager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
+        initListener();
+        getDensity();
         initData();
 
-        getDensity();
+        getDataFromDB();
+//        initViewPagerfromDB();
         return  view;
+    }
+
+    private void initListener() {
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setDot(position);
+//                MyLog.i("viewpager position=="+position);
+//                MyLog.i("imageview count=="+imageViewList.size());
+//                MyLog.i("viewpager count=="+viewPager.getChildCount());
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     public void getDensity(){
@@ -173,6 +198,10 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 success=false;
+//                getDataFromDB();
+                initViewPagerfromDB();
+                CusToast.showToast(getActivity(),"网络出现问题", Toast.LENGTH_SHORT);
+
             }
 
             @Override
@@ -190,6 +219,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                     deletAll();
                     jsonParser(result);
                     initView();
+                    initViewPager();
                 }else {
 
                 }
@@ -198,24 +228,21 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         });
     }
 
+    private void initViewPagerfromDB() {
+        indexAdvertses=seerchIndexAdvert();
+        initViewPager();
+    }
 
 
     private void initView() {
         MyLog.i("initView1");
-//        map=indexJsonParser.map;
-//        order=indexJsonParser.order;
-//        names=indexJsonParser.names;
         MyLog.i("map Size=="+map.size());
         content.clear();
         continer.removeAllViews();
-        viewPager.removeAllViews();
-        initViewPager();
 
         for (int i=0;i<map.size();i++){
-//            MyLog.i("addView1");
             ViewHolder viewHolder=new ViewHolder();
-            LinearLayout layout= (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.layout_index_horlistview,null);
-//            MyLog.i("addView2");
+            LinearLayout layout= (LinearLayout) LayoutInflater.from(context).inflate(R.layout.layout_index_horlistview,null);
             viewHolder.listView= (HorizontalScrollView) layout.findViewById(R.id.list_horizontalListview);
 
 
@@ -226,14 +253,13 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             viewHolder.more= (TextView) layout.findViewById(R.id.more_horizontalListview);
             Order order=orders.get(i);
             viewHolder.tj.setText(order.getName());
-//            MyLog.i("addView3");
             layout.setTag(viewHolder);
-//            MyLog.i("addView4");
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             continer.addView(layout,layoutParams);
-//            MyLog.i("addView5");
             content.add(layout);
-//            MyLog.i("addView6");
+            if (i==map.size()-1){
+                layout.findViewById(R.id.line_index).setVisibility(View.INVISIBLE);
+            }
         }
         MyLog.i("initView2");
         for (int i=0;i<map.size();i++){
@@ -280,6 +306,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                             intent.putExtra("tag",ListActivity.Invesment_TAG);
                             break;
                     }
+                    intent.putExtra("remment",true);
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
@@ -293,17 +320,18 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     }
 
     private LinearLayout getLinearInScroll2(final ArrayList<IndexItemInfo> indexSimpleinfos, final String methodname) {
-        LinearLayout linear=new LinearLayout(getActivity());
+        LinearLayout linear=new LinearLayout(context);
         for (int i=0;i<indexSimpleinfos.size();i++){
-            View convertView= LayoutInflater.from(getActivity()).inflate(R.layout.item_horizaontal_index,null);
+            View convertView= LayoutInflater.from(context).inflate(R.layout.item_horizaontal_index,null);
             ImageView imageView= (ImageView) convertView.findViewById(R.id.imageView_item_hor_index);
             TextView textView= (TextView) convertView.findViewById(R.id.text_item_hor_index);
             IndexItemInfo cp=indexSimpleinfos.get(i);
             String imageUrl=Url.prePic+cp.getLogo();
             String name=cp.getCompany_name();
-            Picasso.with(getActivity())
-                    .load(imageUrl)
-                    .into(imageView);
+//            Picasso.with(context)
+//                    .load(imageUrl)
+//                    .into(imageView);
+            imageLoader.displayImage(imageUrl,imageView,MyDisplayImageOptions.getroundImageOptions());
             textView.setText(name);
             linear.addView(convertView);
             final int j=i;
@@ -338,7 +366,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     }
 
     private LinearLayout getLinearInScroll(final ArrayList<IP> ipSimpleInfos) {
-        LinearLayout linear=new LinearLayout(getActivity());
+        LinearLayout linear=new LinearLayout(context);
         linear.setOrientation(LinearLayout.HORIZONTAL);
 
 
@@ -349,9 +377,10 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             IP ip=ipSimpleInfos.get(i);
             String imageUrl= Url.prePic+ip.getIp_logo();
             String name=ip.getIp_name();
-            Picasso.with(getActivity())
-                    .load(imageUrl)
-                    .into(imageView);
+//            Picasso.with(getActivity())
+//                    .load(imageUrl)
+//                    .into(imageView);
+            imageLoader.displayImage(imageUrl,imageView,MyDisplayImageOptions.getroundImageOptions());
             textView.setText(name);
 
             linear.addView(convertView);
@@ -364,6 +393,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                     IP ipSimpleInfo=ipSimpleInfos.get(j);
                     intent.putExtra("id",ipSimpleInfo.getId());
                     startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+
                 }
             });
         }
@@ -392,7 +423,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         LinearLayout.LayoutParams params1=new LinearLayout.LayoutParams((int)(9*density),(int)(9*density));
 
         for (int i=0;i<indexAdvertses.size();i++){
-            ImageView imageView=new ImageView(getActivity());
+            ImageView imageView=new ImageView(context);
             imageView.setLayoutParams(params);
 
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -401,60 +432,34 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             if (i>0){
                 params1.leftMargin=(int)(12.66*density);
             }
-            ImageView dot=new ImageView(getActivity());
+            ImageView dot=new ImageView(context);
             dot.setImageResource(R.drawable.whitedotselected);
             dot.setLayoutParams(params1);
             whiteDots.addView(dot);
             MyLog.i("imageUrl==="+Url.prePic+indexAdvertses.get(i).getAdvert_pic());
-            Picasso.with(getActivity())
-                    .load(Url.prePic+indexAdvertses.get(i).getAdvert_pic())
-                    .into(imageView);
+
+            imageLoader.displayImage(Url.prePic+indexAdvertses.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultImageOptions());
+//            Picasso.with(getActivity())
+//                    .load()
+//                    .into(imageView);
+            final IndexAdvert indexAdvert=indexAdvertses.get(i);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url=indexAdvert.getAdvert_url();
+                    Intent intent=new Intent(context, InfomaionDetailActivity.class);
+                    intent.putExtra("url",url);
+                    startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }
+            });
         }
         setDot(0);
         MyLog.i("setAdapter");
-        viewPager.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return imageViewList.size();
-            }
-
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                ImageView imageView=imageViewList.get(position);
-                container.addView(imageView);
-                MyLog.i("添加imageview");
-                return imageView;
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView(imageViewList.get(position));
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view==object;
-            }
-        });
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                setDot(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        adapter.notifyDataSetChanged();
 
     }
+
     android.os.Handler handler=new android.os.Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -469,10 +474,6 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
 //                        MyLog.i("currentItem=="+currentItem+"===time==="+new Date().getTime());
                         viewPager.setCurrentItem(currentItem);
 //                        thread.start();
-                        synchronized (currentItem){
-                            currentItem.notify();
-
-                        }
 
                     }
                     break;
@@ -539,9 +540,9 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                     map.put(order.getMethod_name(),indexItemInfos);
                 }
             }
-            indexAdvertses=seerchIndexAdvert();
             MyLog.i("order size=="+orders.size());
             initView();
+//            initViewPagerfromDB();
 
         }
     }
@@ -622,6 +623,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     public void onDestroy() {
         super.onDestroy();
         first=true;
+        adapter.notifyDataSetChanged();
     }
 
     private IndexItemInfoDao getIndexItemInfoDao(){

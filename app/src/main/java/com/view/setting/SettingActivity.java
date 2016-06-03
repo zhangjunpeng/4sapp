@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,9 +20,10 @@ import android.widget.TextView;
 import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
 import com.test4s.myapp.R;
+import com.view.activity.BaseActivity;
 import com.view.index.MySettingFragment;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
+public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
     private FragmentManager fragmentManager;
     private FragmentTransaction transaction;
@@ -33,6 +35,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private String tag;
 
+    private String fragment_tag="";
 
     public enum fragmenttag{
         index,adisereport,aboutus,servicedeal;
@@ -46,9 +49,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         fragmentManager=getSupportFragmentManager();
 
 
-        fragment=new Settingfragment();
-        transaction=fragmentManager.beginTransaction();
-        transaction.replace(R.id.contianer_setting,fragment).commit();
+
 
         back= (ImageView) findViewById(R.id.back_savebar);
         title= (TextView) findViewById(R.id.textView_titlebar_save);
@@ -64,6 +65,20 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         save.setVisibility(View.INVISIBLE);
 
         tag="index";
+        fragment_tag=getIntent().getStringExtra("tag");
+        if (TextUtils.isEmpty(fragment_tag)){
+            fragment=new Settingfragment();
+            transaction=fragmentManager.beginTransaction();
+            transaction.replace(R.id.contianer_setting,fragment).commit();
+        }else {
+            switch (fragment_tag){
+                case "agreement":
+                    toServiceDeal();
+                    break;
+            }
+        }
+
+
 
         setImmerseLayout(findViewById(R.id.titlebar_setting));
 
@@ -129,7 +144,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         title.setText("用户服务协议");
         MyLog.i("点击servicedeal2");
     }
-    private void backToSetting(){
+    public void backToSetting(){
         tag="index";
         fragment=new Settingfragment();
         transaction=fragmentManager.beginTransaction();
@@ -138,7 +153,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         title.setText("设 置");
 
     }
-    private void backAboutus() {
+    public void backAboutus() {
         tag="aboutus";
         fragment=new aboutusfragment();
         transaction=fragmentManager.beginTransaction();
@@ -154,6 +169,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         pressback();
     }
 }

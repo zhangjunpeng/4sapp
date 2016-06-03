@@ -19,15 +19,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.app.tools.CusToast;
 import com.app.tools.MyLog;
-import com.squareup.picasso.Picasso;
+import com.app.view.MyDialog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.MyAccount;
+import com.test4s.account.TencentLogin;
+import com.test4s.account.ThirdLoginActivity;
 import com.test4s.gdb.AdvertsDao;
 import com.test4s.gdb.DaoSession;
 import com.test4s.gdb.GameInfoDao;
@@ -56,11 +60,11 @@ import java.util.concurrent.Executors;
 public class Settingfragment extends Fragment implements View.OnClickListener {
 
     private ToggleButton toggleButton;
-    private Button loginout;
+    private RelativeLayout loginout;
 
     private SettingActivity activity;
     Dialog dialog;
-    ProgressDialog progressdialog;
+    Dialog progressdialog;
 
     private TextView cahesize;
     private MyAccount myaccount;
@@ -98,7 +102,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.advice_report).setOnClickListener(this);
         view.findViewById(R.id.about_us).setOnClickListener(this);
 
-        loginout= (Button) view.findViewById(R.id.loginout_setting);
+        loginout= (RelativeLayout) view.findViewById(R.id.loginout_setting);
         cahesize= (TextView) view.findViewById(R.id.cahesize_setting);
 
         loginout.setOnClickListener(this);
@@ -140,7 +144,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode== Activity.RESULT_OK&&requestCode==LoginCode){
-            loginout.setText("退出登录");
+
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -149,12 +153,16 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
     public void showClearDialog(){
         dialog=new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.border_dialog);
+
         View view=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_setting,null);
         LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
         params.leftMargin= (int) (14*density);
         params.rightMargin= (int) (14*density);
         MyLog.i("params width=="+params.width);
+        view.setBackgroundResource(R.drawable.border_dialog);
         dialog.setContentView(view,params);
+
         TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
         TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
         TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
@@ -188,12 +196,22 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
 
     private void clearCahe() {
 
-        progressdialog=new ProgressDialog(getActivity());
 
-        Picasso.with(getActivity()).invalidate(getActivity().getApplicationContext().getCacheDir());
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        progressdialog.setCanceledOnTouchOutside(false);
-        progressdialog.setTitle("正在清理中。。。");
+        progressdialog=new Dialog(getActivity());
+
+        progressdialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        View view=LayoutInflater.from(getActivity()).inflate(R.layout.dialog_clearcahe,null);
+
+        progressdialog.getWindow().setBackgroundDrawableResource(R.drawable.border_dialog);
+//        MyDialog myDialog=new MyDialog(getActivity(),(int) (windowWidth*0.8),(int) (110*density),view,R.style.MyDialog);
+
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        progressdialog.setContentView(view,params);
+
         progressdialog.show();
 
 
@@ -202,6 +220,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
             public void run() {
                 try {
                     deleteAll();
+                    ImageLoader.getInstance().clearDiskCache();  // 清除本地缓存
                     Thread.sleep(2*1000);
                     handler.sendEmptyMessage(0);
 
@@ -282,6 +301,7 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
             }
         });
     }
@@ -339,6 +359,13 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
                 dialog.dismiss();
+                getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+                if (MyAccount.tencentLogin!=null){
+                    MyLog.i("qq login out");
+                    MyAccount.tencentLogin.loginOut();
+                }
+                ThirdLoginActivity.WeiBologinout(getActivity());
+
             }
         });
     }

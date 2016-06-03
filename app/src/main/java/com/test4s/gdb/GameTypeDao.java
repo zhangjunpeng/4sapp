@@ -25,6 +25,7 @@ public class GameTypeDao extends AbstractDao<GameType, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Title = new Property(1, String.class, "title", false, "TITLE");
+        public final static Property Advert_cat_id = new Property(2, String.class, "advert_cat_id", false, "ADVERT_CAT_ID");
     };
 
 
@@ -41,7 +42,8 @@ public class GameTypeDao extends AbstractDao<GameType, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'GAME_TYPE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'TITLE' TEXT);"); // 1: title
+                "'TITLE' TEXT," + // 1: title
+                "'ADVERT_CAT_ID' TEXT);"); // 2: advert_cat_id
     }
 
     /** Drops the underlying database table. */
@@ -64,6 +66,11 @@ public class GameTypeDao extends AbstractDao<GameType, Long> {
         if (title != null) {
             stmt.bindString(2, title);
         }
+ 
+        String advert_cat_id = entity.getAdvert_cat_id();
+        if (advert_cat_id != null) {
+            stmt.bindString(3, advert_cat_id);
+        }
     }
 
     /** @inheritdoc */
@@ -77,7 +84,8 @@ public class GameTypeDao extends AbstractDao<GameType, Long> {
     public GameType readEntity(Cursor cursor, int offset) {
         GameType entity = new GameType( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // title
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // title
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // advert_cat_id
         );
         return entity;
     }
@@ -87,6 +95,7 @@ public class GameTypeDao extends AbstractDao<GameType, Long> {
     public void readEntity(Cursor cursor, GameType entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTitle(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setAdvert_cat_id(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     /** @inheritdoc */

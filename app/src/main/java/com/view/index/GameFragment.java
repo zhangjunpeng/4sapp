@@ -1,6 +1,7 @@
 package com.view.index;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,15 +10,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.Timer;
@@ -31,6 +36,7 @@ import com.test4s.gdb.GameInfo;
 import com.test4s.gdb.GameInfoDao;
 import com.test4s.gdb.GameType;
 import com.test4s.gdb.GameTypeDao;
+import com.test4s.gdb.IP;
 import com.test4s.myapp.MyApplication;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
@@ -39,6 +45,8 @@ import com.view.game.GameListActivity;
 import com.test4s.adapter.Game_HL_Adapter;
 import com.test4s.myapp.R;
 import com.test4s.jsonparser.GameJsonParser;
+import com.view.game.RmGameListActivity;
+import com.view.s4server.IPDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.dao.query.Query;
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * Created by Administrator on 2015/12/7.
@@ -63,27 +72,27 @@ public class GameFragment extends Fragment implements View.OnClickListener{
     List<ImageView> dots;
 
 
-
-    GameJsonParser parser;
-    String[] imageUrl=new String[3];
-
-//    List<Adverts> advertsList;
     List<GameType> titles;
     Map<String,List> map;
 
     LinearLayout continar;
     List<LinearLayout> content;
 
+    private ViewPagerAdapter adapter;
     List<ImageView> imageViewList;
     private float density;
     private LinearLayout whiteDots;
 
     private DaoSession daoSession;
     private ArrayList<Adverts> gameAdverts;
+
+    private List<GameInfo> allgames;
+
     View view;
 
     private ImageLoader imageloder=ImageLoader.getInstance();
     private Thread thread;
+    private Activity context;
 
     private int currentItem;
     android.os.Handler handler=new android.os.Handler(){
@@ -97,9 +106,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                         if (currentItem == gameAdverts.size()) {
                             currentItem = 0;
                         }
-//                        MyLog.i("currentItem=="+currentItem+"===time==="+new Date().getTime());
                         viewPager.setCurrentItem(currentItem);
-//                        thread.start();
 
                     }
                     break;
@@ -114,6 +121,12 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             thread=new Timer(handler);
             thread.start();
         }
+        context=getActivity();
+        content=new ArrayList<>();
+        imageViewList=new ArrayList<>();
+        adapter=new ViewPagerAdapter(imageViewList);
+        allgames=new ArrayList<>();
+
     }
 
     @Nullable
@@ -123,13 +136,17 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         continar= (LinearLayout) view.findViewById(R.id.contianer_game);
         whiteDots= (LinearLayout) view.findViewById(R.id.whitedot_linear_game);
         viewPager= (ViewPager) view.findViewById(R.id.viewpager_game);
-        content=new ArrayList<>();
         mcontext=getContext();
         daoSession= MyApplication.daoSession;
+
+        viewPager.setAdapter(adapter);
+
         getDensity();
-        parser=GameJsonParser.getIntance();
+//        parser=GameJsonParser.getIntance();
+
         getDateFromDB();
-        
+
+
         initData();
 
         return view;
@@ -149,11 +166,12 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             MyLog.i("gamelist size=="+gamelist1.size());
             map.put(name,gamelist1);
         }
-        gameAdverts= (ArrayList<Adverts>) searchAdverts();
         initView();
+        initViewPagerFromDB();
     }
 
     private void initData() {
+        getAllGameData();
         BaseParams baseParams=new BaseParams("game/index");
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(1000*60*30);
@@ -171,6 +189,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 update=false;
+//                getDateFromDB();
+                initViewPagerFromDB();
+
             }
 
             @Override
@@ -185,13 +206,89 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                     deleteAll();
                     parser(result);
                     MyLog.i("解析完成");
-
                     initView();
+                    initViewPager();
                 }
 
             }
         });
     }
+
+    private void initViewPagerFromDB() {
+        gameAdverts= (ArrayList<Adverts>) searchAdverts();
+        initViewPager();
+    }
+
+    private void getAllGameData() {
+        BaseParams gameParams=new BaseParams("game/gamelist");
+        gameParams.addParams("p","1");
+        gameParams.addSign();
+        gameParams.getRequestParams().setCacheMaxAge(1000*60*5);
+        x.http().post(gameParams.getRequestParams(),new Callback.CacheCallback<String>() {
+            private String result;
+            @Override
+            public boolean onCache(String result) {
+                this.result=result;
+                MyLog.i("使用缓存");
+                return true;
+            }
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("访问网络");
+                this.result=result;
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                MyLog.i("GameList==="+result);
+                gameparser(result);
+                addAllGame();
+
+            }
+        });
+    }
+
+    private void gameparser(String result) {
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            int code=jsonObject.getInt("code");
+            boolean su=jsonObject.getBoolean("success");
+            if (su&&code==200){
+                JSONObject jsonObject1=jsonObject.getJSONObject("data");
+                Url.prePic=jsonObject1.getString("prefixPic");
+                JSONArray jsonArray=jsonObject1.getJSONArray("gameList");
+
+                for (int i=0;i<jsonArray.length();i++){
+                    JSONObject game=jsonArray.getJSONObject(i);
+                    GameInfo gameInfo=new GameInfo();
+                    gameInfo.setGame_name(game.getString("game_name"));
+                    gameInfo.setGame_id(game.getString("game_id"));
+                    gameInfo.setGame_img(game.getString("game_img"));
+                    gameInfo.setGame_download_url(game.getString("game_download_url"));
+                    gameInfo.setGame_download_nums(game.getString("game_download_nums"));
+                    gameInfo.setRequire(game.getString("require"));
+                    gameInfo.setNorms(game.getString("norms"));
+                    gameInfo.setGame_grade(game.getString("game_grade"));
+                    gameInfo.setPack(game.getString("pack"));
+                    gameInfo.setChecked(game.getString("checked"));
+                    allgames.add(gameInfo);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void getDensity(){
         DisplayMetrics metric = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metric);
@@ -200,63 +297,34 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private void initViewPager() {
 
-        viewPager.removeAllViews();
         whiteDots.removeAllViews();
+        imageViewList.clear();
         MyLog.i("initViewPager");
-        imageViewList=new ArrayList<>();
-//        MyLog.i("params");
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(viewPager.getLayoutParams().width,viewPager.getLayoutParams().height);
-//        MyLog.i("params1");
         LinearLayout.LayoutParams params1=new LinearLayout.LayoutParams((int)(9*density),(int)(9*density));
 
         MyLog.i("advertsList size"+gameAdverts.size());
         for (int i=0;i<gameAdverts.size();i++){
-            ImageView imageView=new ImageView(getActivity());
+            ImageView imageView=new ImageView(context);
             imageView.setLayoutParams(params);
 
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageViewList.add(imageView);
-//            MyLog.i("addimageView");
             if (i>0){
                 params1.leftMargin=(int)(12.66*density);
             }
-            ImageView dot=new ImageView(getActivity());
+            ImageView dot=new ImageView(context);
             dot.setImageResource(R.drawable.whitedotselected);
             dot.setLayoutParams(params1);
             whiteDots.addView(dot);
-//            MyLog.i("imageUrl==="+Url.prePic+gameAdverts.get(i).getAdvert_pic());
-
+            MyLog.i("imageUrl==="+Url.prePic+gameAdverts.get(i).getAdvert_pic());
             imageloder.displayImage(Url.prePic+gameAdverts.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultImageOptions());
-
 
         }
         setDot(0);
         MyLog.i("setAdapter");
-        viewPager.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return imageViewList.size();
-            }
+        adapter.notifyDataSetChanged();
 
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                ImageView imageView=imageViewList.get(position);
-                container.addView(imageView);
-                MyLog.i("添加imageview");
-                return imageView;
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView(imageViewList.get(position));
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view==object;
-            }
-        });
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -287,63 +355,113 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private void initView() {
 
-        initViewPager();
 
         //初始化三个HorizontalListView
         MyLog.i("初始化view");
         content.clear();
         continar.removeAllViews();
-        if (parser==null){
-            return;
-        }
+//        if (parser==null){
+//            return;
+//        }
         MyLog.i("map size=="+map.size());
         for (int i=0;i<map.size();i++){
             MyLog.i("addView1");
             ViewHolder viewHolder=new ViewHolder();
             LinearLayout layout= (LinearLayout) LayoutInflater.from(getActivity()).inflate(R.layout.layout_horilistview_game,null);
-//            MyLog.i("addView2");
-            viewHolder.listView= (HorizontalListView) layout.findViewById(R.id.list_rm_game);
+            viewHolder.listView= (HorizontalScrollView) layout.findViewById(R.id.list_rm_game);
+
+            OverScrollDecoratorHelper.setUpOverScroll(viewHolder.listView);
+
             viewHolder.tj= (TextView) layout.findViewById(R.id.tjrm_game);
             viewHolder.more= (TextView) layout.findViewById(R.id.more_rm_game);
             viewHolder.tj.setText(titles.get(i).getTitle());
-//            MyLog.i("addView3");
             layout.setTag(viewHolder);
-//            MyLog.i("addView4");
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             continar.addView(layout,layoutParams);
-//            MyLog.i("addView5");
             content.add(layout);
-//            MyLog.i("addView6");
-        }
-        for (int i=0;i<map.size();i++){
-            ViewHolder viewHolder= (ViewHolder) content.get(i).getTag();
-            ArrayList<GameInfo> gameInfos= (ArrayList<GameInfo>) map.get(titles.get(i).getTitle());
-            Game_HL_Adapter  adapter=new Game_HL_Adapter(getActivity(),gameInfos);
-            viewHolder.listView.setAdapter(adapter);
-        }
-        for (int i=0;i<map.size();i++){
-            ViewHolder viewHolder= (ViewHolder) content.get(i).getTag();
-            final ArrayList<GameInfo> gameInfos= (ArrayList<GameInfo>) map.get(titles.get(i).getTitle());
-            viewHolder.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    GameInfo gameInfo=gameInfos.get(position);
-                    goDetail(gameInfo.getGame_id());
-                }
-            });
+
+            final int j=i;
             viewHolder.more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), GameListActivity.class);
+                    Intent intent=new Intent(getActivity(),RmGameListActivity.class);
+                    intent.putExtra("position",j);
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
             });
+            ArrayList<GameInfo> gameInfos= (ArrayList<GameInfo>) map.get(titles.get(i).getTitle());
+            viewHolder.listView.addView(getLinearInScroll(gameInfos));
+
+
         }
     }
+    private LinearLayout getLinearInScroll(final List<GameInfo> gameinfos) {
+        LinearLayout linear=new LinearLayout(context);
+        linear.setOrientation(LinearLayout.HORIZONTAL);
+        for (int i=0;i<gameinfos.size();i++){
+            View convertView= LayoutInflater.from(context).inflate(R.layout.item_horizaontal_index,null);
+            ImageView imageView= (ImageView) convertView.findViewById(R.id.imageView_item_hor_index);
+            TextView textView= (TextView) convertView.findViewById(R.id.text_item_hor_index);
+            GameInfo game=gameinfos.get(i);
+            String imageUrl= Url.prePic+game.getGame_img();
+            String name=game.getGame_name();
+
+            ImageView grade= (ImageView) convertView.findViewById(R.id.gamerating_index);
+
+//            Picasso.with(context)
+//                    .load(imageUrl)
+//                    .into(imageView);
+//            MyLog.i(game.getGame_name()+"=="+imageUrl);
+            imageloder.displayImage(imageUrl,imageView,MyDisplayImageOptions.getroundImageOptions());
+            if (!TextUtils.isEmpty(game.getGame_grade())){
+                imageloder.displayImage(Url.prePic+game.getGame_grade(),grade,MyDisplayImageOptions.getdefaultImageOptions());
+            }
+
+            textView.setText(name);
+            linear.addView(convertView);
+            final int j=i;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GameInfo gameinfo=gameinfos.get(j);
+                    goDetail(gameinfo.getGame_id());
+                }
+            });
+        }
+        return linear;
+    }
+
+    private void addAllGame() {
+        LinearLayout layout= (LinearLayout) LayoutInflater.from(context).inflate(R.layout.layout_horilistview_game,null);
+        HorizontalScrollView listView= (HorizontalScrollView) layout.findViewById(R.id.list_rm_game);
+        TextView tj= (TextView) layout.findViewById(R.id.tjrm_game);
+        TextView more= (TextView) layout.findViewById(R.id.more_rm_game);
+        tj.setText("全部游戏");
+        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        continar.addView(layout,layoutParams);
+        content.add(layout);
+
+        OverScrollDecoratorHelper.setUpOverScroll(listView);
+
+        listView.addView(getLinearInScroll(allgames));
+
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context, GameListActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+            }
+        });
+        layout.findViewById(R.id.line_gameindex).setVisibility(View.INVISIBLE);
+
+    }
+
+
 
     class ViewHolder{
-        HorizontalListView listView;
+        HorizontalScrollView listView;
         TextView tj;
         TextView more;
     }
@@ -370,37 +488,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     }
 
-
-    class MyPagerAdapter extends PagerAdapter{
-
-        List<ImageView> imageViews;
-
-        public  MyPagerAdapter(List<ImageView> list){
-            imageViews=list;
-        }
-
-        @Override
-        public int getCount() {
-            return imageViews.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view==object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageView image=imageViews.get(position);
-            container.addView(image);
-            return image;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(imageViews.get(position));
-        }
-    }
 
     public void parser(String result){
         try {
@@ -431,6 +518,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                     GameType title=new GameType();
                     String title_s=game.getString("title");
                     title.setTitle(title_s);
+                    title.setAdvert_cat_id(game.getString("advert_cat_id"));
 
                     JSONArray content=game.getJSONArray("content");
                     ArrayList<GameInfo> gameInfos=new ArrayList<>();
@@ -441,6 +529,12 @@ public class GameFragment extends Fragment implements View.OnClickListener{
                         gameInfo.setGame_img(jsonObject1.getString("game_img"));
                         gameInfo.setGame_id(jsonObject1.getString("game_id"));
                         gameInfo.setGame_name(jsonObject1.getString("game_name"));
+                        try {
+                            gameInfo.setGame_grade(jsonObject1.getString("game_grade"));
+
+                        }catch (Exception e){
+                            gameInfo.setGame_grade("");
+                        }
                         gameInfo.setTitle(title_s);
                         gameInfos.add(gameInfo);
                         addGameInfo(gameInfo);

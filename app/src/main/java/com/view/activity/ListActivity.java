@@ -39,12 +39,13 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
-public class ListActivity extends FragmentActivity implements OnClickListener{
+public class ListActivity extends BaseActivity implements OnClickListener{
 
 
     ImageView back;
     TextView title;
     ImageView search;
+    ImageView backimg;
 
     String tag;
     String p="1";
@@ -52,6 +53,8 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
     String host="http://app.4stest.com/index/";
     String url="";
 
+
+    boolean remment=false;
 
     public final static String CP_TAG="cplist";
     public final static String IP_TAG="iplist";
@@ -100,9 +103,10 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
         back= (ImageView) findViewById(R.id.back_titlebar);
         title= (TextView) findViewById(R.id.title_titlebar);
         search= (ImageView) findViewById(R.id.search_titlebar);
+        backimg= (ImageView) findViewById(R.id.backimg_titlebar);
 
 
-        back.setImageResource(R.drawable.back);
+        backimg.setImageResource(R.drawable.back);
 
         back.setOnClickListener(this);
         search.setOnClickListener(this);
@@ -111,6 +115,8 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
 
 
         tag=getIntent().getStringExtra("tag");
+
+        remment=getIntent().getBooleanExtra("remment",false);
 
         manager=getSupportFragmentManager();
         transaction=manager.beginTransaction();
@@ -122,32 +128,60 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
 
     private void initView() {
         Fragment fragment=null;
+
         Bundle bundle=new Bundle();
         bundle.putBoolean("recommend",true);
         switch (tag) {
             case CP_TAG:
-                title.setText("开发者");
+                if (remment){
+                    title.setText("推荐开发者");
+
+                }else {
+                    title.setText("开发者");
+                }
                 fragment=new CPListFragment();
 
                 break;
             case IP_TAG:
-                title.setText("IP");
+                if (remment){
+                    title.setText("推荐IP");
+
+                }else {
+                    title.setText("IP");
+                }
                 fragment=new IPListFragment();
                 break;
             case Invesment_TAG:
-                title.setText("投资人");
+                if (remment){
+                    title.setText("推荐投资人");
+
+                }else {
+                    title.setText("投资人");
+                }
                 fragment=new InvesmentListFragment();
                 break;
             case OutSource_TAG:
-                title.setText("外包");
+                if (remment){
+                    title.setText("推荐外包");
+
+                }else {
+                    title.setText("外包");
+                }
                 fragment=new OutSourceListFragment();
                 break;
             case Issue_TAG:
-                title.setText("发行");
+                if (remment){
+                    title.setText("推荐发行");
+
+                }else {
+                    title.setText("发行");
+                }
                 fragment=new IssueListFragment();
                 break;
         }
-        fragment.setArguments(bundle);
+        if (remment){
+            fragment.setArguments(bundle);
+        }
         transaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
         transaction.replace(R.id.contianner_listactivity,fragment).commit();
     }
@@ -282,6 +316,7 @@ public class ListActivity extends FragmentActivity implements OnClickListener{
         switch (v.getId()){
             case R.id.back_titlebar:
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 break;
             case R.id.search_titlebar:
                 Intent intent=new Intent(ListActivity.this, SearchActivity.class);

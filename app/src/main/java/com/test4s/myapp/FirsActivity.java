@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.app.tools.MyLog;
 import com.test4s.net.BaseParams;
@@ -29,6 +31,8 @@ public class FirsActivity extends AppCompatActivity {
 
     private boolean isFirstin=false;
     private SharedPreferences sharedPreferences;
+    private Button degug;
+    private Button relaless;
 
     private Handler handler=new Handler(){
         @Override
@@ -68,17 +72,42 @@ public class FirsActivity extends AppCompatActivity {
             finish();
         }else {
             setContentView(R.layout.activity_firs);
-            Executors.newSingleThreadExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(2*1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            degug= (Button) findViewById(R.id.debug_first);
+            relaless= (Button) findViewById(R.id.relaless_first);
+            if (MyApplication.DeBug){
+                degug.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BaseParams.urlindex = MyApplication.mcontext.getString(R.string.url_index_test);
+
+                        Intent intent=new Intent(FirsActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
-                    handler.sendEmptyMessage(0);
-                }
-            });
+                });
+                relaless.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BaseParams.urlindex =MyApplication.mcontext.getString(R.string.url_index);
+                        Intent intent=new Intent(FirsActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
+            }else {
+                Executors.newSingleThreadExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(2*1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        handler.sendEmptyMessage(0);
+                    }});
+            }
+
         }
 
     }

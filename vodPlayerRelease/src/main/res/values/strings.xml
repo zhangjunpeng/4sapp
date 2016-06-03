@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">YKCloudVedio</string>
+    <string name="error_code">错误代码：%1$s!</string>
+    <string name="player_failed_defualt">播放失败，点击刷新</string>
+
+
+    <string name="pref_key_enable_background_play">"pref_key_enable_background_play"</string>
+    <string name="pref_key_player">"pref_key_player"</string>
+    <string name="pref_key_using_media_codec">"pref_key_using_media_codec"</string>
+    <string name="pref_key_using_media_codec_auto_rotate">"pref_key_using_media_codec_auto_rotate"</string>
+    <string name="pref_key_using_opensl_es">"pref_key_using_opensl_es"</string>
+    <string name="pref_key_pixel_format">"pref_key_pixel_format"</string>
+    <string name="pref_key_enable_no_view">"pref_key_enable_no_view"</string>
+    <string name="pref_key_enable_surface_view">"pref_key_enable_surface_view"</string>
+    <string name="pref_key_enable_texture_view">"pref_key_enable_texture_view"</string>
+    <string name="pref_key_enable_detached_surface_texture">"pref_key_enable_detached_surface_texture"</string>
+    <string name="pref_key_last_directory">"pref_key_last_directory"</string>
+
+    <string name="player_tips_disable_auto_play">已设置不自动播放,点击播放</string>
+    <string name="player_tips_use_none_wifi">您正在使用非WIFI网络,点击观看视频</string>
+    <string name="player_tips_use_none_wifi_w">您正在使用非WIFI网络观看视频</string>
+</resources>

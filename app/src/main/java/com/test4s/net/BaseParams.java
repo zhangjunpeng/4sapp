@@ -19,16 +19,16 @@ public class BaseParams {
     TreeMap<String,String> map;
     RequestParams requestParams;
     StringBuffer mess;
-    String urlindex="";
+    public static String urlindex="";
 
     public BaseParams(String uri){
-        if (MyApplication.DeBug) {
-            //测试地址
-            urlindex = MyApplication.mcontext.getString(R.string.url_index_test);
-        }else {
-//            //正式地址
-            urlindex =MyApplication.mcontext.getString(R.string.url_index);
-        }
+//        if (MyApplication.DeBug) {
+//            //测试地址
+//            urlindex = MyApplication.mcontext.getString(R.string.url_index_test);
+//        }else {
+////            //正式地址
+//            urlindex =MyApplication.mcontext.getString(R.string.url_index);
+//        }
 //        urlindex =MyApplication.mcontext.getString(R.string.url_index);
 
         mess=new StringBuffer(urlindex+uri);

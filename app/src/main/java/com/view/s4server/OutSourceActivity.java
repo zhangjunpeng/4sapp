@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,8 +23,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.app.view.MyScrollView;
 import com.app.view.RoundImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
@@ -79,6 +83,8 @@ public class OutSourceActivity extends BaseActivity {
     private LinearLayout div_game;
     private LinearLayout div_art;
     private LinearLayout div_video;
+
+    private ImageLoader imageLoader= ImageLoader.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +191,8 @@ public class OutSourceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+
             }
         });
     }
@@ -208,7 +216,7 @@ public class OutSourceActivity extends BaseActivity {
         }
         baseParams.addSign();
         baseParams.getRequestParams().setCacheMaxAge(60*1000*60);
-        x.http().post(baseParams.getRequestParams(), new Callback.CacheCallback<String>() {
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
             String res;
             @Override
             public void onSuccess(String result) {
@@ -217,6 +225,7 @@ public class OutSourceActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                MyLog.i("error==="+ex.toString());
                 setContentView(R.layout.neterror);
 
             }
@@ -230,12 +239,6 @@ public class OutSourceActivity extends BaseActivity {
             public void onFinished() {
                 MyLog.i("outsource==="+res);
                 jsonparser(res);
-            }
-
-            @Override
-            public boolean onCache(String result) {
-                res=result;
-                return true;
             }
         });
     }
@@ -275,7 +278,7 @@ public class OutSourceActivity extends BaseActivity {
                 artscases=new ArrayList<>();
                 JSONArray ac=jinfo.getJSONArray("arts_case");
                 for (int i=0;i<ac.length();i++){
-                    JSONObject arcase=cases.getJSONObject(i);
+                    JSONObject arcase=ac.getJSONObject(i);
                     artscases.add(arcase.getString("logo"));
                 }
                 musiccases=new ArrayList<>();
@@ -297,9 +300,10 @@ public class OutSourceActivity extends BaseActivity {
             care_title.setImageResource(R.drawable.cared);
             care.setImageResource(R.drawable.attention_has);
         }
-        Picasso.with(this)
-                .load(Url.prePic+logostring)
-                .into(icon);
+        imageLoader.displayImage(Url.prePic+logostring,icon, MyDisplayImageOptions.getroundImageOptions());
+//        Picasso.with(this)
+//                .load()
+//                .into(icon);
         if (TextUtils.isEmpty(introstring)){
 
         }else {
@@ -383,15 +387,21 @@ public class OutSourceActivity extends BaseActivity {
             LinearLayout layout= (LinearLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_item_invesdetail,null);
             MyLog.i("addView2");
             IssueCaseInfo caseInfo=cases.get(i);
-            viewHolder.icon= (RoundImageView) layout.findViewById(R.id.icon_item_invesdetail);
+            viewHolder.icon= (ImageView) layout.findViewById(R.id.icon_item_invesdetail);
             viewHolder.time= (TextView) layout.findViewById(R.id.time_item_invesdetail);
             viewHolder.name= (TextView) layout.findViewById(R.id.name_item_invesdetail);
             viewHolder.money= (TextView) layout.findViewById(R.id.money_item_invesdetail);
             viewHolder.stage= (TextView) layout.findViewById(R.id.stage_item_invesdetail);
-            Picasso.with(this)
-                    .load(Url.prePic+caseInfo.getLogo())
-                    .placeholder(R.drawable.default_icon)
-                    .into(viewHolder.icon);
+            if (caseInfo.getLogo().contains("http")){
+                imageLoader.displayImage(caseInfo.getLogo(),viewHolder.icon,MyDisplayImageOptions.getroundImageOptions());
+
+            }else {
+                imageLoader.displayImage(Url.prePic+caseInfo.getLogo(),viewHolder.icon,MyDisplayImageOptions.getroundImageOptions());
+            }
+//            Picasso.with(this)
+//                    .load()
+//                    .placeholder(R.drawable.default_icon)
+//                    .into(viewHolder.icon);
             viewHolder.time.setText("上线时间 ："+caseInfo.getOnline_time());
             viewHolder.name.setText(caseInfo.getName());
             viewHolder.money.setText("合作类型 ："+caseInfo.getCoop_cat());
@@ -415,7 +425,7 @@ public class OutSourceActivity extends BaseActivity {
     }
     class ViewHolder{
         TextView time;
-        RoundImageView icon;
+        ImageView icon;
         TextView name;
         TextView money;
         TextView stage;

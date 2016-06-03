@@ -82,7 +82,7 @@ public class aboutusfragment extends Fragment implements View.OnClickListener {
         TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
         TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
         TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
-        mes.setText("确定要拨打075"+phoneNum+"吗?");
+        mes.setText("确定要拨打"+phoneNum+"吗?");
         clear.setText("确定");
         clear.setTextColor(Color.rgb(255,157,0));
         dialog.show();

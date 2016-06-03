@@ -51,6 +51,9 @@ public class PlayerReportActivity extends BaseActivity {
     TextView title;
     TextView save;
 
+    ImageView button_right;
+    int p=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,38 @@ public class PlayerReportActivity extends BaseActivity {
                 finish();
             }
         });
+        button_right= (ImageView) findViewById(R.id.button_right_report);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                p=position;
+                if (p==fragmentList.size()-1){
+                    button_right.setVisibility(View.GONE);
+                }else {
+                    button_right.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        button_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                p++;
+                viewPager.setCurrentItem(p);
+
+            }
+        });
+
 
 //        initData();
 

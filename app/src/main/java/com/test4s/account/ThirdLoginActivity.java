@@ -1,8 +1,12 @@
 package com.test4s.account;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.app.tools.CusToast;
 import com.app.tools.MyLog;
+import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -34,6 +42,8 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.concurrent.Executors;
+
 public class ThirdLoginActivity extends Activity implements IUiListener{
 
     static String third="";
@@ -43,85 +53,89 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
     private String qq_openid;
     private String qq_token;
     private String qq_expir;
-    private SendListener listener;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 0:
+
+                    break;
+            }
+
+        }
+    };
+
+    private static Oauth2AccessToken mAccessToken;
+
+    private AuthListener listener;
+    private ImageView image;
+    private SsoHandler mSsoHandler;
+    private AuthInfo mAuthInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_loading);
+        setContentView(R.layout.activity_third_login);
+        getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
         third=getIntent().getStringExtra("third");
         myAccount=MyAccount.getInstance();
-        starLogin();
+        image= (ImageView) findViewById(R.id.image_third);
+        AnimationDrawable drawable= (AnimationDrawable) image.getBackground();
+        drawable.start();
+        setFinishOnTouchOutside(false);
+
+        mAuthInfo = new AuthInfo(this, "963258147", "https://api.weibo.com/oauth2/default.html",SinaWeiboLogin.SCOPE);
+        mSsoHandler = new SsoHandler(this, mAuthInfo);
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                    starLogin();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+      initListener();
+    }
+
+    private void initListener() {
+        listener=new AuthListener();
     }
 
     private void starLogin() {
         switch (third){
             case "qq":
+                MyLog.i("qq登录");
                 TencentLogin tencentLogin=TencentLogin.getIntance(this,this);
+                MyAccount.tencentLogin=tencentLogin;
                 tencentLogin.login();
                 break;
             case "weixin":
                 MyLog.i("微信登录");
-                WeiXinLogin.getInstance(this).login();
-                setResult(Activity.RESULT_OK);
+
+                boolean islogin=WeiXinLogin.getInstance(this).login();
+                if (islogin){
+                    setResult(WeiXinLogin.LOGIN_TRUE);
+                }else {
+                    setResult(WeiXinLogin.LOGIN_FALSE);
+                }
                 finish();
                 break;
             case "sina":
+                sinalogin();
                 sinaWeiboLogin=SinaWeiboLogin.getInstance(this);
-                sinaWeiboLogin.login(new WeiboAuthListener() {
-                    @Override
-                    public void onComplete(Bundle values) {
-                        MyLog.i("vaulues=="+values.toString());
-                        // 从 Bundle 中解析 Token
-                        Oauth2AccessToken mAccessToken = Oauth2AccessToken.parseAccessToken(values);
-                        //从这里获取用户输入的 电话号码信息
-                        String phoneNum = mAccessToken.getPhoneNum();
-                        if (mAccessToken.isSessionValid()) {
-                            // 显示 Token
-//                updateTokenView(false);
-                            MyLog.i("weibo toke ==" + mAccessToken);
-                            String info="";
-                            JSONObject jsonObject=new JSONObject();
-
-
-
-                            String nickname=values.getString("userName","");
-                            if (!TextUtils.isEmpty(nickname)){
-                                try {
-                                    jsonObject.put("type","SINA");
-                                    jsonObject.put("nick",nickname);
-                                    jsonObject.put("name",nickname);
-                                    jsonObject.put("head","");
-                                    info=jsonObject.toString();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            send("sina",mAccessToken.getUid(),info,null);
-                        } else {
-                            // 以下几种情况，您会收到 Code：
-                            // 1. 当您未在平台上注册的应用程序的包名与签名时；
-                            // 2. 当您注册的应用程序包名与签名不正确时；
-                            // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
-                            String code = values.getString("code");
-                            if (!TextUtils.isEmpty(code)) {
-                                MyLog.i("weibo ");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onWeiboException(WeiboException e) {
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-                });
+                sinaWeiboLogin.login(listener);
                 break;
         }
+    }
+
+    private void sinalogin() {
+        mSsoHandler.authorize(new AuthListener());
     }
 
     @Override
@@ -130,19 +144,21 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
         if (requestCode==BIND_PHONE && resultCode==Activity.RESULT_OK){
             setResult(Activity.RESULT_OK);
             finish();
+        }else {
+            switch (third){
+                case "sina":
+                    MyLog.i("third activity login onActivityResult:sina");
+                    if (mSsoHandler != null) {
+                        mSsoHandler .authorizeCallBack(requestCode, resultCode, data);
+                    }
+                    break;
+                case "qq":
+                    MyLog.i("third activity login onActivityResult:qq");
+                    Tencent.onActivityResultData(requestCode,resultCode,data,this);
+                    break;
+            }
         }
-        switch (third){
-            case "sina":
-                MyLog.i("third activity login onActivityResult:sina");
-                if (SinaWeiboLogin.getInstance(this).mSsoHandler != null) {
-                    SinaWeiboLogin.getInstance(this).mSsoHandler .authorizeCallBack(requestCode, resultCode, data);
-                }
-                break;
-            case "qq":
-                MyLog.i("third activity login onActivityResult:qq");
-                Tencent.onActivityResultData(requestCode,resultCode,data,this);
-                break;
-        }
+
     }
     private void thirdLoginBind(String regtype, String openid, String info) {
         MyLog.i("绑定手机号1");
@@ -352,5 +368,64 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
             }
         });
     }
+    /**
+     * 微博认证授权回调类。
+     * 1. SSO 授权时，需要在 {@link #} 中调用 {@link SsoHandler#authorizeCallBack} 后，
+     * 该回调才会被执行。
+     * 2. 非 SSO 授权时，当授权结束后，该回调就会被执行。
+     * 当授权成功后，请保存该 access_token、expires_in、uid 等信息到 SharedPreferences 中。
+     */
+    class AuthListener implements WeiboAuthListener {
+
+        @Override
+        public void onComplete(Bundle values) {
+            MyLog.i("vaulues=="+values.toString());
+            // 从 Bundle 中解析 Token
+            mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+            //从这里获取用户输入的 电话号码信息
+            String phoneNum = mAccessToken.getPhoneNum();
+            if (mAccessToken.isSessionValid()) {
+                // 显示 Token
+//                updateTokenView(false);
+                MyLog.i("weibo toke ==" + mAccessToken);
+                String info="";
+                JSONObject jsonObject=new JSONObject();
+
+                String nickname=values.getString("userName","");
+                if (!TextUtils.isEmpty(nickname)){
+                    try {
+                        jsonObject.put("type","SINA");
+                        jsonObject.put("nick",nickname);
+                        jsonObject.put("name",nickname);
+                        jsonObject.put("head","");
+                        info=jsonObject.toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                send("sina",mAccessToken.getUid(),info,null);
+            } else {
+                // 以下几种情况，您会收到 Code：
+                // 1. 当您未在平台上注册的应用程序的包名与签名时；
+                // 2. 当您注册的应用程序包名与签名不正确时；
+                // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
+                String code = values.getString("code");
+                if (!TextUtils.isEmpty(code)) {
+                    MyLog.i("weibo "+code);
+                }
+            }
+        }
+        @Override
+        public void onCancel() {
+        }
+        @Override
+        public void onWeiboException(WeiboException e) {
+        }
+    }
+    public static void WeiBologinout(Context context){
+        mAccessToken=new Oauth2AccessToken();
+        AccessTokenKeeper.clear(context);
+    }
+
 
 }

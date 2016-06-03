@@ -94,8 +94,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
+                text.setText("取消登录");
+                MyLog.i("ERR_USER_CANCEL");
+                setResult(Activity.RESULT_CANCELED);
+                finish();
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                MyLog.i("ERR_AUTH_DENIED");
                 break;
             default:
                 break;

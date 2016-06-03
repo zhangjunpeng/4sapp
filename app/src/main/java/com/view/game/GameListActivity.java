@@ -3,14 +3,17 @@ package com.view.game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -23,12 +26,16 @@ import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.gdb.GameInfo;
+import com.test4s.gdb.GameType;
+import com.test4s.gdb.GameTypeDao;
+import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
+import com.view.activity.ListActivity;
 import com.view.search.SearchActivity;
 
 import org.json.JSONArray;
@@ -40,9 +47,16 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameListActivity extends Activity implements View.OnClickListener{
+import de.greenrobot.dao.query.Query;
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
-    PullToRefreshListView pullToRefreshListView;
+public class GameListActivity extends BaseActivity implements View.OnClickListener{
+
+    ListView pullToRefreshListView;
 
     ImageView back;
     TextView title;
@@ -51,32 +65,66 @@ public class GameListActivity extends Activity implements View.OnClickListener{
     MyGameListAdapter gameAdapter;
     int p=1;
 
-    String packageurl;
+
+
+    String all_url="game/gamelist";
+
+//    private TextView showall;
+    private PtrClassicFrameLayout ptrFrameLayout;
+    private MyScrollViewListener listener;
+    private View headview;
+    private View footview;
+    private View nomore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
-        pullToRefreshListView= (PullToRefreshListView) findViewById(R.id.ptflistView_gamelist);
+        nomore=LayoutInflater.from(this).inflate(R.layout.nomore,null);
+        AbsListView.LayoutParams params=new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        nomore.setLayoutParams(params);
+
+
+        pullToRefreshListView= (ListView) findViewById(R.id.ptflistView_gamelist);
 
         setImmerseLayout(findViewById(R.id.title_gamelist));
 
         back= (ImageView) findViewById(R.id.back_titlebar);
         title= (TextView) findViewById(R.id.title_titlebar);
         search= (ImageView) findViewById(R.id.search_titlebar);
-        title.setText("游 戏");
+        ImageView backimg= (ImageView) findViewById(R.id.backimg_titlebar);
 
-        back.setImageResource(R.drawable.back);
+//        showall= (TextView) findViewById(R.id.showall_gamelist);
+        ptrFrameLayout= (PtrClassicFrameLayout) findViewById(R.id.ptr_gamelist);
+
+        listener=new MyScrollViewListener();
+        footview=LayoutInflater.from(this).inflate(R.layout.footerloading,null);
+        ImageView image= (ImageView) footview.findViewById(R.id.image_footerloading);
+        AnimationDrawable drable= (AnimationDrawable) image.getBackground();
+        drable.start();
+
+        headview=LayoutInflater.from(this).inflate(R.layout.handerloading,null);
+        ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
+        AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
+        drawable.start();
 
 
 
+        title.setText("全部游戏");
+
+
+
+        backimg.setImageResource(R.drawable.back);
 
         initListener();
 
         gameInfos=new ArrayList<>();
         gameAdapter=new MyGameListAdapter(this,gameInfos);
         pullToRefreshListView.setAdapter(gameAdapter);
-        initData("1");
+//        initData("1");
+
+        initPtrLayout();
+
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +136,59 @@ public class GameListActivity extends Activity implements View.OnClickListener{
         });
 
 
+    }
+
+    private void initPtrLayout() {
+
+        ptrFrameLayout.setHeaderView(headview);
+//        prt_cp.setPinContent(true);
+
+        ptrFrameLayout.setPtrHandler(new PtrHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                MyLog.i("~~~~下拉刷新");
+                p=1;
+                gameInfos.clear();
+                pullToRefreshListView.removeFooterView(nomore);
+                pullToRefreshListView.setOnScrollListener(listener);
+                initData(p+"");
+
+            }
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame,content,header);
+            }
+        });
+        ptrFrameLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ptrFrameLayout.autoRefresh();
+                pullToRefreshListView.addFooterView(footview);
+            }
+        },100);
+    }
+    class MyScrollViewListener implements AbsListView.OnScrollListener{
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+                // 当不滚动时
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    // 判断滚动到底部
+                    if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+                        p++;
+                        initData(p+"");
+
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
     }
 
     protected void setImmerseLayout(View view) {
@@ -103,18 +204,12 @@ public class GameListActivity extends Activity implements View.OnClickListener{
     }
 
     private void initData(String p) {
-        BaseParams gameParams=new BaseParams("game/gamelist");
+        BaseParams gameParams=new BaseParams(all_url);
+
         gameParams.addParams("p",p);
         gameParams.addSign();
-        gameParams.getRequestParams().setCacheMaxAge(1000*60*5);
-        x.http().post(gameParams.getRequestParams(),new Callback.CacheCallback<String>() {
+        x.http().post(gameParams.getRequestParams(),new Callback.CommonCallback<String>() {
             private String result;
-            @Override
-            public boolean onCache(String result) {
-                this.result=result;
-                MyLog.i("使用缓存");
-                return true;
-            }
 
             @Override
             public void onSuccess(String result) {
@@ -137,7 +232,14 @@ public class GameListActivity extends Activity implements View.OnClickListener{
             @Override
             public void onFinished() {
                 MyLog.i("GameList==="+result);
+                if (pullToRefreshListView.getFooterViewsCount()==0){
+                    pullToRefreshListView.addFooterView(footview);
+                }
                 gameListParser(result);
+
+                if (ptrFrameLayout.isRefreshing()) {
+                    ptrFrameLayout.refreshComplete();
+                }
 
             }
         });
@@ -152,10 +254,13 @@ public class GameListActivity extends Activity implements View.OnClickListener{
             if (su&&code==200){
                 JSONObject jsonObject1=jsonObject.getJSONObject("data");
                 Url.prePic=jsonObject1.getString("prefixPic");
-                packageurl=jsonObject1.getString("prefixPackage");
+                Url.packageurl=jsonObject1.getString("prefixPackage");
                 JSONArray jsonArray=jsonObject1.getJSONArray("gameList");
                 if (jsonArray.length()==0){
-                    CusToast.showToast(this,"没有更多游戏", Toast.LENGTH_SHORT);
+//                    CusToast.showToast(this, "没有更多游戏", Toast.LENGTH_SHORT);
+                    pullToRefreshListView.removeFooterView(footview);
+                    pullToRefreshListView.addFooterView(nomore);
+                    pullToRefreshListView.setOnScrollListener(null);
                 }
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject game=jsonArray.getJSONObject(i);
@@ -166,11 +271,12 @@ public class GameListActivity extends Activity implements View.OnClickListener{
                     gameInfo.setGame_download_url(game.getString("game_download_url"));
                     gameInfo.setGame_download_nums(game.getString("game_download_nums"));
                     gameInfo.setRequire(game.getString("require"));
-                    gameInfo.setGame_size(game.getString("game_size"));
-                    gameInfo.setNorms(game.getString("norms"));
                     gameInfo.setGame_grade(game.getString("game_grade"));
                     gameInfo.setPack(game.getString("pack"));
+                    gameInfo.setNorms(game.getString("norms"));
                     gameInfo.setChecked(game.getString("checked"));
+                    gameInfo.setGame_type(game.getString("game_type"));
+                    gameInfo.setGame_stage(game.getString("game_stage"));
                     gameInfos.add(gameInfo);
                 }
             }
@@ -178,17 +284,52 @@ public class GameListActivity extends Activity implements View.OnClickListener{
             e.printStackTrace();
         }
         gameAdapter.notifyDataSetChanged();
-        pullToRefreshListView.onRefreshComplete();
+//        pullToRefreshListView.onRefreshComplete();
     }
 
     private void initListener(){
+//        showall.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent(GameListActivity.this, GameListActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+//            }
+//        });
+        View headview=LayoutInflater.from(this).inflate(R.layout.handerloading,null);
+        ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
+        AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
+        drawable.start();
+        ptrFrameLayout.setHeaderView(headview);
+        ptrFrameLayout.setPtrHandler(new PtrHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                frame.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initData("1");
+                    }
+                }, 1800);
+            }
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                // 默认实现，根据实际情况做改动
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+            }
+        });
         back.setOnClickListener(this);
-        pullToRefreshListView.setMode(PullToRefreshBase.Mode.BOTH);
+//        if (position==-1){
+//            pullToRefreshListView.setMode(PullToRefreshBase.Mode.BOTH);
+//        }else {
+//            pullToRefreshListView.setMode(PullToRefreshBase.Mode.DISABLED);
+//        }
         pullToRefreshListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MyLog.i("position===="+position);
-                MyLog.i("id==="+id);
+                if (view==nomore){
+                    return;
+                }
                 GameInfo gameInfo=gameInfos.get((int) id);
                 Intent intent= new Intent(GameListActivity.this,GameDetailActivity.class);
                 MyLog.i("game_id==="+gameInfo.getGame_id());
@@ -197,20 +338,20 @@ public class GameListActivity extends Activity implements View.OnClickListener{
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
-        pullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-            @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                Toast.makeText(GameListActivity.this,"下拉刷新",Toast.LENGTH_SHORT).show();
-                gameInfos.clear();
-                initData("1");
-            }
-
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                p++;
-                initData(p+"");
-            }
-        });
+//        pullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+//            @Override
+//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+////                Toast.makeText(GameListActivity.this,"下拉刷新",Toast.LENGTH_SHORT).show();
+//                gameInfos.clear();
+//                initData("1");
+//            }
+//
+//            @Override
+//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+//                p++;
+//                initData(p+"");
+//            }
+//        });
         MyLog.i("initView");
 
     }
@@ -225,96 +366,7 @@ public class GameListActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    class MyGameListAdapter extends BaseAdapter{
-        private Context mcontext;
-        private List<GameInfo> gameInfos;
-        public  MyGameListAdapter(Context context,List<GameInfo> list){
-            mcontext=context;
-            this.gameInfos=list;
-        }
 
-        @Override
-        public int getCount() {
-            return gameInfos.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return gameInfos.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
-            if (convertView==null){
-                viewHolder=new ViewHolder();
-                convertView= LayoutInflater.from(mcontext).inflate(R.layout.item_gamelist_listactivity,null);
-                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gamelist);
-                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gamelist);
-                viewHolder.down= (ImageView) convertView.findViewById(R.id.download_item_gamelist);
-                viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gamelist);
-                viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating);
-                viewHolder.norms= (TextView) convertView.findViewById(R.id.norms_item_gamelist);
-                convertView.setTag(viewHolder);
-            }else {
-                viewHolder= (ViewHolder) convertView.getTag();
-            }
-            final GameInfo gameInfo=gameInfos.get(position);
-            Picasso.with(mcontext)
-                    .load(Url.prePic+gameInfo.getGame_img())
-                    .placeholder(R.drawable.default_icon)
-                    .into(viewHolder.icon);
-            Picasso.with(mcontext)
-                    .load(Url.prePic+gameInfo.getGame_grade())
-                    .into(viewHolder.gamerating);
-            viewHolder.name.setText(gameInfo.getGame_name());
-            if ("1".equals(gameInfo.getNorms())){
-                viewHolder.norms.setVisibility(View.VISIBLE);
-            }else if("0".equals(gameInfo.getNorms())){
-                viewHolder.norms.setVisibility(View.INVISIBLE);
-            }
-            String down_nums=gameInfo.getGame_download_nums();
-            Long nums=Long.parseLong(down_nums);
-            if (nums>100000){
-                down_nums=(nums/10000)+"万";
-            }
-            String mess="";
-            if ("1".equals(gameInfo.getPack())&&"1".equals(gameInfo.getChecked())){
-                mess=down_nums+"下载/"+gameInfo.getGame_size()+"M\n"+gameInfo.getRequire();
-                viewHolder.down.setVisibility(View.VISIBLE);
-                viewHolder.down.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        downLoadGame(packageurl+gameInfo.getGame_download_url());
-                        if (MyAccount.isLogin){
-                            addMyEvaluation(gameInfo.getGame_id());
-                        }
-                    }
-                });
-            }else {
-                viewHolder.down.setClickable(false);
-                viewHolder.down.setVisibility(View.INVISIBLE);
-                mess=gameInfo.getRequire()+"\n";
-
-            }
-            viewHolder.info.setText(mess);
-
-            return convertView;
-        }
-        class ViewHolder{
-            ImageView icon;
-            TextView name;
-            ImageView down;
-            ImageView gamerating;
-            TextView info;
-            TextView norms;
-        }
-    }
     private void downLoadGame(String url){
         //调用外部浏览器下载文件
         MyLog.i("Url==="+url);
@@ -322,32 +374,16 @@ public class GameListActivity extends Activity implements View.OnClickListener{
         Intent downloadIntent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(downloadIntent);
     }
-    private void addMyEvaluation(String game_id){
-        BaseParams baseParams=new BaseParams("test/downloadgame");
-        baseParams.addParams("game_id",game_id);
-        baseParams.addParams("token",MyAccount.getInstance().getToken());
-        baseParams.addSign();
-        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                MyLog.i("add game to eva back=="+result);
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
 
-            }
+    private List searchTitle(){
+        Query query = getGameTypeDao().queryBuilder()
+                .build();
+        return query.list();
+    }
 
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
+    private GameTypeDao getGameTypeDao() {
+        return MyApplication.daoSession.getGameTypeDao();
     }
 
 }

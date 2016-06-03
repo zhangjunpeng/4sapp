@@ -10,7 +10,7 @@
         android:id="@+id/myAccount_my"
         android:layout_width="match_parent"
         android:layout_height="111dp"
-        android:background="@drawable/mynamebg"
+        android:background="@drawable/bg_my"
         >
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -80,7 +80,7 @@
             android:id="@+id/image_messcenter_my"
             android:layout_width="21.66dp"
             android:layout_height="21.66dp"
-            android:src="@drawable/messagecenter_my"
+            android:src="@drawable/messcenter_my"
             android:layout_centerVertical="true"
             android:layout_marginLeft="27.33dp"
             />
@@ -177,7 +177,7 @@
             android:id="@+id/image_bg_my"
             android:layout_width="21.66dp"
             android:layout_height="21.66dp"
-            android:src="@drawable/bg_my"
+            android:src="@drawable/myreport_my"
             android:layout_centerVertical="true"
             android:layout_marginLeft="27.33dp"
             />
@@ -218,7 +218,7 @@
             android:id="@+id/image_gz_my"
             android:layout_width="21.66dp"
             android:layout_height="21.66dp"
-            android:src="@drawable/care_my"
+            android:src="@drawable/atten_my"
             android:layout_centerVertical="true"
             android:layout_marginLeft="27.33dp"
             />

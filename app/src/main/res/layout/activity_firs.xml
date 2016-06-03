@@ -12,5 +12,23 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        />
+        android:id="@+id/imageView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试环境"
+        android:id="@+id/debug_first"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="160dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正式环境"
+        android:id="@+id/relaless_first"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/debug_first"
+        android:layout_alignStart="@+id/debug_first" />
 </RelativeLayout>

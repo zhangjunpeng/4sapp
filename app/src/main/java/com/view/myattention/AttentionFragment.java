@@ -44,6 +44,8 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+
 /**
  * Created by Administrator on 2016/3/19.
  */
@@ -51,8 +53,9 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
 
     private String tag;
     String[] titles={"game","cp","ip","inves","issue","outsource"};
-    private PullToRefreshListView listView;
+    private ListView listView;
 
+    private PtrClassicFrameLayout ptr_atten;
     List<Object> datalist;
     BaseAdapter adapter = new OutSourceAttentionAdapter(getActivity(),datalist,listView);
     Button wantcare;
@@ -61,10 +64,6 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         tag=getArguments().getString("tag","game");
-
-
-
-//        MyLog.i("TAG==="+tag);
         super.onCreate(savedInstanceState);
     }
 
@@ -72,21 +71,22 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_attention,container,false);
-        listView= (PullToRefreshListView) view.findViewById(R.id.listview_attention_fragment);
+        listView= (ListView) view.findViewById(R.id.listview_attention_fragment);
         wantcare= (Button) view.findViewById(R.id.want_care);
         datalist=new ArrayList<>();
+
+        ptr_atten= (PtrClassicFrameLayout) view.findViewById(R.id.ptrframe_attention);
         initAdapter();
-        initData("1");
 
 
         listView.setAdapter(adapter);
 
+        initData("1");
         initListener();
         return view;
     }
 
     private void initListener() {
-        listView.setMode(PullToRefreshBase.Mode.BOTH);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -135,20 +135,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
                 MyLog.i("Item click finish");
             }
         });
-        listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-            @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                p=1;
-                datalist.clear();
-                initData(p+"");
-            }
 
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                p++;
-                initData(p+"");
-            }
-        });
 
         wantcare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,7 +296,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
         }
 
         adapter.notifyDataSetChanged();
-        listView.onRefreshComplete();
+//        listView.onRefreshComplete();
         isEmty();
     }
 
@@ -340,7 +327,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
-        listView.onRefreshComplete();
+//        listView.onRefreshComplete();
         isEmty();
     }
 
@@ -371,7 +358,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
-        listView.onRefreshComplete();
+//        listView.onRefreshComplete();
         isEmty();
     }
 
@@ -402,7 +389,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
-        listView.onRefreshComplete();
+//        listView.onRefreshComplete();
         isEmty();
 
     }
@@ -434,7 +421,7 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
-        listView.onRefreshComplete();
+//        listView.onRefreshComplete();
         isEmty();
     }
 
@@ -464,13 +451,14 @@ public class AttentionFragment extends Fragment implements View.OnClickListener 
                 e.printStackTrace();
             }
             adapter.notifyDataSetChanged();
-            listView.onRefreshComplete();
+//            listView.onRefreshComplete();
             isEmty();
     }
 
     public void isEmty(){
         if (datalist.size()==0){
-            listView.setVisibility(View.GONE);
+            ptr_atten.setVisibility(View.GONE);
+//            listView.setVisibility(View.GONE);
         }
     }
 

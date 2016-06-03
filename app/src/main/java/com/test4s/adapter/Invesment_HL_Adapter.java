@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.app.tools.MyDisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.gdb.IndexItemInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
@@ -21,6 +22,7 @@ import java.util.List;
 public class Invesment_HL_Adapter extends BaseAdapter {
     List<IndexItemInfo> list;
     Context mcontext;
+    ImageLoader imageLoader=ImageLoader.getInstance();
     public Invesment_HL_Adapter(Context context, List<IndexItemInfo> ipList){
         list=ipList;
         mcontext=context;
@@ -57,9 +59,11 @@ public class Invesment_HL_Adapter extends BaseAdapter {
         IndexItemInfo investment=list.get(position);
         String imageUrl= Url.prePic+investment.getLogo();
         String name=investment.getCompany_name();
-        Picasso.with(mcontext)
-                .load(imageUrl)
-                .into(viewHolder.imageView);
+
+//        Picasso.with(mcontext)
+//                .load(imageUrl)
+//                .into(viewHolder.imageView);
+        imageLoader.displayImage(imageUrl,viewHolder.imageView, MyDisplayImageOptions.getdefaultImageOptions());
 //        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

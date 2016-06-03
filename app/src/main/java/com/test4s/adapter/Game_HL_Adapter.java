@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.squareup.picasso.Picasso;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;

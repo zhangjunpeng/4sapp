@@ -12,8 +12,9 @@ import com.tencent.tauth.Tencent;
 import com.test4s.account.SinaWeiboLogin;
 import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
+import com.view.activity.BaseActivity;
 
-public class MyAcountSettingActivity extends FragmentActivity {
+public class MyAcountSettingActivity extends BaseActivity {
 
     FragmentManager fragmentManager;
     Fragment fragment;
@@ -37,6 +38,7 @@ public class MyAcountSettingActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         setResult(Activity.RESULT_OK);
         if (BaseFragment.selectedFragment instanceof MyAcountSettingFragment){
             setResult(Activity.RESULT_OK);

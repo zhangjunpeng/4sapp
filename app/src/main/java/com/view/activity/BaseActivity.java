@@ -78,6 +78,7 @@ public class BaseActivity  extends AppCompatActivity {
     public void onBackPressed() {
         setResult(Activity.RESULT_OK);
         finish();
+        overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
     }
     public void getFocus(EditText editText){
         editText.setFocusable(true);

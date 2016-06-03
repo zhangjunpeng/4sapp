@@ -16,7 +16,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="184dp"
+        android:layout_height="167dp"
 
         >
     <android.support.v4.view.ViewPager
@@ -30,26 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="10dp"
             android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="168dp"
+            android:layout_marginBottom="7dp"
             >
 
         </LinearLayout>
     </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="11dp"
-        android:background="#fff"
-        ></LinearLayout>
 
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#B4B4B4"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="14dp"
-        />
             <LinearLayout
                android:id="@+id/contianer_game"
                android:layout_width="match_parent"

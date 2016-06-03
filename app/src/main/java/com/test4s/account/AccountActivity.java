@@ -94,11 +94,18 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         MyLog.i("AccountActivity  onActivityResult");
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==THIRD_LOGIN&&resultCode==Activity.RESULT_OK){
             setResult(Activity.RESULT_OK);
             finish();
+            overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
         }
+        if (requestCode==WX_LOGIN&&resultCode==Activity.RESULT_CANCELED){
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+            overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
 

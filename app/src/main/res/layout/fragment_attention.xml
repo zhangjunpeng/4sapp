@@ -3,11 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.app.view.PullListView
+    <in.srain.cube.views.ptr.PtrClassicFrameLayout
+        android:id="@+id/ptrframe_attention"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <ListView
         android:id="@+id/listview_attention_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></com.app.view.PullListView>
+        android:divider="@null"
+        ></ListView>
+    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
     <ImageView
         android:layout_width="72dp"
         android:layout_height="67dp"

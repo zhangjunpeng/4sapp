@@ -86,7 +86,7 @@
             android:lineSpacingExtra="5px"
             />
 
-        <Button
+        <TextView
             android:id="@+id/cancel_care_evalu"
             android:layout_width="84dp"
             android:layout_height="36dp"
@@ -94,13 +94,15 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="19dp"
+            android:gravity="center"
             android:text="游戏评测"
             android:textSize="12dp"
             android:textColor="#FF9D00"
             />
 
     </RelativeLayout>
-    <TextView
+    <ImageView
+        android:id="@+id/line_reportlist"
         android:layout_width="332dp"
         android:layout_height="1px"
         android:layout_gravity="center_horizontal"

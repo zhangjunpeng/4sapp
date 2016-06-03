@@ -4,16 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
+    android:background="#80353535"
     tools:context="com.test4s.account.ThirdLoginActivity">
-
-    <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+    <ImageView
+        android:id="@+id/image_third"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/loading"
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="正在拉取信息"
+        android:text="加载中..."
+        android:textSize="15.33dp"
+        android:textColor="#969696"
         />
 
 </LinearLayout>

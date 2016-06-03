@@ -15,22 +15,32 @@
 
         >
 
-        <ImageView
+        <RelativeLayout
             android:layout_width="66.67dp"
             android:layout_height="66.67dp"
-            android:id="@+id/imageView_item_hor_index"
-            android:src="@drawable/ip"
             android:layout_centerInParent="true"
-            android:scaleType="fitXY"
-
-            />
-
+            >
+            <ImageView
+                android:layout_width="66.67dp"
+                android:layout_height="66.67dp"
+                android:id="@+id/imageView_item_hor_index"
+                android:src="@drawable/ip"
+                android:scaleType="fitXY"
+                />
+            <com.app.view.TopLeftCornerImage
+                android:id="@+id/gamerating_index"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:background="@drawable/boder_topleft_image"
+                />
+        </RelativeLayout>
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="fitXY"
             android:src="@drawable/item_bg_2"
             />
+
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"

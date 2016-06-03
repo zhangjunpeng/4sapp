@@ -18,8 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
-import com.squareup.picasso.Picasso;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.account.MyAccount;
 import com.test4s.gdb.GameInfo;
 import com.test4s.myapp.R;
@@ -55,6 +56,7 @@ public class EvaluationListFragment extends Fragment {
     private Button want_down;
 
     private String sdk;
+    private ImageLoader imageLoader=ImageLoader.getInstance();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,7 +200,7 @@ public class EvaluationListFragment extends Fragment {
                 convertView= LayoutInflater.from(context).inflate(R.layout.item_evaluationlist,parent,false);
                 viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gameevalu);
                 viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gameevalu);
-                viewHolder.pc= (Button) convertView.findViewById(R.id.cancel_care_evalu);
+                viewHolder.pc= (TextView) convertView.findViewById(R.id.cancel_care_evalu);
                 viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu);
                 viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu);
                 viewHolder.delete= (ImageView) convertView.findViewById(R.id.delete_item_evalu);
@@ -225,14 +227,18 @@ public class EvaluationListFragment extends Fragment {
                     getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
             });
-            Picasso.with(context)
-                    .load(Url.prePic+gameInfo.getGame_img())
-                    .placeholder(R.drawable.default_icon)
-                    .into(viewHolder.icon);
-            viewHolder.name.setText(gameInfo.getGame_name());
-            Picasso.with(context)
-                    .load(Url.prePic+gameInfo.getGame_grade())
-                    .into(viewHolder.gamerating);
+//            Picasso.with(context)
+//                    .load(Url.prePic+gameInfo.getGame_img())
+//                    .placeholder(R.drawable.default_icon)
+//                    .into(viewHolder.icon);
+//            viewHolder.name.setText(gameInfo.getGame_name());
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_img(),viewHolder.icon, MyDisplayImageOptions.getdefaultImageOptions());
+
+//            Picasso.with(context)
+//                    .load(Url.prePic+gameInfo.getGame_grade())
+//                    .into(viewHolder.gamerating);
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_grade(),viewHolder.gamerating, MyDisplayImageOptions.getdefaultImageOptions());
+
             viewHolder.info.setText(gameInfo.getGame_dev()+" / "+gameInfo.getGame_type()+"\n"+gameInfo.getCreate_time());
             if ("0".equals(gameInfo.getIs_test())){
                 //未评测
@@ -286,7 +292,7 @@ public class EvaluationListFragment extends Fragment {
         class ViewHolder{
             ImageView icon;
             TextView name;
-            Button pc;
+            TextView pc;
             TextView info;
             ImageView gamerating;
             ImageView delete;

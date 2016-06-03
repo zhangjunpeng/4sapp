@@ -24,7 +24,6 @@ import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
 import com.app.tools.UploadUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.UserInfo;
@@ -76,6 +75,8 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
     public static boolean changeIcon=false;
 
 
+
+
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -104,10 +105,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         if (myAccount.getUserInfo()!=null){
             if (!myAccount.getAvatar().equals(myAccount.getUserInfo().getAvatar())){
                 myAccount.setAvatar(myAccount.getUserInfo().getAvatar());
-                Picasso.with(getActivity())
-                        .load(myAccount.getAvatar())
-                        .placeholder(R.drawable.default_icon)
-                        .into(roundedIcon);
+                imageLoader.displayImage(myAccount.getAvatar(),roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
                 myAccount.saveUserInfo();
             }
         }
@@ -236,10 +234,14 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_login){
             //登录成功返回
             MyLog.i("mysetting~~~~~onActivityResult");
-            CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
+            if (TextUtils.isEmpty(MyAccount.getInstance().getToken())){
+                CusToast.showToast(getActivity(),"登录失败",Toast.LENGTH_SHORT);
 
-            name2.setVisibility(View.GONE);
-            initUserInfo();
+            }else {
+                CusToast.showToast(getActivity(),"登录成功",Toast.LENGTH_SHORT);
+                name2.setVisibility(View.GONE);
+                initUserInfo();
+            }
         }
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_setting){
             if (MyAccount.isLogin) {

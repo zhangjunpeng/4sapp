@@ -3,16 +3,19 @@ package com.view.s4server;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ import com.test4s.myapp.BaseFragment;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.ListActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,20 +40,27 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
+
 /**
  * Created by Administrator on 2016/2/18.
  */
-public class CPListFragment extends BaseFragment {
+public class CPListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     View view;
 
-    PullListView listView;
+    ListView listView;
 
     TextView title;
     ImageView back;
     ImageView search;
 
-//    TextView showall;
+    View showall;
+    View footview;
 
     int p=1;
 
@@ -57,35 +68,41 @@ public class CPListFragment extends BaseFragment {
 
     private CpAdapter adapter;
 
-    private Dialog dialog;
 
     private Button refreash;
 
     boolean recommend=false;
 
     private String all_url="index/cplist";
-    private String tj_url="/ret/2";
+
+    private PtrClassicFrameLayout prt_cp;
+    private MyScrollViewListener listener;
+
+    //flag 1为footview 2为showall
+    private int Foot_flag=1;
+    private View headview;
+    private View nomore;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        nomore=getTextView(getActivity());
+
         cpSimpleInfos=new ArrayList<>();
         Bundle bundle=getArguments();
         if (bundle!=null){
             recommend=bundle.getBoolean("recommend",false);
         }
         adapter=new CpAdapter(getActivity(),cpSimpleInfos);
+        listener=new MyScrollViewListener();
         super.onCreate(savedInstanceState);
 
     }
 
     private void initData(String p) {
-        BaseParams baseParams=null;
+        BaseParams baseParams=new BaseParams(all_url);
         if (recommend){
-            baseParams=new BaseParams(all_url+tj_url);
-
-        }else {
-            baseParams =new BaseParams(all_url);
+            baseParams.addParams("ret","2");
         }
         baseParams.addParams("p",p);
         baseParams.addSign();
@@ -95,16 +112,25 @@ public class CPListFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 MyLog.i("cplist success=="+result);
+                if (listView.getFooterViewsCount()==0){
+                    listView.addFooterView(footview);
+                }
+                if (Foot_flag!=1){
+                    listView.removeFooterView(showall);
+                    listView.removeFooterView(nomore);
+                    listView.addFooterView(footview);
+                    Foot_flag=1;
+                }
                 getcplistparser(result);
 
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                if (dialog.isShowing()){
-                    dialog.dismiss();
+                MyLog.i("错误 ::"+ex.toString());
+                if (cpSimpleInfos.size()==0) {
+                    listView.setVisibility(View.GONE);
                 }
-                listView.setVisibility(View.GONE);
 
             }
 
@@ -115,10 +141,13 @@ public class CPListFragment extends BaseFragment {
 
             @Override
             public void onFinished() {
-                if (dialog.isShowing()){
-                    dialog.dismiss();
+
+//                listView.onRefreshComplete();
+
+
+                if (prt_cp.isRefreshing()){
+                    prt_cp.refreshComplete();
                 }
-                listView.onRefreshComplete();
                 adapter.notifyDataSetChanged();
 
             }
@@ -127,36 +156,51 @@ public class CPListFragment extends BaseFragment {
 
     private void initListView() {
 
-        listView.setMode(PullToRefreshBase.Mode.BOTH);
-        listView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+        listView.setOnScrollListener(listener);
+        listView.setOnItemClickListener(this);
 
-            //下拉刷新
-            @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                MyLog.i("下拉刷新");
-                cpSimpleInfos.clear();
-                p=1;
-                initData(p+"");
+
+        Foot_flag=1;
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (view==nomore){
+            return;
+        }
+        Intent intent=new Intent(getActivity(),CPDetailActivity.class);
+        CPSimpleInfo cpSimpleInfo=cpSimpleInfos.get((int) id);
+        intent.putExtra("user_id",cpSimpleInfo.getUser_id());
+        intent.putExtra("identity_cat",cpSimpleInfo.getIdentity_cat());
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+    }
+
+    class MyScrollViewListener implements AbsListView.OnScrollListener{
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+                // 当不滚动时
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    // 判断滚动到底部
+                    if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+                        adddata();
+                    }
+                    break;
             }
-            //上拉加载
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                MyLog.i("上拉加载");
-                p++;
-                initData(p+"");
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(getActivity(),CPDetailActivity.class);
-                CPSimpleInfo cpSimpleInfo=cpSimpleInfos.get((int) id);
-                intent.putExtra("user_id",cpSimpleInfo.getUser_id());
-                intent.putExtra("identity_cat",cpSimpleInfo.getIdentity_cat());
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
-            }
-        });
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
+    }
+    private void adddata() {
+
+        p++;
+        initData(p+"");
 
     }
 
@@ -165,32 +209,92 @@ public class CPListFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view=inflater.inflate(R.layout.fragment_list,null);
-        listView= (PullListView) view.findViewById(R.id.pullToRefresh_fglist);
+        listView= (ListView) view.findViewById(R.id.pullToRefresh_fglist);
         title= (TextView) view.findViewById(R.id.title_titlebar);
         back= (ImageView) view.findViewById(R.id.back_titlebar);
         search= (ImageView) view.findViewById(R.id.search_titlebar);
 
-//        showall= (TextView) view.findViewById(R.id.showall_listfragment);
+        prt_cp= (PtrClassicFrameLayout) view.findViewById(R.id.prt_cplist);
+        footview=LayoutInflater.from(getActivity()).inflate(R.layout.footerloading,null);
+        ImageView image= (ImageView) footview.findViewById(R.id.image_footerloading);
+        AnimationDrawable drable= (AnimationDrawable) image.getBackground();
+        drable.start();
 
+        headview=LayoutInflater.from(getActivity()).inflate(R.layout.handerloading,null);
+        ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
+        AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
+        drawable.start();
 
         listView.setAdapter(adapter);
 
+        initPtrLayout();
+        initListView();
 
-
-        dialog=showLoadingDialog(getActivity());
         refreash= (Button) view.findViewById(R.id.refeash_list);
         refreash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listView.setVisibility(View.VISIBLE);
-                dialog.show();
-                initData("1");
+                prt_cp.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        prt_cp.autoRefresh();
+                    }
+                },100);
             }
         });
-        initData("1");
-        initListView();
+        showall=LayoutInflater.from(getActivity()).inflate(R.layout.showall,null);
+        showall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), ListActivity.class);
+                intent.putExtra("tag",ListActivity.CP_TAG);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+            }
+        });
         return view;
     }
+
+    private void initPtrLayout() {
+
+        prt_cp.setHeaderView(headview);
+
+        prt_cp.setResistance(1.7f);
+        prt_cp.setRatioOfHeaderHeightToRefresh(1.2f);
+        prt_cp.setDurationToClose(200);
+        prt_cp.setDurationToCloseHeader(1000);
+// default is false
+        prt_cp.setPullToRefresh(false);
+// default is true
+        prt_cp.setKeepHeaderWhenRefresh(true);
+
+//        prt_cp.setPinContent(true);
+
+        prt_cp.setPtrHandler(new PtrHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                MyLog.i("~~~~下拉刷新");
+                p=1;
+                cpSimpleInfos.clear();
+                listView.setOnScrollListener(listener);
+
+                initData(p+"");
+            }
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame,content,header);
+            }
+        });
+        prt_cp.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                prt_cp.autoRefresh();
+            }
+        },100);
+    }
+
     class CpAdapter extends BaseAdapter{
 
         List<CPSimpleInfo> list;
@@ -244,7 +348,9 @@ public class CPListFragment extends BaseFragment {
             TextView intro;
         }
     }
+
     public void getcplistparser(String result){
+//        cpSimpleInfos.clear();
         try {
             JSONObject jsonObject=new JSONObject(result);
             boolean su=jsonObject.getBoolean("success");
@@ -255,15 +361,16 @@ public class CPListFragment extends BaseFragment {
                 JSONArray ja=jsonObject1.getJSONArray("cpList");
                 MyLog.i("cplist size=="+ja.length());
                 if (ja.length()==0){
+                    listView.setOnScrollListener(null);
                     if (recommend){
-//                        addMessage();
-                        TextView testview=new TextView(getActivity());
-                        testview.setText("查看全部");
-                        testview.setGravity(Gravity.CENTER);
-                        testview.setTextSize(15);
-                        listView.addView(testview);
+                        listView.removeFooterView(footview);
+                        listView.addFooterView(showall);
+                        Foot_flag=2;
                     }else {
-                        CusToast.showToast(getActivity(), "没有更多开发者信息", Toast.LENGTH_SHORT);
+                        listView.removeFooterView(footview);
+                        listView.addFooterView(nomore);
+                        Foot_flag=3;
+//                        CusToast.showToast(getActivity(), "没有更多开发者信息", Toast.LENGTH_SHORT);
                     }
                 }
                 for (int i=0;i<ja.length();i++){
@@ -283,5 +390,6 @@ public class CPListFragment extends BaseFragment {
         }
 
     }
+
 
 }

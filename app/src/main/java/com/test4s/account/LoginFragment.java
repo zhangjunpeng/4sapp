@@ -109,9 +109,14 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         reg.setOnClickListener(this);
         findpwd.setOnClickListener(this);
 
-        view.findViewById(R.id.weichat_login).setOnClickListener(this);
-        view.findViewById(R.id.weibo_login).setOnClickListener(this);
-        view.findViewById(R.id.qq_login).setOnClickListener(this);
+//        view.findViewById(R.id.weichat_login).setOnClickListener(this);
+//        view.findViewById(R.id.weibo_login).setOnClickListener(this);
+//        view.findViewById(R.id.qq_login).setOnClickListener(this);
+
+        view.findViewById(R.id.weichat_login).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.weibo_login).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.qq_login).setVisibility(View.INVISIBLE);
+
 
         editText_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -163,7 +168,17 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        MyLog.i("fragment回调");
+        MyLog.i("fragment回调::resultCode=="+resultCode);
+        MyLog.i("requestCode==="+requestCode);
+        if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_FALSE){
+            MyLog.i("微信客户端启动失败");
+            CusToast.showToast(getActivity(),"微信客户端启动失败",Toast.LENGTH_SHORT);
+        }
+        if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_TRUE){
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
+            getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+        }
     }
 
     @Override
@@ -191,25 +206,32 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
                 break;
             case R.id.back_savebar:
                 getActivity().finish();
+                getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+
                 break;
             case R.id.weichat_login:
                 Intent intent1=new Intent(getActivity(),ThirdLoginActivity.class);
                 intent1.putExtra("third","weixin");
-                getActivity().startActivity(intent1);
-                getActivity().setResult(Activity.RESULT_OK);
-                getActivity().finish();
+                startActivityForResult(intent1,AccountActivity.WX_LOGIN);
+                getActivity().overridePendingTransition(R.anim.in_from_right,0);
+//                getActivity().setResult(Activity.RESULT_OK);
+//                getActivity().finish();
                 break;
             case R.id.weibo_login:
                 Intent intent2=new Intent(getActivity(),ThirdLoginActivity.class);
                 intent2.putExtra("third","sina");
                 getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
-                getActivity().setResult(Activity.RESULT_OK);
-                getActivity().finish();
+                getActivity().overridePendingTransition(R.anim.in_from_right,0);
+
+//                getActivity().setResult(Activity.RESULT_OK);
+//                getActivity().finish();
                 break;
             case R.id.qq_login:
                 Intent intent3=new Intent(getActivity(),ThirdLoginActivity.class);
                 intent3.putExtra("third","qq");
                 getActivity().startActivityForResult(intent3,AccountActivity.THIRD_LOGIN);
+                getActivity().overridePendingTransition(R.anim.in_from_right,0);
+
                 break;
         }
     }
@@ -281,7 +303,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         Intent intent=null;
         switch (tag){
             case "login":
-
+                getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 break;
             case "messagecenter":
                 intent= new Intent(getActivity(), MessageList.class);
@@ -308,6 +330,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         MyLog.i("登录成功：："+myAccount.toString());
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
+
     }
 
     public void showwarning(String mes){

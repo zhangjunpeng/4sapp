@@ -151,6 +151,7 @@
             android:layout_marginRight="14dp"
             android:background="@drawable/border_button_gray" />
     <TextView
+        android:id="@+id/user_agreement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

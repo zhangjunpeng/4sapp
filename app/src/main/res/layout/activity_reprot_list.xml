@@ -10,6 +10,7 @@
         layout="@layout/titlebar_save"/>
     <com.app.delslidelistview.DeleListView
         android:id="@+id/listview_reportlist"
+        android:divider="@null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

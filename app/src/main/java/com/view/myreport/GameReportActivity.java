@@ -1,11 +1,15 @@
 package com.view.myreport;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +22,7 @@ import com.test4s.account.MyAccount;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
+import com.view.activity.BaseActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +33,7 @@ import org.xutils.x;
 /*
 * 游戏评测报告主页
 * */
-public class GameReportActivity extends FragmentActivity implements View.OnClickListener {
+public class GameReportActivity extends BaseActivity implements View.OnClickListener {
 
     String gameid;
 
@@ -48,6 +53,11 @@ public class GameReportActivity extends FragmentActivity implements View.OnClick
     private TextView paintstyle;
     private TextView horizon;
 
+
+    private String tester_num;
+    private Dialog dialog;
+    private float density;
+    private int windowWidth;
 
 
     @Override
@@ -70,7 +80,11 @@ public class GameReportActivity extends FragmentActivity implements View.OnClick
 
         gameid=getIntent().getStringExtra("game_id");
 
-
+        //获取屏幕密度
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
+        windowWidth=metric.widthPixels;
         
         initListener();
         initData();
@@ -155,6 +169,7 @@ public class GameReportActivity extends FragmentActivity implements View.OnClick
                 paintstyle.setText(info.getString("paint_style"));
                 horizon.setText(info.getString("horizon"));
                 theme.setText(info.getString("theme"));
+                tester_num=info.getString("tester_num");
             }
 
 
@@ -174,10 +189,24 @@ public class GameReportActivity extends FragmentActivity implements View.OnClick
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 break;
             case R.id.playerreport_gamereport:
-                Intent intent1=new Intent(this,PlayerReportActivity.class);
-                intent1.putExtra("game_id",gameid);
-                startActivity(intent1);
-                overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                int num=0;
+                try {
+                    num=Integer.parseInt(tester_num);
+                }catch (Exception e) {
+                    MyLog.i(e.toString());
+                    showDialog("您的游戏包未集成SDK，暂无报告。");
+                    return;
+                }
+                if (num>0){
+                    Intent intent1=new Intent(this,PlayerReportActivity.class);
+                    intent1.putExtra("game_id",gameid);
+                    startActivity(intent1);
+                    overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }else {
+                    showDialog("您的游戏包未集成SDK，\n暂无报告。");
+
+                }
+
                 break;
             case R.id.back_gamereport:
                 finish();
@@ -194,5 +223,29 @@ public class GameReportActivity extends FragmentActivity implements View.OnClick
             }
 
         }
+    }
+    public void showDialog(String message){
+        dialog=new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view= LayoutInflater.from(this).inflate(R.layout.dialog_setting,null);
+        LinearLayout.LayoutParams params= new LinearLayout.LayoutParams((int) (windowWidth*0.8), LinearLayout.LayoutParams.MATCH_PARENT);
+        params.leftMargin= (int) (14*density);
+        params.rightMargin= (int) (14*density);
+        MyLog.i("params width=="+params.width);
+        dialog.setContentView(view,params);
+        TextView mes= (TextView) view.findViewById(R.id.message_dialog_setting);
+        TextView channel= (TextView) view.findViewById(R.id.channel_dialog_setting);
+        TextView clear= (TextView) view.findViewById(R.id.positive_dialog_setting);
+        mes.setText(message);
+        clear.setText("我知道了");
+//        clear.setTextColor(Color.rgb(255,157,0));
+        dialog.show();
+        channel.setVisibility(View.GONE);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }

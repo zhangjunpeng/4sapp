@@ -2,19 +2,32 @@ package com.test4s.myapp;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.app.tools.MyLog;
 import com.app.tools.ScreenUtil;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2016/3/2.
@@ -22,11 +35,13 @@ import com.app.tools.ScreenUtil;
 public class BaseFragment extends Fragment {
 
     public static Fragment selectedFragment;
+    public ArrayList<View> footviews;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSelectedFragment(this);
+        footviews=new ArrayList<>();
     }
 
     protected void setImmerseLayout(View view) {
@@ -62,6 +77,34 @@ public class BaseFragment extends Fragment {
 
         ad.start();
         return dialog;
+    }
+    public void addMessage(PullToRefreshListView listView, TextView textView) {
+        MyLog.i("addMessage");
+        listView.setMode(PullToRefreshBase.Mode.DISABLED);
+        textView.setVisibility(View.VISIBLE);
+    }
+    public View getTextView(Context context){
+        View view= LayoutInflater.from(context).inflate(R.layout.nomore,null);
+//        TextView textView=new TextView(context);
+//        textView.setGravity(Gravity.CENTER);
+//        textView.setText("已无更多");
+        AbsListView.LayoutParams params=new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        params.height=90;
+//        textView.setLayoutParams(params);
+//        textView.setTextSize(15);
+        view.setLayoutParams(params);
+        return view;
+    }
+
+    public void addFootView(ListView listView,View view){
+        footviews.add(view);
+        listView.addFooterView(view);
+    }
+    public void removeAllFootView(ListView listView){
+        for (View view:footviews){
+            listView.removeFooterView(view);
+        }
+       footviews.clear();
     }
 
 }

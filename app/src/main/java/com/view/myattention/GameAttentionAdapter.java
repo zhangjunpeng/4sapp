@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.tools.MyLog;
@@ -30,9 +31,9 @@ import java.util.List;
 public class GameAttentionAdapter extends BaseAdapter {
     private Activity mcontext;
     private List<Object> gameInfos;
-    PullToRefreshListView listView;
+    ListView listView;
 
-    public  GameAttentionAdapter(Activity context, List<Object> list, PullToRefreshListView listView){
+    public  GameAttentionAdapter(Activity context, List<Object> list, ListView listView){
         mcontext=context;
         this.gameInfos=list;
         this.listView=listView;

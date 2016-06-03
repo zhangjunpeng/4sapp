@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.app.tools.MyDisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.myapp.R;
 import com.test4s.net.Url;
 import com.view.s4server.IssueSimpleInfo;
@@ -21,6 +22,8 @@ import java.util.List;
 public class Issue_HL_Adapter extends BaseAdapter {
     List<IssueSimpleInfo> list;
     Context mcontext;
+    private ImageLoader imageLoader= ImageLoader.getInstance();
+
     public Issue_HL_Adapter(Context context, List<IssueSimpleInfo> list){
         mcontext=context;
         this.list=list;
@@ -56,9 +59,11 @@ public class Issue_HL_Adapter extends BaseAdapter {
         IssueSimpleInfo issueSimpleInfo=list.get(position);
         String imageUrl= Url.prePic+issueSimpleInfo.getLogo();
         String name=issueSimpleInfo.getCompany_name();
-        Picasso.with(mcontext)
-                .load(imageUrl)
-                .into(viewHolder.imageView);
+//        Picasso.with(mcontext)
+//                .load(imageUrl)
+//                .into(viewHolder.imageView);
+        imageLoader.displayImage(imageUrl,viewHolder.imageView, MyDisplayImageOptions.getdefaultImageOptions());
+
         viewHolder.textView.setText(name);
         return convertView;
     }
