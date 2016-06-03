@@ -88,6 +88,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         switch (tag){
             case "index":
                 setResult(Activity.RESULT_OK);
+                overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 finish();
                 break;
             case "aboutus":
@@ -169,7 +170,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         pressback();
     }
 }

@@ -86,6 +86,8 @@ public class OutSourceActivity extends BaseActivity {
 
     private ImageLoader imageLoader= ImageLoader.getInstance();
 
+    private View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +106,9 @@ public class OutSourceActivity extends BaseActivity {
         // enable navigation bar tint
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setTintColor(Color.parseColor("#252525"));
+
+        view=findViewById(R.id.coordinatorlayout_osdetail);
+        view.setVisibility(View.INVISIBLE);
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_osdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_osDetail);
@@ -327,6 +332,8 @@ public class OutSourceActivity extends BaseActivity {
         }else {
             addVideo(musiccases);
         }
+        view.setVisibility(View.VISIBLE);
+
     }
 
     private void addVideo(List<String> musiccases) {

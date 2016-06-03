@@ -129,7 +129,10 @@ public class CPListFragment extends BaseFragment implements AdapterView.OnItemCl
             public void onError(Throwable ex, boolean isOnCallback) {
                 MyLog.i("错误 ::"+ex.toString());
                 if (cpSimpleInfos.size()==0) {
-                    listView.setVisibility(View.GONE);
+                    prt_cp.setVisibility(View.GONE);
+
+                    CusToast.showToast(getActivity(),"请检查网络",Toast.LENGTH_SHORT);
+
                 }
 
             }
@@ -234,7 +237,7 @@ public class CPListFragment extends BaseFragment implements AdapterView.OnItemCl
         refreash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listView.setVisibility(View.VISIBLE);
+                prt_cp.setVisibility(View.VISIBLE);
                 prt_cp.postDelayed(new Runnable() {
                     @Override
                     public void run() {

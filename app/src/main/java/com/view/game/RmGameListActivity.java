@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -65,6 +66,8 @@ public class RmGameListActivity extends BaseActivity {
 
     private PtrClassicFrameLayout ptrlayout;
     private View headview;
+    private Button refreash;
+    private View footview;
 
 
     @Override
@@ -91,6 +94,11 @@ public class RmGameListActivity extends BaseActivity {
         ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
         AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
         drawable.start();
+
+        footview=LayoutInflater.from(this).inflate(R.layout.footerloading,null);
+        ImageView image= (ImageView) footview.findViewById(R.id.image_footerloading);
+        AnimationDrawable drable= (AnimationDrawable) image.getBackground();
+        drable.start();
 
         ptrlayout= (PtrClassicFrameLayout) findViewById(R.id.ptr_rmgamelist);
         showall= LayoutInflater.from(this).inflate(R.layout.showall,null);
@@ -140,6 +148,19 @@ public class RmGameListActivity extends BaseActivity {
                 overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
             }
         });
+        refreash= (Button) findViewById(R.id.refeash_rmgamelist);
+        refreash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ptrlayout.setVisibility(View.VISIBLE);
+                ptrlayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ptrlayout.autoRefresh();
+                    }
+                },100);
+            }
+        });
     }
 
     private void initPtrLayout() {
@@ -175,7 +196,6 @@ public class RmGameListActivity extends BaseActivity {
             @Override
             public void run() {
                 ptrlayout.autoRefresh();
-                listView.addFooterView(showall);
             }
         },100);
     }
@@ -197,7 +217,7 @@ public class RmGameListActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                ptrlayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -208,6 +228,9 @@ public class RmGameListActivity extends BaseActivity {
             @Override
             public void onFinished() {
                 MyLog.i("GameList==="+result);
+                if (listView.getFooterViewsCount()==0){
+                    listView.addFooterView(footview);
+                }
                 gameListParser(result);
 
                 if (ptrlayout.isRefreshing()){

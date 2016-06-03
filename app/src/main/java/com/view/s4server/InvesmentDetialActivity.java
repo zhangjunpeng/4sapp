@@ -74,6 +74,8 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
 
     private ImageLoader imageLoader= ImageLoader.getInstance();
 
+    private View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,10 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
         tintManager.setNavigationBarTintEnabled(true);
         // set a custom tint color for all system bars
         tintManager.setTintColor(Color.parseColor("#252525"));
+
+
+        view=findViewById(R.id.coordinatorlayout_tzdetail);
+        view.setVisibility(View.INVISIBLE);
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_tzdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_tzDetail);
@@ -233,6 +239,8 @@ public class InvesmentDetialActivity extends BaseActivity implements View.OnClic
         }else {
             addcase(invescases);
         }
+        view.setVisibility(View.VISIBLE);
+
     }
 
 

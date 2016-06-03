@@ -139,12 +139,12 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout
-            android:id="@+id/div_intro_cpdetail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
             <LinearLayout
+                android:id="@+id/div_intro_cpdetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -174,18 +174,6 @@
 
                     android:textColor="#7C7C7C"
                     android:ellipsize="end"
-                    />
-                <TextView
-                    android:id="@+id/all_cpdetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:textColor="#FF9D00"
-                    android:text="全部"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginRight="10dp"
-                    android:visibility="invisible"
                     />
 
             </RelativeLayout>

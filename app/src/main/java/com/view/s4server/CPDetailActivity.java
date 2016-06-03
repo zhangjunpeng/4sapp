@@ -90,6 +90,8 @@ public class CPDetailActivity extends BaseActivity {
 
     private ImageLoader imageloder=ImageLoader.getInstance();
 
+    private View content;
+
 
 
     @Override
@@ -113,6 +115,8 @@ public class CPDetailActivity extends BaseActivity {
         // set a custom tint color for all system bars
         tintManager.setTintColor(Color.parseColor("#252525"));
 
+        content=findViewById(R.id.coordinatorlayout_cpdetail);
+        content.setVisibility(View.INVISIBLE);
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_cpdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_cpDetail);
@@ -128,7 +132,6 @@ public class CPDetailActivity extends BaseActivity {
         info= (TextView) findViewById(R.id.info_cpdetail);
         horizontalListView= (HorizontalListView) findViewById(R.id.horListView_cpdetail);
         share= (ImageView) findViewById(R.id.share_titlebar_de);
-        all= (TextView) findViewById(R.id.all_cpdetail);
         div_other= (LinearLayout) findViewById(R.id.div_othergame_cpdetail);
         div_intro= (LinearLayout) findViewById(R.id.div_intro_cpdetail);
         othergamemore= (TextView) findViewById(R.id.other_game_cpdetail);
@@ -307,28 +310,38 @@ public class CPDetailActivity extends BaseActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            MyLog.i("cpdetail=="+e.toString());
         }
-        MyLog.i("initView");
-        initView();
+        try {
+            initView();
+
+        }catch (Exception e){
+            MyLog.i("cpdetail exception==="+e.toString());
+        }
 
     }
 
     private void initView() {
         name_title.setText(namestring);
         name.setText(namestring);
+        MyLog.i("namestring=="+namestring);
 
-//        Picasso.with(this)
-//                .load(Url.prePic+logostring)
-//                .into(icon);
 
         imageloder.displayImage(Url.prePic+logostring,icon, MyDisplayImageOptions.getroundImageOptions());
 
+        MyLog.i("introstring=="+introstring);
+
         if (TextUtils.isEmpty(introstring)){
             div_intro.setVisibility(View.GONE);
+            MyLog.i("div_intro GONE");
+
         }else {
             intro.setText(introstring);
-            all.setVisibility(View.INVISIBLE);
+//            all.setVisibility(View.INVISIBLE);
         }
+
+
+
 
         info.setText("所在地 ："+cityname+"\n公司规模 ："+scalestring+"\n电话 ："+phonestring);
 
@@ -337,13 +350,14 @@ public class CPDetailActivity extends BaseActivity {
             care.setImageResource(R.drawable.attention_has);
         }
 
-        MyLog.i("other games size"+othergames.size());
         if (othergames.size()==0){
             div_other.setVisibility(View.GONE);
         }else {
             if (othergames.size()<10){
                 othergamemore.setVisibility(View.INVISIBLE);
             }
+            MyLog.i("othergames=="+othergames.size());
+
             Game_HL_Adapter gameAdaper=new Game_HL_Adapter(this,othergames);
             horizontalListView.setAdapter(gameAdaper);
             horizontalListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -357,6 +371,9 @@ public class CPDetailActivity extends BaseActivity {
                 }
             });
         }
+        MyLog.i("initView4");
+
+        content.setVisibility(View.VISIBLE);
         setVisible(true);
     }
 

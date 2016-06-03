@@ -75,6 +75,8 @@ public class IssueDetailActivity extends BaseActivity {
     private LinearLayout div_anli;
     private ImageLoader imageLoader=ImageLoader.getInstance();
 
+    private View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,9 @@ public class IssueDetailActivity extends BaseActivity {
         // enable navigation bar tint
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setTintColor(Color.parseColor("#252525"));
+
+        view=findViewById(R.id.coordinatorlayout_fxdetail);
+        view.setVisibility(View.INVISIBLE);
 
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_fxdetail);
         toolbar= (Toolbar) findViewById(R.id.toolbar_fxDetail);
@@ -221,6 +226,8 @@ public class IssueDetailActivity extends BaseActivity {
         }else {
             addcase(issuecases);
         }
+        view.setVisibility(View.VISIBLE);
+
     }
 
     private void initListener() {

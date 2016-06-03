@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import de.greenrobot.dao.query.Query;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -114,6 +116,20 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         }
     };
 
+    private Handler mhander=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    initView();
+                    break;
+                case 1:
+                    initViewPager();
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +160,22 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         getDensity();
 //        parser=GameJsonParser.getIntance();
 
-        getDateFromDB();
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                getDateFromDB();
+
+                mhander.sendEmptyMessage(0);
+            }
+        });
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                initViewPagerFromDB();
+
+                mhander.sendEmptyMessage(1);
+            }
+        });
 
 
         initData();
@@ -166,8 +197,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             MyLog.i("gamelist size=="+gamelist1.size());
             map.put(name,gamelist1);
         }
-        initView();
-        initViewPagerFromDB();
     }
 
     private void initData() {
@@ -216,7 +245,6 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     private void initViewPagerFromDB() {
         gameAdverts= (ArrayList<Adverts>) searchAdverts();
-        initViewPager();
     }
 
     private void getAllGameData() {
@@ -318,7 +346,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
             dot.setLayoutParams(params1);
             whiteDots.addView(dot);
             MyLog.i("imageUrl==="+Url.prePic+gameAdverts.get(i).getAdvert_pic());
-            imageloder.displayImage(Url.prePic+gameAdverts.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultImageOptions());
+            imageloder.displayImage(Url.prePic+gameAdverts.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultBannerOptions());
 
         }
         setDot(0);

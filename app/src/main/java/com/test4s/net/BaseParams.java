@@ -31,6 +31,10 @@ public class BaseParams {
 //        }
 //        urlindex =MyApplication.mcontext.getString(R.string.url_index);
 
+        if (!MyApplication.DeBug){
+            urlindex=MyApplication.mcontext.getString(R.string.url_index);
+        }
+
         mess=new StringBuffer(urlindex+uri);
         requestParams=new RequestParams(urlindex+uri);
         requestParams.addBodyParameter("imei", MyApplication.imei);

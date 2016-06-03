@@ -42,6 +42,7 @@ public class FirsActivity extends AppCompatActivity {
                     Intent intent=new Intent(FirsActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
+                    overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                     break;
             }
         }
@@ -96,6 +97,8 @@ public class FirsActivity extends AppCompatActivity {
                 });
 
             }else {
+                degug.setVisibility(View.INVISIBLE);
+                relaless.setVisibility(View.INVISIBLE);
                 Executors.newSingleThreadExecutor().execute(new Runnable() {
                     @Override
                     public void run() {

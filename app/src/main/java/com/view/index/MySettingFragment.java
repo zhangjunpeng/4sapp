@@ -244,13 +244,9 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
             }
         }
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_setting){
-            if (MyAccount.isLogin) {
-             if (changeIcon) {
-                 updataInfo();
-             }
-            }else {
-                updataInfo();
-            }
+            MyLog.i("mysetting~~~~~RequestCode_setting");
+            updataInfo();
+
 
         }
         super.onActivityResult(requestCode, resultCode, data);

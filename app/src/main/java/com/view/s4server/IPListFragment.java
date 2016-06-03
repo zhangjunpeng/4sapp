@@ -196,7 +196,11 @@ public class IPListFragment extends BaseFragment implements AdapterView.OnItemCl
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
 
-                listView.setVisibility(View.GONE);
+//                listView.setVisibility(View.GONE);
+                prt_cp.setVisibility(View.GONE);
+
+                CusToast.showToast(getActivity(),"请检查网络",Toast.LENGTH_SHORT);
+
 
             }
 

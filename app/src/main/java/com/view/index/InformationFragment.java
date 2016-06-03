@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import de.greenrobot.dao.query.Query;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
@@ -71,6 +74,21 @@ public class InformationFragment extends BaseFragment {
     private View headview;
     private View nomore;
     private ImageLoader imageloder=ImageLoader.getInstance();
+
+    private static boolean first=true;
+    private Handler mhander=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    if (myapapter!=null) {
+                        myapapter.notifyDataSetChanged();
+//            listView.onRefreshComplete();
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,8 +121,15 @@ public class InformationFragment extends BaseFragment {
         ImageView imageView= (ImageView) headview.findViewById(R.id.image_handerloading);
         AnimationDrawable drawable= (AnimationDrawable) imageView.getBackground();
         drawable.start();
-
         getDataFromDB();
+
+//        Executors.newSingleThreadExecutor().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
+
 
 //        initData("1");
         initPtrLayout();
@@ -113,18 +138,7 @@ public class InformationFragment extends BaseFragment {
     }
 
     private void initListener() {
-
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });
+        listView.setOnScrollListener(listener);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -166,7 +180,6 @@ public class InformationFragment extends BaseFragment {
                 MyLog.i("~~~~下拉刷新");
                 p=1;
                 newInfos.clear();
-                listView.setOnScrollListener(listener);
                 removeAllFootView(listView);
                 initData(p+"");
             }
@@ -176,12 +189,15 @@ public class InformationFragment extends BaseFragment {
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame,content,header);
             }
         });
-        ptrlayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ptrlayout.autoRefresh();
-            }
-        },100);
+        if (first){
+            ptrlayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ptrlayout.autoRefresh();
+                }
+            },100);
+            first=false;
+        }
         addFootView(listView,footview);
     }
     class MyScrollViewListener implements AbsListView.OnScrollListener{
@@ -359,9 +375,8 @@ public class InformationFragment extends BaseFragment {
     }
     private void getDataFromDB(){
         newInfos=searchNewsInfo();
-        if (newInfos!=null) {
+        if (newInfos!=null){
             myapapter.notifyDataSetChanged();
-//            listView.onRefreshComplete();
         }
     }
 }

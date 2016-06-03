@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -75,6 +76,7 @@ public class GameListActivity extends BaseActivity implements View.OnClickListen
     private View headview;
     private View footview;
     private View nomore;
+    private Button refreash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +223,7 @@ public class GameListActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                ptrFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -338,21 +340,20 @@ public class GameListActivity extends BaseActivity implements View.OnClickListen
                 overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
             }
         });
-//        pullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-//            @Override
-//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-////                Toast.makeText(GameListActivity.this,"下拉刷新",Toast.LENGTH_SHORT).show();
-//                gameInfos.clear();
-//                initData("1");
-//            }
-//
-//            @Override
-//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                p++;
-//                initData(p+"");
-//            }
-//        });
         MyLog.i("initView");
+        refreash= (Button) findViewById(R.id.refeash_gamelist);
+        refreash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ptrFrameLayout.setVisibility(View.VISIBLE);
+                ptrFrameLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ptrFrameLayout.autoRefresh();
+                    }
+                },100);
+            }
+        });
 
     }
 

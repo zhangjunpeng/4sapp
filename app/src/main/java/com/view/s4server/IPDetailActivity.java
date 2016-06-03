@@ -136,6 +136,7 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
 //    private YoukuPlayerView youkuvideo;
 //    private JCVideoPlayerStandard videoPlayerStandard;
     private WebView webView;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +157,9 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
         // set a custom tint color for all system bars
         tintManager.setTintColor(Color.parseColor("#252525"));
 
+
+        view=findViewById(R.id.coordinatorlayout_ipdetail);
+        view.setVisibility(View.INVISIBLE);
         toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collToolbar_ipDetail);
         appBarLayout= (AppBarLayout) findViewById(R.id.appbar_ipdetail);
         ipshotContinar= (LinearLayout) findViewById(R.id.imageContinar_ipdetail);
@@ -574,6 +578,8 @@ public class IPDetailActivity extends BaseActivity implements View.OnClickListen
         name_ipdetail.setText(ip_name);
         name_title.setText(ip_name);
         ipcat.setText("类型 ："+ip_cat+"\n风格 ："+ip_style+"\n授权范围 ："+uthority+"\n上线时间 ："+over_time);
+
+        view.setVisibility(View.VISIBLE);
 
 
     }

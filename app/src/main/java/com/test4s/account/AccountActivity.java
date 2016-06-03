@@ -22,6 +22,7 @@ import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
 import com.test4s.net.LoginParams;
 import com.view.Evaluation.EvaluationActivity;
+import com.view.activity.BaseActivity;
 import com.view.messagecenter.MessageList;
 import com.view.myattention.AttentionActivity;
 import com.view.myreport.ReprotListActivity;
@@ -33,7 +34,7 @@ import org.xutils.x;
 
 import java.util.Iterator;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends BaseActivity {
 
 
     LoginFragment loginFragment;
@@ -163,4 +164,10 @@ public class AccountActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+        overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+    }
 }

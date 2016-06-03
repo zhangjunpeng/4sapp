@@ -76,17 +76,10 @@ public class BaseActivity  extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(Activity.RESULT_OK);
         finish();
         overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
     }
-    public void getFocus(EditText editText){
-        editText.setFocusable(true);
-        editText.setFocusableInTouchMode(true);
-        editText.requestFocus();
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-    }
+
     public Dialog showLoadingDialog(Context context){
         Dialog dialog=new Dialog(context,R.style.CustomDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

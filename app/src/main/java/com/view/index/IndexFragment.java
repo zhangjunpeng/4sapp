@@ -4,6 +4,7 @@ package com.view.index;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import com.app.tools.Timer;
 import com.app.view.HorizontalListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.gdb.DaoSession;
@@ -65,6 +67,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import de.greenrobot.dao.query.Query;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -99,6 +102,18 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
     private Activity context;
     private ImageLoader imageLoader=ImageLoader.getInstance();
 
+    private Handler mhandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    initView();
+                    break;
+            }
+        }
+    };
+
+
   @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (thread==null){
@@ -115,6 +130,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         imageViewList=new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
+
+
 
     @Nullable
     @Override
@@ -143,7 +160,14 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
         getDensity();
         initData();
 
-        getDataFromDB();
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                getDataFromDB();
+                mhandler.sendEmptyMessage(0);
+            }
+        });
+
 //        initViewPagerfromDB();
         return  view;
     }
@@ -268,15 +292,12 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             Order order=orders.get(i);
             if (order.getMethod_name().equals("ip")){
                 ArrayList<IP> ipSimpleInfos= (ArrayList<IP>) map.get(order.getMethod_name());
-//                IP_HL_Adapter adapter=new IP_HL_Adapter(getActivity(),ipSimpleInfos);
                 LinearLayout linearLayout=getLinearInScroll(ipSimpleInfos);
                 viewHolder.listView.addView(linearLayout);
 
             }else {
                 ArrayList<IndexItemInfo> indexSimpleinfos= (ArrayList<IndexItemInfo>) map.get(order.getMethod_name());
-//                CP_HL_Adapter adapter=new CP_HL_Adapter(getActivity(),indexSimpleinfos);
                 LinearLayout linearLayout=getLinearInScroll2(indexSimpleinfos,method_name);
-//                viewHolder.listView.setAdapter(adapter);
                 viewHolder.listView.addView(linearLayout);
             }
         }
@@ -328,9 +349,6 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             IndexItemInfo cp=indexSimpleinfos.get(i);
             String imageUrl=Url.prePic+cp.getLogo();
             String name=cp.getCompany_name();
-//            Picasso.with(context)
-//                    .load(imageUrl)
-//                    .into(imageView);
             imageLoader.displayImage(imageUrl,imageView,MyDisplayImageOptions.getroundImageOptions());
             textView.setText(name);
             linear.addView(convertView);
@@ -438,7 +456,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             whiteDots.addView(dot);
             MyLog.i("imageUrl==="+Url.prePic+indexAdvertses.get(i).getAdvert_pic());
 
-            imageLoader.displayImage(Url.prePic+indexAdvertses.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultImageOptions());
+
+            imageLoader.displayImage(Url.prePic+indexAdvertses.get(i).getAdvert_pic(),imageView, MyDisplayImageOptions.getdefaultBannerOptions());
 //            Picasso.with(getActivity())
 //                    .load()
 //                    .into(imageView);
@@ -541,7 +560,6 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
                 }
             }
             MyLog.i("order size=="+orders.size());
-            initView();
 //            initViewPagerfromDB();
 
         }

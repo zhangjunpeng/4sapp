@@ -38,8 +38,6 @@ public class MyAcountSettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        setResult(Activity.RESULT_OK);
         if (BaseFragment.selectedFragment instanceof MyAcountSettingFragment){
             setResult(Activity.RESULT_OK);
             super.onBackPressed();
