@@ -46,12 +46,18 @@ public class TencentLogin {
     }
 
     public void login(){
+        MyLog.i("qq登录3");
+
         if (!mtencent.isSessionValid())
         {
             if (mActivity==null){
-                mtencent.login(mFragment, "all", listener);
+                MyLog.i("qq登录4");
+
+                MyLog.i("qq login back::=="+ mtencent.login(mFragment, "all", listener));
             }else if (mFragment==null){
-                mtencent.login(mActivity, "all", listener);
+                MyLog.i("qq登录4");
+
+                MyLog.i("qq login back::=="+ mtencent.login(mActivity, "all", listener));
             }
         }
     }
@@ -63,7 +69,12 @@ public class TencentLogin {
     }
     public void loginOut(){
         if (mtencent!=null){
-            mtencent.logout(mActivity);
+            if (mActivity!=null) {
+                mtencent.logout(mActivity);
+            }else {
+                mtencent.logout(mFragment.getActivity());
+
+            }
         }
     }
 }

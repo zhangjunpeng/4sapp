@@ -88,11 +88,11 @@
         "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\plugin_ad_gosmall.png"
     },
     {
-        "merged": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\yp_tudou_encrypt_input_box.9.png",
-        "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\yp_tudou_encrypt_input_box.9.png"
-    },
-    {
         "merged": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\loading_frame4.png",
         "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\loading_frame4.png"
+    },
+    {
+        "merged": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\yp_tudou_encrypt_input_box.9.png",
+        "source": "E:\\work\\MyApp\\YoukuPlayerOpenSDK\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\yp_tudou_encrypt_input_box.9.png"
     }
 ]

@@ -28,6 +28,7 @@ import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.app.view.MyDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.tencent.tauth.Tencent;
 import com.test4s.account.AccountActivity;
 import com.test4s.account.MyAccount;
 import com.test4s.account.TencentLogin;
@@ -361,7 +362,8 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 dialog.dismiss();
                 getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
                 if (MyAccount.tencentLogin!=null){
-                    MyLog.i("qq login out");
+                    MyLog.i("qq login out1");
+//                    Tencent tencent=MyAccount.tencentLogin.mtencent;
                     MyAccount.tencentLogin.loginOut();
                 }
                 ThirdLoginActivity.WeiBologinout(getActivity());

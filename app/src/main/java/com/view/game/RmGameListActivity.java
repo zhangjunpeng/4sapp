@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -68,6 +69,8 @@ public class RmGameListActivity extends BaseActivity {
     private View headview;
     private Button refreash;
     private View footview;
+    private int p=1;
+    private MyScrollViewListener listener;
 
 
     @Override
@@ -107,6 +110,8 @@ public class RmGameListActivity extends BaseActivity {
         titles=searchTitle();
         title.setText(titles.get(position).getTitle());
 
+        listener=new MyScrollViewListener();
+
         listView.setAdapter(gameAdapter);
 
 
@@ -122,6 +127,28 @@ public class RmGameListActivity extends BaseActivity {
             }
         });
 
+    }
+    class MyScrollViewListener implements AbsListView.OnScrollListener{
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+                // 当不滚动时
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    // 判断滚动到底部
+                    if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+                        p++;
+                        initData(p+"");
+
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
     }
 
     private void initListener() {
@@ -184,7 +211,8 @@ public class RmGameListActivity extends BaseActivity {
 //                p=1;
                 gameInfos.clear();
 
-                initData();
+                listView.setOnScrollListener(listener);
+                initData(p+"");
             }
 
             @Override
@@ -200,11 +228,11 @@ public class RmGameListActivity extends BaseActivity {
         },100);
     }
 
-    private void initData() {
+    private void initData(String p) {
         BaseParams gameParams=new BaseParams(tj_url);
         GameType type=titles.get(position);
         gameParams.addParams("catId",type.getAdvert_cat_id());
-        gameParams.addParams("p","1");
+        gameParams.addParams("p",p);
         gameParams.addSign();
         x.http().post(gameParams.getRequestParams(),new Callback.CommonCallback<String>() {
             private String result;
