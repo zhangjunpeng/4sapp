@@ -137,9 +137,8 @@ public class RmGameListActivity extends BaseActivity {
                 case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
                     // 判断滚动到底部
                     if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
-                        p++;
-                        initData(p+"");
-
+//                        p++;
+//                        initData(p+"");
                     }
                     break;
             }
@@ -211,8 +210,8 @@ public class RmGameListActivity extends BaseActivity {
 //                p=1;
                 gameInfos.clear();
 
-                listView.setOnScrollListener(listener);
-                initData(p+"");
+//                listView.setOnScrollListener(listener);
+                initData();
             }
 
             @Override
@@ -228,11 +227,11 @@ public class RmGameListActivity extends BaseActivity {
         },100);
     }
 
-    private void initData(String p) {
+    private void initData() {
         BaseParams gameParams=new BaseParams(tj_url);
         GameType type=titles.get(position);
         gameParams.addParams("catId",type.getAdvert_cat_id());
-        gameParams.addParams("p",p);
+        gameParams.addParams("p","1");
         gameParams.addSign();
         x.http().post(gameParams.getRequestParams(),new Callback.CommonCallback<String>() {
             private String result;
@@ -257,7 +256,7 @@ public class RmGameListActivity extends BaseActivity {
             public void onFinished() {
                 MyLog.i("GameList==="+result);
                 if (listView.getFooterViewsCount()==0){
-                    listView.addFooterView(footview);
+                    listView.addFooterView(showall);
                 }
                 gameListParser(result);
 
@@ -281,7 +280,12 @@ public class RmGameListActivity extends BaseActivity {
                     Url.packageurl=jsonObject1.getString("prefixPackage");
                 }
                 JSONArray jsonArray=jsonObject1.getJSONArray("gameList");
-
+//                if (jsonArray.length()==0){
+////                    CusToast.showToast(this, "没有更多游戏", Toast.LENGTH_SHORT);
+//                    listView.removeFooterView(footview);
+//                    listView.addFooterView(showall);
+//                    listView.setOnScrollListener(null);
+//                }
                 for (int i=0;i<jsonArray.length();i++){
                     JSONObject game=jsonArray.getJSONObject(i);
                     GameInfo gameInfo=new GameInfo();
