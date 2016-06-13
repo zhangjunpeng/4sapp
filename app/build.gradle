@@ -8,8 +8,6 @@ android {
         applicationId "com.test4s.myapp"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
 
         multiDexEnabled true
     }
@@ -22,9 +20,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
-    }
-    sourceSets.main {
-        jniLibs.srcDirs = ['libs']  // <-- Set your folder here!
     }
     productFlavors {
     }
@@ -39,10 +34,14 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'lib/armeabi-v7a/libwebpbackport.so'
     }
+    sourceSets{
+        main{
+            jniLibs.srcDir("jniLibs")
+        }
+    }
 }
 sourceSets {
     main {
-
         java.srcDirs = ['src/main/java', 'src/main/java-gen']
     }
 }
@@ -62,7 +61,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:design:23.2.0'
-    compile 'org.xutils:xutils:3.1.+'
+    compile 'org.xutils:xutils:3.3.36'
     compile 'de.greenrobot:greendao:2.0.0'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.0'
@@ -73,4 +72,7 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'me.everything:overscroll-decor-android:1.0.1'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+
 }

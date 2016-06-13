@@ -86,8 +86,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
         drawable.start();
         setFinishOnTouchOutside(false);
 
-        mAuthInfo = new AuthInfo(this, "963258147", "https://api.weibo.com/oauth2/default.html",SinaWeiboLogin.SCOPE);
-        mSsoHandler = new SsoHandler(this, mAuthInfo);
+        MyLog.i(getLocalClassName()+" call");
 
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
@@ -102,7 +101,37 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
         });
       initListener();
     }
+    IUiListener iulistener = new IUiListener() {
+        @Override
+        public void onComplete(Object o) {
+            MyLog.i("qq back=="+o.toString());
+            String res=o.toString();
+            try {
+                JSONObject jsob=new JSONObject(res);
+                qq_openid=jsob.getString("openid");
+                qq_token=jsob.getString("access_token");
+                qq_expir=jsob.getString("expires_in");
 
+                send("qq",qq_openid,null,null);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            MyLog.i("qq login error::"+uiError.errorDetail);
+        }
+
+        @Override
+        public void onCancel() {
+            MyLog.i("qq login onCancel");
+            finish();
+        }
+
+
+    };
     private void initListener() {
         listener=new AuthListener();
     }
@@ -110,9 +139,14 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
     private void starLogin() {
         switch (third){
             case "qq":
-                MyLog.i("qq登录");
-                TencentLogin tencentLogin=TencentLogin.getIntance(this,this);
+                MyLog.i("qq登录1");
+
+
+
+                TencentLogin tencentLogin=TencentLogin.getIntance(this,iulistener);
                 MyAccount.tencentLogin=tencentLogin;
+                MyLog.i("qq登录2");
+
                 tencentLogin.login();
                 break;
             case "weixin":
@@ -127,6 +161,8 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
                 finish();
                 break;
             case "sina":
+                mAuthInfo = new AuthInfo(this, "963258147", "https://api.weibo.com/oauth2/default.html",SinaWeiboLogin.SCOPE);
+                mSsoHandler = new SsoHandler(this, mAuthInfo);
                 sinalogin();
                 sinaWeiboLogin=SinaWeiboLogin.getInstance(this);
                 sinaWeiboLogin.login(listener);
@@ -140,7 +176,8 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        MyLog.i("third::"+third);
+//        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==BIND_PHONE && resultCode==Activity.RESULT_OK){
             setResult(Activity.RESULT_OK);
             finish();
@@ -154,10 +191,12 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
                     break;
                 case "qq":
                     MyLog.i("third activity login onActivityResult:qq");
+
                     Tencent.onActivityResultData(requestCode,resultCode,data,this);
                     break;
             }
         }
+//        finish();
 
     }
     private void thirdLoginBind(String regtype, String openid, String info) {
@@ -339,7 +378,7 @@ public class ThirdLoginActivity extends Activity implements IUiListener{
 
     @Override
     public void onCancel() {
-        MyLog.i("cancel login");
+        MyLog.i("qq cancel login");
     }
 
     public void getWXUserInfo(String token,String oid){

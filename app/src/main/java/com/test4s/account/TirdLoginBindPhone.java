@@ -128,7 +128,7 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
     }
 
     private void changeButton() {
-        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>6){
+        if (phoneNum.getText().toString().length()==11&&code.getText().toString().length()==4&&pwd.getText().toString().length()>=6){
             reg.setClickable(true);
             reg.setBackgroundResource(R.drawable.border_button_orange);
         }else {
@@ -146,7 +146,8 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
                     return;
                 }
                 getCode();
-                codeChange();
+                getCode.setClickable(false);
+
                 break;
             case R.id.button_reg_reg:
                 reg();
@@ -248,9 +249,11 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
                     if (success&&code==200){
                         JSONObject jsonObject1=jsonObject.getJSONObject("data");
                         pa=jsonObject1.getString("pa");
-//                        codeChange();
+                        codeChange();
                     }else {
                         showwarn(jsonObject.getString("msg"));
+                        getCode.setClickable(true);
+
                     }
 
                 } catch (JSONException e) {
@@ -260,6 +263,7 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                getCode.setClickable(true);
 
             }
 
@@ -278,7 +282,6 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
 
     private void codeChange() {
         ClearWindows.clearInput(getActivity(),phoneNum);
-        getCode.setClickable(false);
         getCode.setBackgroundResource(R.drawable.border_getcode_gray);
         new Thread(new Runnable() {
             @Override

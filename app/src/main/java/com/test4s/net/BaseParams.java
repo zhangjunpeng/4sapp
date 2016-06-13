@@ -35,17 +35,20 @@ public class BaseParams {
             urlindex=MyApplication.mcontext.getString(R.string.url_index);
         }
 
+        MyLog.i("version=="+MyApplication.versionName);
         mess=new StringBuffer(urlindex+uri);
         requestParams=new RequestParams(urlindex+uri);
         requestParams.addBodyParameter("imei", MyApplication.imei);
         requestParams.addBodyParameter("version",MyApplication.versionName);
         requestParams.addBodyParameter("package_name",MyApplication.packageName);
         requestParams.addBodyParameter("channel_id","1");
+        requestParams.addBodyParameter("app","2");
         map=new TreeMap<>();
         map.put("imei",MyApplication.imei);
         map.put("version",MyApplication.versionName);
         map.put("package_name",MyApplication.packageName);
         map.put("channel_id","1");
+        map.put("app","2");
     }
 
     public void addParams(String name,String value){

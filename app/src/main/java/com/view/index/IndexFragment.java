@@ -168,7 +168,6 @@ public class IndexFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-//        initViewPagerfromDB();
         return  view;
     }
 

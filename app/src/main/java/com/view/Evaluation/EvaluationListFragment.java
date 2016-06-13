@@ -1,5 +1,6 @@
 package com.view.Evaluation;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +17,16 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.daimajia.swipe.SimpleSwipeListener;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.test4s.account.MyAccount;
 import com.test4s.gdb.GameInfo;
@@ -46,12 +53,12 @@ public class EvaluationListFragment extends Fragment {
 
    View view;
 
-    private DeleListView deleListView;
-    private List<GameInfo> gamelist;
+    private ListView deleListView;
+    private ArrayList<GameInfo> gamelist;
     private Dialog dialog;
     private float density;
     private int windowWidth;
-    private MyListAdapter adapter;
+    private EvaluaAdapter adapter;
 
     private Button want_down;
 
@@ -63,7 +70,7 @@ public class EvaluationListFragment extends Fragment {
         gamelist=new ArrayList<>();
 
 
-        adapter=new MyListAdapter(getActivity(),gamelist);
+        adapter=new EvaluaAdapter(getActivity());
         //获取屏幕密度
         DisplayMetrics metric = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metric);
@@ -76,7 +83,7 @@ public class EvaluationListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_evaluationlist, container, false);
-        deleListView= (DeleListView) view.findViewById(R.id.listview_pclist);
+        deleListView= (ListView) view.findViewById(R.id.listview_pclist);
         deleListView.setAdapter(adapter);
         want_down= (Button) view.findViewById(R.id.want_download);
 
@@ -163,27 +170,182 @@ public class EvaluationListFragment extends Fragment {
             e.printStackTrace();
         }
     }
+    class EvaluaAdapter extends BaseSwipeAdapter{
+        private Activity context;
+
+
+        public EvaluaAdapter(Activity context){
+            this.context=context;
+        }
+
+        @Override
+        public int getSwipeLayoutResourceId(int position) {
+            return R.id.item_evalist_swipe;
+        }
+
+        @Override
+        public View generateView(int position, ViewGroup parent) {
+            View convertView= LayoutInflater.from(context).inflate(R.layout.item_evalua_list_std,null);
+            SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.item_evalist_swipe);
+            ViewHolder viewHolder=new ViewHolder();
+            viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gameevalu_std);
+            viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gameevalu_std);
+            viewHolder.pc= (TextView) convertView.findViewById(R.id.cancel_care_evalu_std);
+            viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu_std);
+            viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu_std);
+
+            MyLog.i("SwipeLayout=="+swipeLayout.toString());
+            //set show mode.
+            swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+
+//            swipeLayout.setDragEdge(SwipeLayout.DragEdge.Left);
+            swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                @Override
+                public void onOpen(SwipeLayout layout) {
+//                    YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.delete_item_evalu_std));
+                    MyLog.i("onOpen");
+
+                }
+
+                @Override
+                public void onClose(SwipeLayout layout) {
+                    super.onClose(layout);
+                    MyLog.i("onClose");
+
+                }
+
+                @Override
+                public void onStartClose(SwipeLayout layout) {
+                    super.onStartClose(layout);
+                    MyLog.i("onStartClose");
+
+                }
+
+            });
+            final GameInfo gameInfo= (GameInfo) gamelist.get(position);
+
+            viewHolder.info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, GameDetailActivity.class);
+                    intent.putExtra("game_id",gameInfo.getGame_id());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }
+            });
+            viewHolder.icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, GameDetailActivity.class);
+                    intent.putExtra("game_id",gameInfo.getGame_id());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                }
+            });
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_img(),viewHolder.icon, MyDisplayImageOptions.getdefaultImageOptions());
+
+            imageLoader.displayImage(Url.prePic+gameInfo.getGame_grade(),viewHolder.gamerating, MyDisplayImageOptions.getdefaultImageOptions());
+
+            viewHolder.info.setText(gameInfo.getGame_dev()+" / "+gameInfo.getGame_type()+"\n"+gameInfo.getCreate_time());
+            viewHolder.name.setText(gameInfo.getGame_name());
+            if ("0".equals(gameInfo.getIs_test())){
+                //未评测
+                viewHolder.pc.setText("评测游戏");
+                viewHolder.pc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (gameInfo.getSdk().equals("0")){
+                            warningDialog("该游戏未集成SDK，无法评测");
+                        }else if (gameInfo.getSdk().equals("1")){
+                            if (gameInfo.getEnabled()==0){
+                                showWarningDialog(gameInfo.getOnline()/60);
+                            }else {
+                                Intent intent=new Intent(getActivity(),StartPCActivity.class);
+                                intent.putExtra("game_id",gameInfo.getGame_id());
+                                startActivity(intent);
+                                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                            }
+
+                        }
+                    }
+                });
+
+            }else {
+                viewHolder.pc.setText("评测详情");
+                viewHolder.pc.setTextColor(Color.rgb(76,76,76));
+                viewHolder.pc.setBackgroundResource(R.drawable.grayborder_button);
+                viewHolder.pc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(),PcDetailActivity.class);
+                        intent.putExtra("game_id",gameInfo.getGame_id());
+                        context.startActivity(intent);
+                        context.overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
+                    }
+                });
+            }
+            final int i=position;
+            convertView.findViewById(R.id.delete_item_evalu_std).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MyLog.i("delete position ==="+i);
+
+                    deleteGame(i);
+                }
+            });
+
+
+            return convertView;
+        }
+
+        @Override
+        public void fillValues(int position, View convertView) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return gamelist.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return gamelist.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        class ViewHolder{
+            ImageView icon;
+            TextView name;
+            TextView pc;
+            TextView info;
+            ImageView gamerating;
+            ImageView delete;
+        }
+    }
 
     class MyListAdapter extends BaseAdapter{
 
         Context context;
-        List<GameInfo> gameInfos;
 
-        public MyListAdapter(Context context,List<GameInfo> gameInfos){
+        public MyListAdapter(Context context){
             this.context=context;
-            this.gameInfos=gameInfos;
 
 
         }
 
         @Override
         public int getCount() {
-            return gameInfos.size();
+            return gamelist.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return gameInfos.get(position);
+            return gamelist.get(position);
         }
 
         @Override
@@ -192,7 +354,7 @@ public class EvaluationListFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             ViewHolder viewHolder;
             if (convertView==null){
@@ -208,7 +370,7 @@ public class EvaluationListFragment extends Fragment {
             }else {
                 viewHolder= (ViewHolder) convertView.getTag();
             }
-            final GameInfo gameInfo= (GameInfo) gameInfos.get(position);
+            final GameInfo gameInfo= (GameInfo) gamelist.get(position);
             viewHolder.info.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -227,16 +389,8 @@ public class EvaluationListFragment extends Fragment {
                     getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
                 }
             });
-//            Picasso.with(context)
-//                    .load(Url.prePic+gameInfo.getGame_img())
-//                    .placeholder(R.drawable.default_icon)
-//                    .into(viewHolder.icon);
-//            viewHolder.name.setText(gameInfo.getGame_name());
             imageLoader.displayImage(Url.prePic+gameInfo.getGame_img(),viewHolder.icon, MyDisplayImageOptions.getdefaultImageOptions());
 
-//            Picasso.with(context)
-//                    .load(Url.prePic+gameInfo.getGame_grade())
-//                    .into(viewHolder.gamerating);
             imageLoader.displayImage(Url.prePic+gameInfo.getGame_grade(),viewHolder.gamerating, MyDisplayImageOptions.getdefaultImageOptions());
 
             viewHolder.info.setText(gameInfo.getGame_dev()+" / "+gameInfo.getGame_type()+"\n"+gameInfo.getCreate_time());
@@ -259,10 +413,6 @@ public class EvaluationListFragment extends Fragment {
                             }
 
                         }
-//                        Intent intent=new Intent(getActivity(),StartPCActivity.class);
-//                        intent.putExtra("game_id",gameInfo.getGame_id());
-//                        startActivity(intent);
-//                        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.out_to_left);
 
                     }
                 });
@@ -284,7 +434,12 @@ public class EvaluationListFragment extends Fragment {
             viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    deleteGame(gameInfo);
+
+                    deleteGame(position);
+                    gamelist.remove(position);
+//                    notifyDataSetChanged();
+                    deleListView.setAdapter(new EvaluaAdapter(getActivity()));
+
                 }
             });
             return convertView;
@@ -299,7 +454,19 @@ public class EvaluationListFragment extends Fragment {
         }
     }
 
-    private void deleteGame(final GameInfo info) {
+    private void deleteGame(int position) {
+        GameInfo info=null;
+        try {
+            info=gamelist.get(position);
+
+            gamelist.remove(position);
+            deleListView.setAdapter(new EvaluaAdapter(getActivity()));
+
+        }catch (Exception e){
+            return;
+        }
+        MyLog.i("delete game "+info.getGame_name());
+
         BaseParams baseParams=new BaseParams("test/delgame");
         baseParams.addParams("game_id",info.getGame_id());
         baseParams.addParams("token",MyAccount.getInstance().getToken());
@@ -313,9 +480,8 @@ public class EvaluationListFragment extends Fragment {
                     boolean su=jsonObject.getBoolean("success");
                     int code=jsonObject.getInt("code");
                     if (su&&code==200){
-                        deleListView.turnToNormal();
-                        gamelist.remove(info);
-                        adapter.notifyDataSetChanged();
+//                        CusToast.showToast(getActivity(),"删除成功", Toast.LENGTH_SHORT);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

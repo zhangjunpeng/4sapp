@@ -116,9 +116,10 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
     private void initView() {
         //设置界面
         if (MyAccount.isLogin){
-//            initData();
-            initUserInfo();
+            initData();
 
+
+//            textView.setText(myAccount.getNickname());
             name2.setVisibility(View.GONE);
         }else{
             textView.setText("未登录");
@@ -128,27 +129,30 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initData() {
-        UserInfo userInfo=myAccount.getUserInfo();
-        if (TextUtils.isEmpty(userInfo.getNickname())){
-            if (!TextUtils.isEmpty(userInfo.getPhone())){
-                String nickname=userInfo.getPhone();
-                String subs=nickname.substring(3,7);
-                MyLog.i("subs==="+subs);
-                nickname=nickname.replace(subs,"*****");
-                textView.setText(nickname);
+        if (TextUtils.isEmpty(myAccount.getNickname())){
+            UserInfo userInfo=myAccount.getUserInfo();
+            if (userInfo!=null) {
+                if (!TextUtils.isEmpty(userInfo.getPhone())) {
+                    String nickname = userInfo.getPhone();
+                    String subs = nickname.substring(3, 7);
+                    MyLog.i("subs===" + subs);
+                    nickname = nickname.replace(subs, "*****");
+                    textView.setText(nickname);
+                } else {
+                    String nickname = userInfo.getEmail();
+                    String subs[] = nickname.split("@");
+                    MyLog.i("subs===" + subs[0]);
+                    nickname = nickname.replace(subs[0], subs[0].replace(subs[0].substring(3, subs[0].length()), "****"));
+                    textView.setText(nickname);
+                }
             }else {
-                String nickname=userInfo.getEmail();
-                String subs[]=nickname.split("@");
-                MyLog.i("subs==="+subs[0]);
-                nickname=nickname.replace(subs[0],subs[0].replace(subs[0].substring(3,subs[0].length()),"****"));
-                textView.setText(nickname);
+                initUserInfo();
+
             }
 
         }else {
-            textView.setText(userInfo.getNickname());
+            textView.setText(myAccount.getNickname());
         }
-
-
     }
 
     @Override
@@ -284,12 +288,13 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
             }else {
                 imageLoader.displayImage( Url.prePic+myAccount.getAvatar(), roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
             }
-        }
-        if (!TextUtils.isEmpty(userInfo.getAvatar())){
-            if (userInfo.getAvatar().contains("http")) {
-                imageLoader.displayImage( userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
-            }else {
-                imageLoader.displayImage( Url.prePic+userInfo.getAvatar(), roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
+        }else {
+            if (!TextUtils.isEmpty(userInfo.getAvatar())) {
+                if (userInfo.getAvatar().contains("http")) {
+                    imageLoader.displayImage(userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
+                } else {
+                    imageLoader.displayImage(Url.prePic + userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
+                }
             }
         }
     }

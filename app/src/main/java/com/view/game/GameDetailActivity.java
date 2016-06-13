@@ -479,8 +479,8 @@ public class GameDetailActivity extends BaseActivity implements View.OnClickList
 //        }
 
         MyLog.i("score=="+score);
-        if (score.equals("null")){
-
+        if (score.equals("null")||score.equals("0")){
+            findViewById(R.id.div_playerscore_gamedetail).setVisibility(View.GONE);
         }else {
             setStarScore(Float.parseFloat(score));
         }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.test4s.myapp"
-    android:versionCode="3"
-    android:versionName="1.2">
+    android:versionCode="5"
+    android:versionName="2.0">
 
     <uses-sdk android:minSdkVersion="18" />
 
@@ -57,6 +57,15 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!--如果是第三方lib项目，请在手册中提示app开发者授予以下权限！ -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <!-- 请在application处配置appkey和渠道或在代码处调用StatConfig类接口 < -->
 
     <application
         android:name=".MyApplication"
@@ -340,11 +349,14 @@
             android:name="com.view.game.RmGameListActivity"
             android:label="@string/title_activity_rm_game_list"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
         <meta-data
             android:name="client_id" android:value="22f67ce1674f8f6e"/>
         <meta-data
             android:name="client_secret" android:value="21dabb6e7193d4ca9cca01462e5ec0a0"/>
+        <!-- 请将value改为MTA分配的appkey < -->
+        <meta-data android:name="TA_APPKEY" android:value="AYRC24L47EVE"/>
+        <!-- 请将value改为app发布对应的渠道，不同的发布渠道使用不同的名字 < -->
+        <meta-data android:name="InstallChannel" android:value="QQ"/>
     </application>
 
 </manifest>

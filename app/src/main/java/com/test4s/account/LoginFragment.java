@@ -109,13 +109,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         reg.setOnClickListener(this);
         findpwd.setOnClickListener(this);
 
-//        view.findViewById(R.id.weichat_login).setOnClickListener(this);
-//        view.findViewById(R.id.weibo_login).setOnClickListener(this);
-//        view.findViewById(R.id.qq_login).setOnClickListener(this);
+        view.findViewById(R.id.weichat_login).setOnClickListener(this);
+        view.findViewById(R.id.weibo_login).setOnClickListener(this);
+        view.findViewById(R.id.qq_login).setOnClickListener(this);
 
-        view.findViewById(R.id.weichat_login).setVisibility(View.INVISIBLE);
-        view.findViewById(R.id.weibo_login).setVisibility(View.INVISIBLE);
-        view.findViewById(R.id.qq_login).setVisibility(View.INVISIBLE);
+//        view.findViewById(R.id.weichat_login).setVisibility(View.INVISIBLE);
+//        view.findViewById(R.id.weibo_login).setVisibility(View.INVISIBLE);
+//        view.findViewById(R.id.qq_login).setVisibility(View.INVISIBLE);
 
 
         editText_name.addTextChangedListener(new TextWatcher() {
@@ -172,9 +172,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         MyLog.i("requestCode==="+requestCode);
         if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_FALSE){
             MyLog.i("微信客户端启动失败");
-            CusToast.showToast(getActivity(),"微信客户端启动失败",Toast.LENGTH_SHORT);
-        }
-        if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_TRUE){
+            CusToast.showToast(getActivity(),"请检查微信客户端",Toast.LENGTH_SHORT);
+        }else if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_TRUE){
             getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
@@ -210,18 +209,26 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
                 break;
             case R.id.weichat_login:
-                Intent intent1=new Intent(getActivity(),ThirdLoginActivity.class);
-                intent1.putExtra("third","weixin");
-                startActivityForResult(intent1,AccountActivity.WX_LOGIN);
-                getActivity().overridePendingTransition(R.anim.in_from_right,0);
+                    Intent intent1=new Intent(getActivity(),ThirdLoginActivity.class);
+                    intent1.putExtra("third","weixin");
+                    startActivityForResult(intent1,AccountActivity.WX_LOGIN);
+                    getActivity().overridePendingTransition(R.anim.in_from_right,0);
+
+
 //                getActivity().setResult(Activity.RESULT_OK);
 //                getActivity().finish();
                 break;
             case R.id.weibo_login:
-                Intent intent2=new Intent(getActivity(),ThirdLoginActivity.class);
-                intent2.putExtra("third","sina");
-                getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
-                getActivity().overridePendingTransition(R.anim.in_from_right,0);
+                try {
+
+                    Intent intent2=new Intent(getActivity(),ThirdLoginActivity.class);
+                    intent2.putExtra("third","sina");
+                    getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
+                    getActivity().overridePendingTransition(R.anim.in_from_right,0);
+                }catch (Exception e){
+                    MyLog.i("EEEEEEEEEEEEEEEEEEEE===="+e.toString());
+                }
+
 
 //                getActivity().setResult(Activity.RESULT_OK);
 //                getActivity().finish();

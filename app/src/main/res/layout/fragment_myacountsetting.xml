@@ -441,13 +441,11 @@
                 android:layout_height="1px"
                 android:background="#B8B8B8"
                 android:layout_marginTop="20dp"
-                android:visibility="gone"
                 />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="#fff"
-                android:visibility="gone"
                 android:id="@+id/bindother_myset_fg">
 
                 <TextView
@@ -479,13 +477,11 @@
                     android:layout_marginRight="11dp"
                     />
 
-
             </RelativeLayout>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="#B8B8B8"
-                android:visibility="gone"
 
                 />
             <ImageView

@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.app.tools.MyLog;
+import com.tencent.wxop.stat.StatConfig;
+import com.tencent.wxop.stat.StatService;
+import com.tencent.wxop.stat.common.StatConstants;
 import com.test4s.net.BaseParams;
 import com.test4s.net.Url;
 import com.view.Introduce.IntroduceActivity;
@@ -63,6 +66,13 @@ public class FirsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //腾讯统计SDK初始化
+        StatConfig.setDebugEnable(true);
+        StatService.startStatService(this,null,StatConstants.VERSION);
+
+        StatService.trackCustomEvent(this,"onCreate","");
+
         sharedPreferences= MyApplication.mcontext.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         isFirstin=sharedPreferences.getBoolean("isFirstin",true);
         getKey();

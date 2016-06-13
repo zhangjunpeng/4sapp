@@ -8,7 +8,7 @@
     <include
         android:id="@+id/titlebar_reportlist"
         layout="@layout/titlebar_save"/>
-    <com.app.delslidelistview.DeleListView
+    <ListView
         android:id="@+id/listview_reportlist"
         android:divider="@null"
         android:layout_width="match_parent"

@@ -11,10 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.tools.MyDisplayImageOptions;
 import com.app.tools.MyLog;
+import com.daimajia.swipe.SimpleSwipeListener;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 import com.test4s.account.MyAccount;
@@ -40,7 +44,7 @@ public class ReprotListActivity extends BaseActivity {
 
     List<GameReportInfo> gameReportInfos;
 
-    DeleListView listview;
+    ListView listview;
     MyListAdapter myadapter;
 
     ImageView back;
@@ -55,7 +59,7 @@ public class ReprotListActivity extends BaseActivity {
         setContentView(R.layout.activity_reprot_list);
         setImmerseLayout(findViewById(R.id.titlebar_reportlist));
 
-        listview= (DeleListView) findViewById(R.id.listview_reportlist);
+        listview= (ListView) findViewById(R.id.listview_reportlist);
         back= (ImageView) findViewById(R.id.back_savebar);
         title= (TextView) findViewById(R.id.textView_titlebar_save);
         save= (TextView) findViewById(R.id.save_savebar);
@@ -132,7 +136,7 @@ public class ReprotListActivity extends BaseActivity {
         });
 
     }
-    class MyListAdapter extends BaseAdapter {
+    class MyListAdapter extends BaseSwipeAdapter {
 
         Context context;
         List<GameReportInfo> gameInfos;
@@ -140,7 +144,6 @@ public class ReprotListActivity extends BaseActivity {
         public MyListAdapter(Context context,List<GameReportInfo> gameInfos){
             this.context=context;
             this.gameInfos=gameInfos;
-
 
         }
 
@@ -160,22 +163,39 @@ public class ReprotListActivity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public int getSwipeLayoutResourceId(int position) {
+            return 0;
+        }
 
-            ViewHolder viewHolder;
-            if (convertView==null){
-                viewHolder=new ViewHolder();
-                convertView= LayoutInflater.from(context).inflate(R.layout.item_evaluationlist,parent,false);
-                viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gameevalu);
-                viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gameevalu);
-                viewHolder.bg= (TextView) convertView.findViewById(R.id.cancel_care_evalu);
-                viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu);
-                viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu);
-                viewHolder.delete= (ImageView) convertView.findViewById(R.id.delete_item_evalu);
-                convertView.setTag(viewHolder);
-            }else {
-                viewHolder= (ViewHolder) convertView.getTag();
-            }
+        @Override
+        public View generateView(int position, ViewGroup parent) {
+
+            View convertView= LayoutInflater.from(context).inflate(R.layout.item_evalua_list_std,null);
+            SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.item_evalist_swipe);
+            ViewHolder viewHolder=new ViewHolder();
+            viewHolder.icon= (ImageView) convertView.findViewById(R.id.imageView_gameevalu_std);
+            viewHolder.name= (TextView) convertView.findViewById(R.id.name_item_gameevalu_std);
+            viewHolder.bg= (TextView) convertView.findViewById(R.id.cancel_care_evalu_std);
+            viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu_std);
+            viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu_std);
+
+            swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+            swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                @Override
+                public void onOpen(SwipeLayout layout) {
+//                    YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.delete_item_evalu_std));
+                    MyLog.i("onOpen");
+
+                }
+
+                @Override
+                public void onClose(SwipeLayout layout) {
+                    super.onClose(layout);
+                    MyLog.i("onClose");
+
+                }
+            });
+
             final GameReportInfo gameInfo= (GameReportInfo) gameReportInfos.get(position);
             viewHolder.info.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -248,6 +268,12 @@ public class ReprotListActivity extends BaseActivity {
             }
             return convertView;
         }
+
+        @Override
+        public void fillValues(int position, View convertView) {
+
+        }
+
         class ViewHolder{
             ImageView icon;
             TextView name;
@@ -265,6 +291,12 @@ public class ReprotListActivity extends BaseActivity {
             myadapter.notifyDataSetChanged();
         }
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
     private void deleteTestGame(String gameid){
         BaseParams baseParams=new BaseParams("test/deltestgame");
         baseParams.addParams("game_id",gameid);
@@ -274,6 +306,7 @@ public class ReprotListActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 MyLog.i("params==="+result);
+                onCreate(null);
             }
 
             @Override
