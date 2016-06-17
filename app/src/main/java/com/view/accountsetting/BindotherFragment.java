@@ -1,7 +1,9 @@
 package com.view.accountsetting;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -12,13 +14,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.tools.CusToast;
 import com.app.tools.MyLog;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
+import com.test4s.account.LoginQQActivity;
+import com.test4s.account.LoginSINAActivity;
+import com.test4s.account.LoginWXActivity;
 import com.test4s.account.MyAccount;
 import com.test4s.account.SinaWeiboLogin;
 import com.test4s.account.TencentLogin;
@@ -53,6 +60,17 @@ public class BindotherFragment extends BaseFragment implements View.OnClickListe
     private TextView title;
     private TextView save;
     public static IUiListener lisener;
+
+    public static final int BIND=666;
+
+    public static final int BIND_SUCCESS=3001;
+    public static final int BIND_CANCEL=3002;
+    public static final int BIND_FAILD=3003;
+    public static final int LOGIN_FALSE=4001;
+    public static final int HASBIND=3009;
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -173,75 +191,106 @@ public class BindotherFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
+
+
     private void bindSina() {
-        SinaWeiboLogin sina=SinaWeiboLogin.getInstance(getActivity());
-        sina.bind(new WeiboAuthListener() {
-            @Override
-            public void onComplete(Bundle values) {
-                MyLog.i("vaulues=="+values.toString());
-                // 从 Bundle 中解析 Token
-                Oauth2AccessToken mAccessToken = Oauth2AccessToken.parseAccessToken(values);
-                //从这里获取用户输入的 电话号码信息
-                String phoneNum = mAccessToken.getPhoneNum();
-                if (mAccessToken.isSessionValid()) {
-                    MyLog.i("weibo toke ==" + mAccessToken);
-                    String info="";
-                    JSONObject jsonObject=new JSONObject();
-                    String nickname=values.getString("userName","");
-                    if (!TextUtils.isEmpty(nickname)){
-                        try {
-                            jsonObject.put("type","SINA");
-                            jsonObject.put("nick",nickname);
-                            jsonObject.put("name",nickname);
-                            jsonObject.put("head","");
-                            info=jsonObject.toString();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    sendToServer("sina",mAccessToken.getUid(),info);
-                } else {
-                    // 以下几种情况，您会收到 Code：
-                    // 1. 当您未在平台上注册的应用程序的包名与签名时；
-                    // 2. 当您注册的应用程序包名与签名不正确时；
-                    // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
-                    String code = values.getString("code");
-                    if (!TextUtils.isEmpty(code)) {
-                        MyLog.i("weibo ");
-                    }
-                }
-            }
-
-            @Override
-            public void onWeiboException(WeiboException e) {
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
+        Intent intent=new Intent(getActivity(), LoginSINAActivity.class);
+        intent.putExtra("tag","bind");
+        startActivityForResult(intent,BIND);
+        getActivity().overridePendingTransition(R.anim.in_from_right,0);
+//        SinaWeiboLogin sina=SinaWeiboLogin.getInstance(getActivity());
+//        sina.bind(new WeiboAuthListener() {
+//            @Override
+//            public void onComplete(Bundle values) {
+//                MyLog.i("vaulues=="+values.toString());
+//                // 从 Bundle 中解析 Token
+//                Oauth2AccessToken mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+//                //从这里获取用户输入的 电话号码信息
+//                String phoneNum = mAccessToken.getPhoneNum();
+//                if (mAccessToken.isSessionValid()) {
+//                    MyLog.i("weibo toke ==" + mAccessToken);
+//                    String info="";
+//                    JSONObject jsonObject=new JSONObject();
+//                    String nickname=values.getString("userName","");
+//                    if (!TextUtils.isEmpty(nickname)){
+//                        try {
+//                            jsonObject.put("type","SINA");
+//                            jsonObject.put("nick",nickname);
+//                            jsonObject.put("name",nickname);
+//                            jsonObject.put("head","");
+//                            info=jsonObject.toString();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    sendToServer("sina",mAccessToken.getUid(),info);
+//                } else {
+//                    // 以下几种情况，您会收到 Code：
+//                    // 1. 当您未在平台上注册的应用程序的包名与签名时；
+//                    // 2. 当您注册的应用程序包名与签名不正确时；
+//                    // 3. 当您在平台上注册的包名和签名与您当前测试的应用的包名和签名不匹配时。
+//                    String code = values.getString("code");
+//                    if (!TextUtils.isEmpty(code)) {
+//                        MyLog.i("weibo ");
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onWeiboException(WeiboException e) {
+//
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//
+//            }
+//        });
 
     }
 
     private void bindQq() {
-
-        TencentLogin qqLogin=TencentLogin.getIntance(getActivity(), lisener);
-        qqLogin.login();
+//        showDialog();
+//        TencentLogin qqLogin=TencentLogin.getIntance(getActivity(), lisener);
+//        qqLogin.login();
         MyLog.i("qq bind start");
-
+        Intent intent=new Intent(getActivity(), LoginQQActivity.class);
+        intent.putExtra("tag","bind");
+        startActivityForResult(intent,BIND);
+        getActivity().overridePendingTransition(R.anim.in_from_right,0);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         MyLog.i("bindother fragment bind");
+        if (requestCode==BIND){
+            switch (resultCode){
+                case BIND_SUCCESS:
+                    CusToast.showToast(getActivity(),"绑定成功", Toast.LENGTH_SHORT);
+                    initView();
+                    break;
+                case BIND_FAILD:
+                    CusToast.showToast(getActivity(),"绑定失败", Toast.LENGTH_SHORT);
+                    break;
+                case LOGIN_FALSE:
+                    CusToast.showToast(getActivity(),"请检查微信客户端",Toast.LENGTH_SHORT);
+                    break;
+                case BIND_CANCEL:
+                    CusToast.showToast(getActivity(),"绑定取消", Toast.LENGTH_SHORT);
+
+                    break;
+                case HASBIND:
+                    CusToast.showToast(getActivity(),"该账号已经被绑定", Toast.LENGTH_SHORT);
+                    break;
+
+            }
+        }
     }
 
     private void getQQUserInfo(final String openid, String toekn, String expir) {
 
-        TencentLogin tencentLogin=TencentLogin.getIntance(this,lisener);
+        TencentLogin tencentLogin=TencentLogin.getIntance(this);
         tencentLogin.mtencent.setOpenId(openid);
         tencentLogin.mtencent.setAccessToken(toekn,expir);
         tencentLogin.getUserInfo(getActivity(),new IUiListener() {
@@ -279,8 +328,13 @@ public class BindotherFragment extends BaseFragment implements View.OnClickListe
     }
 
     private void bindWeixin() {
-        WeiXinLogin weixinLogin=WeiXinLogin.getInstance(getActivity());
-        weixinLogin.bind();
+
+        Intent intent=new Intent(getActivity(), LoginWXActivity.class);
+        intent.putExtra("tag","bind");
+        startActivityForResult(intent,BIND);
+        getActivity().overridePendingTransition(R.anim.in_from_right,0);
+//        WeiXinLogin weixinLogin=WeiXinLogin.getInstance(getActivity());
+//        weixinLogin.bind();
     }
     public void sendToServer(final String type, final String uid, final String info) {
         BaseParams baseParams=new BaseParams("user/thirdlogin");

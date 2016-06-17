@@ -20,27 +20,30 @@ public class TencentLogin {
     private Fragment mFragment;
     private Activity mActivity;
     public Tencent mtencent;
+
+    private Context context;
+
     public String token;
     private IUiListener listener;
-    private TencentLogin(Activity activity,IUiListener listener){
-        this.listener=listener;
+    private TencentLogin(Activity activity){
         mActivity=activity;
+        context=activity;
         mtencent=Tencent.createInstance("1105244367",activity.getApplicationContext());
     }
-    private TencentLogin(Fragment fragment,IUiListener listener){
-        this.listener=listener;
+    private TencentLogin(Fragment fragment){
         mFragment=fragment;
+        context=fragment.getActivity();
         mtencent=Tencent.createInstance("1105244367",fragment.getActivity().getApplicationContext());
     }
-    public static TencentLogin getIntance(Activity activity,IUiListener listener){
+    public static TencentLogin getIntance(Activity activity){
         if (intance==null){
-            intance=new TencentLogin(activity,listener);
+            intance=new TencentLogin(activity);
         }
         return intance;
     }
-    public static TencentLogin getIntance(Fragment fragment, IUiListener listener){
+    public static TencentLogin getIntance(Fragment fragment){
         if (intance==null){
-            intance=new TencentLogin(fragment,listener);
+            intance=new TencentLogin(fragment);
         }
         return intance;
     }
@@ -51,14 +54,18 @@ public class TencentLogin {
         if (!mtencent.isSessionValid())
         {
             if (mActivity==null){
-                MyLog.i("qq登录4");
+                MyLog.i("qq登录mFragment");
 
                 MyLog.i("qq login back::=="+ mtencent.login(mFragment, "all", listener));
             }else if (mFragment==null){
-                MyLog.i("qq登录4");
+                MyLog.i("qq登录mActivity");
 
                 MyLog.i("qq login back::=="+ mtencent.login(mActivity, "all", listener));
             }
+        }else {
+            MyLog.i("checkLogin");
+
+            mtencent.checkLogin(listener);
         }
     }
 
@@ -69,12 +76,8 @@ public class TencentLogin {
     }
     public void loginOut(){
         if (mtencent!=null){
-            if (mActivity!=null) {
-                mtencent.logout(mActivity);
-            }else {
-                mtencent.logout(mFragment.getActivity());
-
-            }
+            MyLog.i("mtencent loginOut");
+          mtencent.logout(context);
         }
     }
 }

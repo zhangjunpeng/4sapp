@@ -2,6 +2,8 @@ package com.view.accountsetting;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -180,6 +182,9 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
 //        x.image().bind(icon, Url.prePic+userInfo.getAvatar());
 //        String identuty=userInfo.getUser_identity();
         //身份的显示与隐藏
+        if (!MyAccount.isLogin){
+            return;
+        }
         userInfo=MyAccount.getInstance().getUserInfo();
         if (userInfo==null){
             initUserInfo();
@@ -350,18 +355,27 @@ public class MyAcountSettingFragment  extends BaseFragment implements View.OnCli
         MyLog.i("MyAccountSeting");
         if(resultCode==Activity.RESULT_OK && requestCode == TO_SELECT_PHOTO)
         {
-            picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
-            MyLog.i( "最终选择的图片="+picPath);
 
-            if(picPath!=null)
-            {
-                imageloder.displayImage("file://"+picPath,icon, MyDisplayImageOptions.getdefaultImageOptions());
-                handler.sendEmptyMessage(TO_UPLOAD_FILE);
-
-            }else{
-                CusToast.showToast(getActivity(),"上传的文件路径出错",Toast.LENGTH_SHORT);
-
+            Bundle extras = data.getExtras();
+            if (extras != null) {
+                Bitmap photo = extras.getParcelable("data");
+                icon.setImageBitmap(photo);
             }
+
+//            picPath = data.getStringExtra(SelectPicActivity.KEY_PHOTO_PATH);
+//            MyLog.i( "最终选择的图片="+picPath);
+//            if(picPath!=null)
+//            {
+////                imageloder.displayImage("file://"+picPath,icon, MyDisplayImageOptions.getdefaultImageOptions());
+////                handler.sendEmptyMessage(TO_UPLOAD_FILE);
+//
+//            }else{
+//                CusToast.showToast(getActivity(),"上传的文件路径出错",Toast.LENGTH_SHORT);
+//
+//            }
+        }else if (requestCode==888&&resultCode==Activity.RESULT_OK){
+            Bitmap bmap = data.getParcelableExtra("data");
+            icon.setImageBitmap(bmap);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

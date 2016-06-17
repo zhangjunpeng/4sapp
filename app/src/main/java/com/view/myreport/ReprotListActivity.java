@@ -164,7 +164,7 @@ public class ReprotListActivity extends BaseActivity {
 
         @Override
         public int getSwipeLayoutResourceId(int position) {
-            return 0;
+            return R.id.item_evalist_swipe;
         }
 
         @Override
@@ -178,7 +178,7 @@ public class ReprotListActivity extends BaseActivity {
             viewHolder.bg= (TextView) convertView.findViewById(R.id.cancel_care_evalu_std);
             viewHolder.info= (TextView) convertView.findViewById(R.id.introuduction_item_gameevalu_std);
             viewHolder.gamerating= (ImageView) convertView.findViewById(R.id.gamerating_gameevalu_std);
-
+            viewHolder.delete= (ImageView) convertView.findViewById(R.id.delete_item_evalu_std);
             swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
             swipeLayout.addSwipeListener(new SimpleSwipeListener() {
                 @Override
@@ -225,7 +225,7 @@ public class ReprotListActivity extends BaseActivity {
             if (position==gameInfos.size()-1){
                 LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.height=1;
-                convertView.findViewById(R.id.line_reportlist).setLayoutParams(layoutParams);
+                convertView.findViewById(R.id.line_reportlist_std).setLayoutParams(layoutParams);
             }
 //            Picasso.with(context)
 //                    .load(Url.prePic+gameInfo.getGame_img())

@@ -21,8 +21,8 @@ public class WeiXinLogin {
     private static WeiXinLogin instance;
     public static String APP_ID="wx53c55fc6f1efaad2";
     public IWXAPI api;
-    public static int LOGIN_FALSE=40001;
-    public static int LOGIN_TRUE=40000;
+    public static int LOGIN_FALSE=4001;
+    public static int LOGIN_TRUE=4000;
 
 
     private WeiXinLogin(Activity context){
@@ -49,11 +49,11 @@ public class WeiXinLogin {
         return flag;
 
     }
-    public void bind(){
+    public boolean bind(){
         SendAuth.Req req=new SendAuth.Req();
         req.scope = "snsapi_userinfo";
         req.state = "52game_bind";
-        MyLog.i("weixin login=="+ api.sendReq(req));
+        return api.sendReq(req);
     }
 
     public void refreshToken(String token, Callback.CommonCallback<String> callback){

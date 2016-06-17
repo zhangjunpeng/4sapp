@@ -443,7 +443,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 //            MyLog.i(game.getGame_name()+"=="+imageUrl);
             imageloder.displayImage(imageUrl,imageView,MyDisplayImageOptions.getroundImageOptions());
             if (!TextUtils.isEmpty(game.getGame_grade())){
-                imageloder.displayImage(Url.prePic+game.getGame_grade(),grade,MyDisplayImageOptions.getdefaultImageOptions());
+                if (!game.getGame_grade().contains("P.jpg")) {
+                    imageloder.displayImage(Url.prePic + game.getGame_grade(), grade, MyDisplayImageOptions.getdefaultImageOptions());
+                }
             }
 
             textView.setText(name);

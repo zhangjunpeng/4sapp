@@ -35,7 +35,7 @@ public class BaseParams {
             urlindex=MyApplication.mcontext.getString(R.string.url_index);
         }
 
-        MyLog.i("version=="+MyApplication.versionName);
+//        MyLog.i("version=="+MyApplication.versionName);
         mess=new StringBuffer(urlindex+uri);
         requestParams=new RequestParams(urlindex+uri);
         requestParams.addBodyParameter("imei", MyApplication.imei);

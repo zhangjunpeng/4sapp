@@ -195,6 +195,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
             baseParams.addParams("password",password);
             baseParams.addParams("code",code_s);
             baseParams.addParams("pa",pa);
+            baseParams.addParams("create_from","2");
             baseParams.addSign();
             x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
                 @Override

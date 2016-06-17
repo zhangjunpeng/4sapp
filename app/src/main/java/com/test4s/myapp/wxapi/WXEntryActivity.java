@@ -21,6 +21,7 @@ import com.test4s.account.WeiXinLogin;
 import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
 import com.test4s.net.BaseParams;
+import com.view.accountsetting.BindotherFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,6 +134,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
                         JSONObject data=jsob.getJSONObject("data");
                         MyAccount.getInstance().getUserInfo().setWeixin_sign(data.getString("weixin_sign"));
                         setResult(Activity.RESULT_OK);
+                        finish();
+                    }else {
+                        String mess=jsob.getString("msg");
+                        if (mess.equals("已绑定")){
+                            setResult(BindotherFragment.HASBIND);
+                        }else {
+                            setResult(BindotherFragment.BIND_CANCEL);
+                        }
                         finish();
                     }
                 } catch (JSONException e) {

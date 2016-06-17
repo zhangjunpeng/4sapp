@@ -108,6 +108,9 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
                 imageLoader.displayImage(myAccount.getAvatar(),roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
                 myAccount.saveUserInfo();
             }
+            if (changeIcon){
+                updataAva();
+            }
         }
 
         super.onResume();
@@ -118,32 +121,36 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         if (MyAccount.isLogin){
             initData();
 
-
 //            textView.setText(myAccount.getNickname());
             name2.setVisibility(View.GONE);
         }else{
             textView.setText("未登录");
             name2.setVisibility(View.VISIBLE);
+
         }
 
     }
 
     private void initData() {
-        if (TextUtils.isEmpty(myAccount.getNickname())){
+        if (MyAccount.isLogin){
             UserInfo userInfo=myAccount.getUserInfo();
             if (userInfo!=null) {
-                if (!TextUtils.isEmpty(userInfo.getPhone())) {
-                    String nickname = userInfo.getPhone();
-                    String subs = nickname.substring(3, 7);
-                    MyLog.i("subs===" + subs);
-                    nickname = nickname.replace(subs, "*****");
-                    textView.setText(nickname);
+                if (!TextUtils.isEmpty(userInfo.getNickname())) {
+                    textView.setText(userInfo.getNickname());
                 } else {
-                    String nickname = userInfo.getEmail();
-                    String subs[] = nickname.split("@");
-                    MyLog.i("subs===" + subs[0]);
-                    nickname = nickname.replace(subs[0], subs[0].replace(subs[0].substring(3, subs[0].length()), "****"));
-                    textView.setText(nickname);
+                    if (!TextUtils.isEmpty(userInfo.getPhone())){
+                        String nickname = userInfo.getPhone();
+                        String subs = nickname.substring(3, 7);
+                        MyLog.i("subs===" + subs);
+                        nickname = nickname.replace(subs, "*****");
+                        textView.setText(nickname);
+                    }else {
+                        String nickname = userInfo.getEmail();
+                        String subs[] = nickname.split("@");
+                        MyLog.i("subs===" + subs[0]);
+                        nickname = nickname.replace(subs[0], subs[0].replace(subs[0].substring(3, subs[0].length()), "****"));
+                        textView.setText(nickname);
+                    }
                 }
             }else {
                 initUserInfo();
@@ -153,6 +160,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         }else {
             textView.setText(myAccount.getNickname());
         }
+        updataAva();
     }
 
     @Override
@@ -238,7 +246,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_login){
             //登录成功返回
             MyLog.i("mysetting~~~~~onActivityResult");
-            if (TextUtils.isEmpty(MyAccount.getInstance().getToken())){
+            if (!MyAccount.isLogin){
                 CusToast.showToast(getActivity(),"登录失败",Toast.LENGTH_SHORT);
 
             }else {
@@ -248,10 +256,9 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
             }
         }
         if (resultCode==Activity.RESULT_OK&&requestCode==RequestCode_setting){
+
             MyLog.i("mysetting~~~~~RequestCode_setting");
-            updataInfo();
-
-
+            initView();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -281,21 +288,20 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
     }
 
     private void updataAva() {
-        UserInfo userInfo=myAccount.getUserInfo();
-        if (userInfo==null){
-            if (myAccount.getAvatar().contains("http")) {
-                imageLoader.displayImage( myAccount.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
-            }else {
-                imageLoader.displayImage( Url.prePic+myAccount.getAvatar(), roundedIcon,MyDisplayImageOptions.getdefaultImageOptions());
-            }
-        }else {
-            if (!TextUtils.isEmpty(userInfo.getAvatar())) {
+        if (MyAccount.isLogin){
+            UserInfo userInfo=myAccount.getUserInfo();
+            if (userInfo!=null){
                 if (userInfo.getAvatar().contains("http")) {
-                    imageLoader.displayImage(userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
-                } else {
-                    imageLoader.displayImage(Url.prePic + userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getdefaultImageOptions());
+                    imageLoader.displayImage( userInfo.getAvatar(), roundedIcon, MyDisplayImageOptions.getIconOptions());
+                }else {
+                    imageLoader.displayImage( Url.prePic+userInfo.getAvatar(), roundedIcon,MyDisplayImageOptions.getIconOptions());
                 }
+            }else {
+                initUserInfo();
             }
+            changeIcon=false;
+        }else {
+            roundedIcon.setImageResource(R.drawable.default_icon);
         }
     }
 
@@ -338,6 +344,11 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
                         userInfo.setQq_sign(jsonObject3.getString("qq_sign"));
                         userInfo.setWeixin_sign(jsonObject3.getString("weixin_sign"));
                         userInfo.setSina_sign(jsonObject3.getString("sina_sign"));
+
+
+                        MyAccount.getInstance().setUsername(jsonObject3.getString("username"));
+                        MyAccount.getInstance().setNickname(jsonObject3.getString("nickname"));
+
 
                         MyAccount.getInstance().setUserInfo(userInfo);
                         network=true;

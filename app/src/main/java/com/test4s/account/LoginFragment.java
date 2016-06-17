@@ -31,7 +31,6 @@ import com.view.myreport.ReprotListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.DbManager;
 import org.xutils.common.Callback;
 import org.xutils.x;
 
@@ -173,10 +172,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
         if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_FALSE){
             MyLog.i("微信客户端启动失败");
             CusToast.showToast(getActivity(),"请检查微信客户端",Toast.LENGTH_SHORT);
-        }else if (requestCode==AccountActivity.WX_LOGIN&&resultCode==WeiXinLogin.LOGIN_TRUE){
+        }
+        if (MyAccount.isLogin){
             getActivity().setResult(Activity.RESULT_OK);
             getActivity().finish();
             getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
+        }else {
+
         }
     }
 
@@ -209,33 +211,25 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
                 break;
             case R.id.weichat_login:
-                    Intent intent1=new Intent(getActivity(),ThirdLoginActivity.class);
-                    intent1.putExtra("third","weixin");
-                    startActivityForResult(intent1,AccountActivity.WX_LOGIN);
-                    getActivity().overridePendingTransition(R.anim.in_from_right,0);
+                Intent intent1=new Intent(getActivity(),LoginWXActivity.class);
+//                    intent1.putExtra("third","weixin");
+                intent1.putExtra("tag","login");
 
+                startActivityForResult(intent1,AccountActivity.WX_LOGIN);
+                getActivity().overridePendingTransition(R.anim.in_from_right,0);
 
-//                getActivity().setResult(Activity.RESULT_OK);
-//                getActivity().finish();
                 break;
             case R.id.weibo_login:
-                try {
 
-                    Intent intent2=new Intent(getActivity(),ThirdLoginActivity.class);
-                    intent2.putExtra("third","sina");
-                    getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
-                    getActivity().overridePendingTransition(R.anim.in_from_right,0);
-                }catch (Exception e){
-                    MyLog.i("EEEEEEEEEEEEEEEEEEEE===="+e.toString());
-                }
+                Intent intent2=new Intent(getActivity(),LoginSINAActivity.class);
+                intent2.putExtra("tag","login");
 
-
-//                getActivity().setResult(Activity.RESULT_OK);
-//                getActivity().finish();
+                getActivity().startActivityForResult(intent2,AccountActivity.THIRD_LOGIN);
+                getActivity().overridePendingTransition(R.anim.in_from_right,0);
                 break;
             case R.id.qq_login:
-                Intent intent3=new Intent(getActivity(),ThirdLoginActivity.class);
-                intent3.putExtra("third","qq");
+                Intent intent3=new Intent(getActivity(),LoginQQActivity.class);
+                intent3.putExtra("tag","login");
                 getActivity().startActivityForResult(intent3,AccountActivity.THIRD_LOGIN);
                 getActivity().overridePendingTransition(R.anim.in_from_right,0);
 

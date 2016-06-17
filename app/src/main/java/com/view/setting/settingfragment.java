@@ -30,6 +30,8 @@ import com.app.view.MyDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.tencent.tauth.Tencent;
 import com.test4s.account.AccountActivity;
+import com.test4s.account.LoginQQActivity;
+import com.test4s.account.LoginSINAActivity;
 import com.test4s.account.MyAccount;
 import com.test4s.account.TencentLogin;
 import com.test4s.account.ThirdLoginActivity;
@@ -361,12 +363,13 @@ public class Settingfragment extends Fragment implements View.OnClickListener {
                 getActivity().finish();
                 dialog.dismiss();
                 getActivity().overridePendingTransition(R.anim.in_form_left,R.anim.out_to_right);
-                if (MyAccount.tencentLogin!=null){
-                    MyLog.i("qq login out1");
-//                    Tencent tencent=MyAccount.tencentLogin.mtencent;
-                    MyAccount.tencentLogin.loginOut();
-                }
-                ThirdLoginActivity.WeiBologinout(getActivity());
+//                if (LoginQQActivity.){
+//                    MyLog.i("qq login out1");
+////                    Tencent tencent=MyAccount.tencentLogin.mtencent;
+//                    MyAccount.tencentLogin.loginOut();
+//                }
+                LoginQQActivity.loginOut();
+                LoginSINAActivity.WeiBologinout(getActivity());
 
             }
         });

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +21,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.tools.CusToast;
+import com.app.tools.FileUtil;
+import com.app.tools.MyLog;
+import com.test4s.account.MyAccount;
+import com.test4s.config.Config;
+import com.test4s.myapp.MyApplication;
 import com.test4s.myapp.R;
+import com.test4s.net.BaseParams;
+import com.test4s.net.Url;
+import com.view.index.MySettingFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.TreeMap;
 
 /**
  * @author spring sky<br>
@@ -39,6 +63,9 @@ public class SelectPicActivity extends Activity implements OnClickListener{
      */
     public static final int SELECT_PIC_BY_PICK_PHOTO = 2;
 
+    //得到裁切后的图片
+    public static final int GET_PIC=3;
+
     /***
      * 从Intent获取图片路径的KEY
      */
@@ -49,12 +76,20 @@ public class SelectPicActivity extends Activity implements OnClickListener{
     private LinearLayout dialogLayout;
     private TextView takePhotoBtn,pickPhotoBtn,cancelBtn;
 
+
+    private Intent resultData;
+
+    private String picUrl_cq;
+
+
     /**获取到的图片路径*/
     private String picPath;
 
     private Intent lastIntent ;
 
     private Uri photoUri;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,9 +160,13 @@ public class SelectPicActivity extends Activity implements OnClickListener{
      * 从相册中取图片
      */
     private void pickPhoto() {
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK, null);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        intent.setAction(Intent.ACTION_PICK);
+        intent.setDataAndType(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "image/*");
+//        startActivityForResult(intent, 1);
         startActivityForResult(intent, SELECT_PIC_BY_PICK_PHOTO);
     }
 
@@ -142,11 +181,92 @@ public class SelectPicActivity extends Activity implements OnClickListener{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK)
         {
-            doPhoto(requestCode,data);
+           switch (requestCode){
+               case SELECT_PIC_BY_PICK_PHOTO:
+                   startPhotoZoom(data.getData());
+                   break;
+               case SELECT_PIC_BY_TACK_PHOTO:
+//                   File temp = new File(picPath);
+                   startPhotoZoom(photoUri);
+                   break;
+               case GET_PIC:
+                   resultData=data;
+//                  doPhoto(requestCode,data);
+                    setPicToView(data);
+                   break;
+           }
         }else if(resultCode==Activity.RESULT_CANCELED){
             finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 保存裁剪之后的图片数据
+     * @param picdata
+     */
+    private void setPicToView(Intent picdata) {
+        Bundle extras = picdata.getExtras();
+        if (extras != null) {
+            Bitmap photo = extras.getParcelable("data");
+//            Drawable drawable = new BitmapDrawable(photo);
+
+            /**
+             * 下面注释的方法是将裁剪之后的图片以Base64Coder的字符方式上
+             * 传到服务器，QQ头像上传采用的方法跟这个类似
+             */
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            photo.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+//            byte[] b = stream.toByteArray();
+//            InputStream input=photo.compress()
+//            MyLog.i("裁切字节大小：："+b.length);
+//            ByteArrayInputStream tInputStringStream = new ByteArrayInputStream(b);
+
+            picUrl_cq= FileUtil.saveFile(this,"headcq.jpg",photo);
+
+            toUploadFile(picUrl_cq);
+//            picPath = FileUtil.saveFile(mContext, temphead.jpg, photo);
+
+            /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+            byte[] b = stream.toByteArray();
+            // 将图片流以字符串形式存储下来
+
+            tp = new String(Base64Coder.encodeLines(b));
+            这个地方大家可以写下给服务器上传图片的实现，直接把tp直接上传就可以了，
+            服务器处理的方法是服务器那边的事了，吼吼
+
+            如果下载到的服务器的数据还是以Base64Coder的形式的话，可以用以下方式转换
+            为我们可以用的图片类型就OK啦...吼吼
+            Bitmap dBitmap = BitmapFactory.decodeFile(tp);
+            Drawable drawable = new BitmapDrawable(dBitmap);
+            */
+//            ib.setBackgroundDrawable(drawable);
+//            iv.setBackgroundDrawable(drawable);
+        }
+    }
+
+    private void startPhotoZoom(Uri uri) {
+         /*
+         * 至于下面这个Intent的ACTION是怎么知道的，大家可以看下自己路径下的如下网页
+         * yourself_sdk_path/docs/reference/android/content/Intent.html
+         * 直接在里面Ctrl+F搜：CROP ，之前小马没仔细看过，其实安卓系统早已经有自带图片裁剪功能,
+         * 是直接调本地库的，小马不懂C C++  这个不做详细了解去了，有轮子就用轮子，不再研究轮子是怎么
+         * 制做的了...吼吼
+         */
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        //下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
+        intent.putExtra("crop", "true");
+        // aspectX aspectY 是宽高的比例
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // outputX outputY 是裁剪图片宽高
+        intent.putExtra("outputX", 150);
+        intent.putExtra("outputY", 150);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent,GET_PIC);
     }
 
     /**
@@ -156,6 +276,7 @@ public class SelectPicActivity extends Activity implements OnClickListener{
      */
     private void doPhoto(int requestCode,Intent data)
     {
+
         if(requestCode == SELECT_PIC_BY_PICK_PHOTO )  //从相册取图片，有些手机有异常情况，请注意
         {
             if(data == null)
@@ -191,4 +312,106 @@ public class SelectPicActivity extends Activity implements OnClickListener{
 
         }
     }
+
+    private void toUploadFile(String b)
+    {
+
+//        UploadUtil uploadUtil = UploadUtil.getInstance();;
+//        uploadUtil.setOnUploadProcessListener(this);  //设置监听器监听上传状态
+//        uploadUtil.uploadFile( picPath,fileKey, requestURL,params);
+
+        RequestParams baseParams=new RequestParams(Config.RequestURL);
+
+        baseParams.setMultipart(true);
+        baseParams.addBodyParameter("imei", MyApplication.imei);
+        baseParams.addBodyParameter("version",MyApplication.versionName);
+        baseParams.addBodyParameter("package_name",MyApplication.packageName);
+        baseParams.addBodyParameter("channel_id","1");
+        baseParams.addBodyParameter("form","app");
+        baseParams.addBodyParameter("token", MyAccount.getInstance().getToken());
+
+        TreeMap<String,String> map=new TreeMap<>();
+        map.put("imei",MyApplication.imei);
+        map.put("version",MyApplication.versionName);
+        map.put("package_name",MyApplication.packageName);
+        map.put("channel_id","1");
+        map.put("form","app");
+        map.put("token",MyAccount.getInstance().getToken());
+        baseParams.addBodyParameter("sign", Url.getSign(map.entrySet()));
+        baseParams.addBodyParameter("filedata",new File(b),null);
+//        baseParams.addBodyParameter("filedata",b,"multipart/form-data");
+        x.http().post(baseParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("裁切图片上传数据 updataImage==="+result);
+                try {
+                    JSONObject jsonObject=new JSONObject(result);
+                    boolean su=jsonObject.getBoolean("success");
+                    if (su){
+                        JSONObject jsonObject1=jsonObject.getJSONObject("data");
+//                        String url=jsonObject1.getString("url");
+                        String picurl=jsonObject1.getString("picpath");
+
+                        uploadurl(picurl);
+                    }else {
+                        setResult(Activity.RESULT_CANCELED);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+
+
+    }
+
+    private void uploadurl(final String url) {
+        BaseParams baseParams=new BaseParams("user/upavatar");
+        baseParams.addParams("token",MyAccount.getInstance().getToken());
+        baseParams.addParams("avatar",url);
+        baseParams.addSign();
+        x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                MyLog.i("上传图片链接"+result);
+                MyAccount.getInstance().setAvatar(url);
+                MyAccount.getInstance().getUserInfo().setAvatar(url);
+                MySettingFragment.changeIcon=true;
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                setResult(Activity.RESULT_OK,resultData);
+                finish();
+
+            }
+        });
+
+    }
+
 }

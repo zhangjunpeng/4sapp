@@ -182,6 +182,7 @@ public class TirdLoginBindPhone extends BaseFragment implements View.OnClickList
         baseParams.addParams("code",code_s);
         baseParams.addParams("uniqueid",openId);
         baseParams.addParams("otherinfo",otherinfo);
+        baseParams.addParams("create_from","2");
         baseParams.addParams("pa",pa);
         baseParams.addSign();
         x.http().post(baseParams.getRequestParams(), new Callback.CommonCallback<String>() {
