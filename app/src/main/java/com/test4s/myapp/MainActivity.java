@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -74,6 +75,7 @@ public class MainActivity extends FragmentActivity  implements View.OnClickListe
     private Dialog dialog;
     private float density;
     private int windowWidth;
+    private Fragment mContent;
 
 
     @Override
@@ -110,7 +112,7 @@ public class MainActivity extends FragmentActivity  implements View.OnClickListe
         Fragment gameFragment=new GameFragment();
         Fragment informationFragment=new InformationFragment();
         Fragment mySettingFragment=new MySettingFragment();
-
+        mContent=indexFragment;
 
         fragments.add(indexFragment);
         fragments.add(gameFragment);
@@ -203,19 +205,26 @@ public class MainActivity extends FragmentActivity  implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.index_linear:
-                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(0)).commit();
+                switchContent(mContent,fragments.get(0));
+//                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(0)).commit();
                 setImageColor(0);
                 break;
             case R.id.game_linear:
-                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(1)).commit();
+                switchContent(mContent,fragments.get(1));
+
+//                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(1)).commit();
                 setImageColor(1);
                 break;
             case R.id.info_linear:
-                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(2)).commit();
+                switchContent(mContent,fragments.get(2));
+
+//                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(2)).commit();
                 setImageColor(2);
                 break;
             case R.id.my_linear:
-                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(3)).commit();
+                switchContent(mContent,fragments.get(3));
+
+//                fm.beginTransaction().replace(R.id.frameLayout_main,fragments.get(3)).commit();
                 setImageColor(3);
                 break;
         }
@@ -323,6 +332,19 @@ public class MainActivity extends FragmentActivity  implements View.OnClickListe
 
         }
         return true;
+    }
+
+    public void switchContent(Fragment from, Fragment to) {
+        if (mContent != to) {
+            mContent = to;
+            FragmentTransaction transaction =fm.beginTransaction().setCustomAnimations(
+                    android.R.anim.fade_in, android.R.anim.fade_out);
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(from).add(R.id.frameLayout_main, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
+        }
     }
 
     private long exitTime = 0;

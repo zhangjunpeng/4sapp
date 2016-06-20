@@ -378,7 +378,9 @@
             android:name="com.test4s.account.LoginWXActivity"
             android:label="@string/title_activity_qqlogin"
             android:theme="@style/CustomDialog"></activity>
-
+        <activity
+            android:name="com.view.s4server.FiltrateListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>

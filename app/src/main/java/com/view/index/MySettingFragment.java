@@ -126,7 +126,7 @@ public class MySettingFragment extends Fragment implements View.OnClickListener{
         }else{
             textView.setText("未登录");
             name2.setVisibility(View.VISIBLE);
-
+            roundedIcon.setImageResource(R.drawable.default_icon);
         }
 
     }
